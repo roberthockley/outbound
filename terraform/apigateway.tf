@@ -100,21 +100,21 @@ resource "aws_api_gateway_integration" "connect_outbound_options" {
 #  status_code = "200"
 #}
 
-resource "aws_api_gateway_integration_response" "connect_outbound_post" {
-  #depends_on  = [aws_api_gateway_resource.connect_outbound]
-  http_method = "POST"
-  resource_id = aws_api_gateway_resource.connect_outbound.id
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
-  }
-  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
-  status_code = "200"
-}
+#resource "aws_api_gateway_integration_response" "connect_outbound_post" {
+#  #depends_on  = [aws_api_gateway_resource.connect_outbound]
+#  http_method = "POST"
+#  resource_id = aws_api_gateway_resource.connect_outbound.id
+#  response_parameters = {
+#    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+#  }
+#  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+#  status_code = "200"
+#}
 
-resource "aws_api_gateway_deployment" "call_service_api_deployment" {
-  #_on  = [aws_api_gateway_integration.connect_outbound_options, aws_api_gateway_integration.connect_outbound_post]
-  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
-}
+#resource "aws_api_gateway_deployment" "call_service_api_deployment" {
+#  #_on  = [aws_api_gateway_integration.connect_outbound_options, aws_api_gateway_integration.connect_outbound_post]
+#  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+#ß}
 
 resource "aws_api_gateway_stage" "connect_outbound" {
   cache_cluster_enabled = "false"
