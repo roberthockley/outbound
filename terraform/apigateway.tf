@@ -87,6 +87,20 @@ resource "aws_api_gateway_integration" "connect_outbound_options" {
   type                 = "MOCK"
 }
 
+resource "aws_api_gateway_integration" "connect_outbound_scan" {
+  cache_namespace      = aws_api_gateway_resource.connect_outbound.id
+  connection_type      = "INTERNET"
+  http_method          = "OPTIONS"
+  passthrough_behavior = "WHEN_NO_MATCH"
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+  resource_id          = aws_api_gateway_resource.connect_outbound.id
+  rest_api_id          = aws_api_gateway_rest_api.connect_outbound.id
+  timeout_milliseconds = "29000"
+  type                 = "AWS"
+  credentials             = aws_iam_role.api_gateway_dynamodb_role.arn
+}
 
 resource "aws_api_gateway_integration_response" "connect_outbound_options" {
   http_method = "OPTIONS"
