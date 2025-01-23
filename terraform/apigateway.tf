@@ -76,6 +76,7 @@ resource "aws_api_gateway_resource" "connect_outbound" {
 }
 
 resource "aws_api_gateway_integration" "connect_outbound_options" {
+  depends_on = [ aws_api_gateway_method.connect_outbound_options ]
   cache_namespace      = aws_api_gateway_resource.connect_outbound.id
   connection_type      = "INTERNET"
   http_method          = "OPTIONS"
