@@ -5,7 +5,7 @@ resource "aws_dynamodb_table" "outbound_table" {
   range_key    = var.dynamo.range_key1
   attribute {
     name = var.dynamo.hash_key1
-    type = "N"
+    type = "S"
   }
 
   attribute {
