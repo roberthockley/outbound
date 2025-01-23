@@ -99,7 +99,7 @@ resource "aws_api_gateway_integration" "connect_outbound_scan" {
   rest_api_id          = aws_api_gateway_rest_api.connect_outbound.id
   timeout_milliseconds = "29000"
   type                 = "AWS"
-  credentials             = aws_iam_role.api_gateway_dynamodb_role.arn
+  credentials             = aws_iam_role.RoleForDynamoDB.arn
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_options" {
