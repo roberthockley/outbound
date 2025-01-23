@@ -101,7 +101,7 @@ resource "aws_api_gateway_integration" "connect_outbound_options" {
 #}
 
 resource "aws_api_gateway_integration_response" "connect_outbound_post" {
-  depends_on  = [aws_api_gateway_resource.connect_outbound]
+  #depends_on  = [aws_api_gateway_resource.connect_outbound]
   http_method = "POST"
   resource_id = aws_api_gateway_resource.connect_outbound.id
   response_parameters = {
@@ -112,7 +112,7 @@ resource "aws_api_gateway_integration_response" "connect_outbound_post" {
 }
 
 resource "aws_api_gateway_deployment" "call_service_api_deployment" {
-  depends_on  = [aws_api_gateway_integration.connect_outbound_options, aws_api_gateway_integration.connect_outbound_post]
+  #_on  = [aws_api_gateway_integration.connect_outbound_options, aws_api_gateway_integration.connect_outbound_post]
   rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
 }
 
