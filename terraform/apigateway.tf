@@ -109,7 +109,7 @@ EOF
 
 
 resource "aws_api_gateway_integration_response" "connect_outbound_options" {
-  depends_on = [ aws_api_gateway_method.connect_outbound_option ]
+  depends_on = [ aws_api_gateway_method.connect_outbound_options ]
   http_method = "OPTIONS"
   resource_id = aws_api_gateway_resource.connect_outbound.id
   response_parameters = {
