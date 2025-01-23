@@ -87,18 +87,18 @@ resource "aws_api_gateway_integration" "connect_outbound_options" {
   type                 = "MOCK"
 }
 
-#
-#resource "aws_api_gateway_integration_response" "connect_outbound_options" {
-#  http_method = "OPTIONS"
-#  resource_id = aws_api_gateway_resource.connect_outbound.id
-#  response_parameters = {
-#    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-#    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST'"
-#    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-#  }
-#  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
-#  status_code = "200"
-#}
+
+resource "aws_api_gateway_integration_response" "connect_outbound_options" {
+  http_method = "OPTIONS"
+  resource_id = aws_api_gateway_resource.connect_outbound.id
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  }
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+  status_code = "200"
+}
 
 #resource "aws_api_gateway_integration_response" "connect_outbound_post" {
 #  #depends_on  = [aws_api_gateway_resource.connect_outbound]
