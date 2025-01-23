@@ -40,6 +40,7 @@ resource "aws_api_gateway_method" "connect_outbound_post" {
 }
 
 resource "aws_api_gateway_method_response" "connect_outbound_options" {
+  depends_on  = [aws_api_gateway_method.connect_outbound_options]
   http_method = "OPTIONS"
   resource_id = aws_api_gateway_resource.connect_outbound.id
   response_models = {
@@ -55,7 +56,7 @@ resource "aws_api_gateway_method_response" "connect_outbound_options" {
 }
 
 resource "aws_api_gateway_method_response" "connect_outbound_post" {
-    depends_on = [ aws_api_gateway_method.connect_outbound_post ]
+  depends_on = [aws_api_gateway_method.connect_outbound_post]
 
   http_method = "POST"
   resource_id = aws_api_gateway_resource.connect_outbound.id
@@ -76,7 +77,7 @@ resource "aws_api_gateway_resource" "connect_outbound" {
 }
 
 resource "aws_api_gateway_integration" "connect_outbound_options" {
-  depends_on = [ aws_api_gateway_method.connect_outbound_options ]
+  depends_on           = [aws_api_gateway_method.connect_outbound_options]
   cache_namespace      = aws_api_gateway_resource.connect_outbound.id
   connection_type      = "INTERNET"
   http_method          = "OPTIONS"
@@ -112,7 +113,7 @@ EOF
 
 
 resource "aws_api_gateway_integration_response" "connect_outbound_options" {
-  depends_on = [ aws_api_gateway_method.connect_outbound_options ]
+  depends_on  = [aws_api_gateway_method.connect_outbound_options, aws_api_gateway_integration.connect_outbound_options]
   http_method = "OPTIONS"
   resource_id = aws_api_gateway_resource.connect_outbound.id
   response_parameters = {
@@ -160,7 +161,7 @@ EOF
 }
 
 resource "aws_api_gateway_deployment" "call_service_api_deployment" {
-  depends_on = [aws_api_gateway_integration.connect_outbound_options, aws_api_gateway_integration.connect_outbound_scan]
+  depends_on  = [aws_api_gateway_integration.connect_outbound_options, aws_api_gateway_integration.connect_outbound_scan]
   rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
 }
 
