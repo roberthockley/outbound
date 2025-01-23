@@ -6,7 +6,7 @@ resource "aws_iam_role" "RoleForDynamoDB" {
         Action = "sts:AssumeRole"
         Effect = "Allow"
         Principal = {
-          Service = "lambda.amazonaws.com"
+          Service = "apigateway.amazonaws.com"
         }
       }
     ]
