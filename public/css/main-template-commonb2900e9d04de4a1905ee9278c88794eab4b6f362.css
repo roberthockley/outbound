@@ -1,0 +1,510 @@
+/* Enable for page and awsui components */
+.awsui, html, body{
+    font-family: AmazonEmber_Rg,"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+#body{
+    /* zindex */
+    --zindex-level-0: 200;
+    --zindex-level-1: 100;
+
+    /* Spacing */
+
+    --global-margin: 20px;
+
+    --global-box-shadow: 0 2px 4px #00000050;
+    --card-box-shadow: 0 2px 3px #00000020;
+
+    --spacing-large: 30px;
+    --spacing-medium: 25px;
+    --global-spacing: 20px;
+    --spacing-small: 15px;
+    --spacing-extra-small: 10px;
+    --spacing-mini: 5px;
+
+    --spacing-head-row: 100px;
+    --spacing-alert-row: 120px;
+
+    --top-row-spacing-small: 40px;
+    --top-row-spacing-medium: 60px;
+    --top-row-spacing-large: 70px;
+    --top-row-spacing--extra-large: 120px;
+
+    --navigation-width: 50px;
+
+    /* font family */
+    --font-medium: "AmazonEmber_Md";
+    --font-bold: "AmazonEmber_Bd";
+    --font-regular: "AmazonEmber_Rg";
+
+    --font-size-medium: 24px;
+
+
+    /* colors - refer https://w.amazon.com/index.php/Lily/UX/Design_language/Colors */
+    --color-very-dark-blue: #26303B;
+    --color-dark-blue: #607794;
+    --color-black: #000000;
+    --color-white: #ffffff;
+    --color-alert: #f89406;
+    --color-light-gray: #0000008a;
+    --color-very-light-gray: #cccccc;
+    --color-poor-state: #FE6B5F;
+    --color-sentiment-category-tag: #DDEDF1;
+
+    /* text color https://w.amazon.com/index.php/Lily/UX/Design_language/Typography */
+    --color-body-font: #000000bd;
+    --color-subtext-font: #0000009e;
+
+    --icon-small: 22px;
+
+    --main-canvas-background: #f5f5f5;
+    /* Navigation */
+    --header-height: 60px;
+    --row-height: 35px;
+
+    /* Divider Line*/
+    --grey-line: 2px solid #e6e6e6;
+
+    --customer-sentiment-neutral: #DDDDDD;
+    --customer-sentiment-positive: #63CAA0;
+    --customer-sentiment-negative: #FA512D;
+    --non-talk-time: #F8DB80;
+    --customer-talk-time: #78E0EA;
+    --agent-talk-time: #506B8A;
+
+    --drop-down-menu-arrow-width: 3rem;
+
+    --footer-spacing: 20px;
+}
+
+html, body {
+    overflow: auto; /* prevent margin-collapsing */
+    background-color: var(--main-canvas-background) !important;
+}
+
+body h1, body h2, body h3, body h4, body h5, body h6 {
+    margin: 10px 0;
+}
+
+body, label, input, button, select, textarea, .uneditable-input, .btn {
+    font-size: 14px;
+    line-height: 20px;
+}
+
+a:-webkit-any-link {
+    text-decoration: none;
+}
+
+a:link, a:visited, a:hover, a:active {
+    color: #00649e;
+    text-decoration: none;
+}
+
+label {
+    cursor: default;
+}
+
+@media (max-width: 767px){
+    body{
+        padding-right: 0;
+        padding-left: 0;
+    }
+}
+
+#bodyContainer {
+    margin-left: 50px;
+    margin-top: 60px;
+    padding: 19px 25px 0 25px;
+}
+
+
+
+/* for pages migrating away from law nav */
+.connect-layout-container{
+    padding-right: 25px;
+    margin-bottom: var(--footer-spacing);
+
+    /* Needed for absolute psotioned elements in pages, 
+    which are previously being positioned relative to the body(not using lws) */
+    position: relative;
+    margin-left: -50px;
+    padding-left: 75px; /* 50px + 25px */
+    margin-top: -60px;
+    padding-top: 79px; /* 60px + 19px */
+}
+
+.connect-custom-layout-container{
+    margin-bottom: var(--footer-spacing);
+
+    /* Needed for absolute psotioned elements in pages, 
+    which are previously being positioned relative to the body(not using lws) */
+    position: relative;
+    margin-left: -50px;
+    padding-left: 50px; 
+    margin-top: -60px;
+    padding-top: 60px;
+}
+
+
+body {
+    margin: 0;
+    color: #333;
+    background-color: var(--color-white);
+    padding-right: 0 !important;
+}
+
+.main-header {
+    height: var(--header-height);
+    background-color: var(--color-very-dark-blue);
+    box-shadow: var(--global-box-shadow);
+    z-index: var(--zindex-level-0);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    padding: 0 10px;
+}
+
+.main-header .header-left-section{
+    display: flex;
+    align-items: center;
+}
+
+.header-logo{
+    margin: var(--global-margin)/2;
+}
+
+.locale-dropdown-icon {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: middle;
+    background-repeat: no-repeat;
+    left: 49px;
+    top: 3px;
+    margin-left: -3px;
+}
+
+.locale-dropdown-menu{
+    background: white;
+    color: black;
+    margin: 0 0 10px -5px;
+    list-style: none;
+    border: 1px solid rgba(0,0,0,0.2);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    border-radius: 6px;
+    position: absolute;
+    width: 121px;
+    min-width: 111px !important;
+    padding-inline-start: 0;
+    display: none;
+}
+
+.locale-dropdown-toggle:focus ~ .locale-dropdown-menu, .locale-dropdown-menu:hover {
+    display: block;
+}
+
+.locale-dropdown-menu.hide{
+    display: none;
+}
+
+.lily-icon-arrow-sort-down-white {
+    background-image: url("icon-arrow-sort-down-white.svg");
+}
+
+#lily-admin-locale-container {
+    display: inline-block;
+    width: auto;
+    color: var(--color-white);
+}
+
+/* Lily Icons */
+.lily-icon {
+    background-size: 20px 20px;
+    border: 0;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.lily-icon-logo {
+    background-image: url("ic_connect.svg");
+    background-size: 46px 41px;
+    width: 46px;
+    height: 41px;
+}
+
+.header-title {
+    font-family: var(--font-medium);
+    font-size: var(--font-size-medium);
+    margin: var(--global-margin);
+    display: inline-block;
+    font-weight: normal;
+    color: var(--color-white);
+}
+
+.header-nav {
+    list-style-type: none;
+    display: flex;
+    color: var(--color-white);
+    margin: 0 10px;
+    margin-right: 20px;
+}
+
+.nav-item {
+    padding-left: var(--spacing-mini);
+}
+
+#localeContainer{
+    min-width: 85px;
+}
+
+.locale-option {
+    padding: 5px 5px 5px 15px;
+}
+
+.locale-option label{
+    margin-bottom: 0;
+}
+
+#localeContainer:hover{
+    cursor: pointer;
+}
+
+.locale-dropdown-menu input[type="radio"] {
+    margin-right: 6px;
+}
+
+.lily-admin-login-name {
+    padding-right: 10px;
+}
+
+.lily-icon-dashboard {
+    background-image: url("icon-dashboard.svg");
+}
+
+.lily-icon-routing {
+    background-image: url("icon-routing.svg");
+}
+
+.lily-icon-gavel {
+    background-image: url("icon-gavel.svg");
+}
+
+.lily-icon-bayes-markov {
+    background-image: url("icon-bayes-markov.svg");
+}
+
+.lily-icon-channels {
+    background-image: url("icon-channels.svg");
+}
+
+.lily-icon-gardner-website {
+    background-image: url("icon-gardner-website.svg");
+}
+
+.lily-icon-agent-applications {
+    background-image: url("icon-agent-applications.svg");
+}
+
+.lily-icon-contacts {
+    background-image: url("icon-contacts.svg");
+}
+
+.lily-icon-users {
+    background-image: url("icon-users.svg");
+}
+
+.lily-icon-chart {
+    background-image: url("icon-chart.svg");
+}
+
+.lily-admin-logout-icon {
+    background-image: url("ic_logout_white.svg");
+}
+
+.lily-icon-connect {
+    background-image: url("icon-connect-white.svg");
+}
+
+.lily-admin-document-icon {
+    background-image: url("ic_help_white.svg");
+}
+
+.top-nav-divider-icon {
+    background-image: url("ic_divider_darkheader.svg");
+}
+
+.lily-admin-local-icon {
+    background-image: url("ic_locale_white.svg");
+}
+
+.locale-dropdown-toggle, .locale-dropdown-toggle:hover {
+    color: #fff;
+}
+
+#sideNavigationBar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+#sideNavigationBar ul a, #sideNavigationBar ul a:hover {
+    color: white;
+    text-decoration: none;
+}
+
+#sideNavigationBar ul .clickable-group:hover {
+    background-color: #313E4D;
+}
+
+#sideNavigationBar .openedCategory {
+    background-color: #069EBD;
+}
+
+#sideNavigationBar .lily-icon {
+    /* Webkit click bug: https://bugs.webkit.org/show_bug.cgi?id=39620 */
+    pointer-events: none;
+}
+
+#sideNavigationBar ul li:hover .page-group-category-button{
+    background-color: #069EBD;
+}
+
+#sideNavigationBar ul li:hover  .group-content{
+    display: block;
+}
+
+#sideNavigationBar {
+    width: 50px;
+    height: 100%;
+    top: var(--header-height);
+    left: 0;
+    background-color: var(--color-dark-blue);
+    padding-top: var(--global-spacing);
+    z-index: var(--zindex-level-1);
+}
+
+.navigation {
+    z-index: 1;
+    position: fixed;
+    margin: 0;
+    color: white;
+}
+
+.group-drop-down {
+    position: relative;
+    display: inline-block;
+}
+
+.page-group-category-button {
+    width: 50px;
+    height: 50px;
+    padding: 15px;
+    font-size: 16px;
+    border: none;
+    background-color: #607794;
+    outline: none;
+    cursor: default;
+}
+
+.page-group-category-button:hover {
+    background-color: #E67F24;
+}
+
+.group-content {
+    display: none;
+    position: absolute;
+    overflow: auto;
+    background-color: #415266;
+    min-width: 160px;
+    left: 50px;
+    top: 0;
+}
+
+.group-content li {
+    width: 225px;
+    min-height: 50px;
+    margin: 0;
+    padding: 15px 0 15px 24px;
+    box-sizing:border-box;
+    word-break: break-word;
+}
+
+.group-content .categoryHeader {
+    background-color: #0290B0;
+    font-size: 17px;
+}
+
+.page-header {
+    font-size: 28px;
+    color: #333333;
+    letter-spacing: 0;
+    line-height: 34px;
+    font-weight: normal;
+    border-bottom: 0;
+}
+
+#errorBodyContainer .errorBody {
+    height: 150px;
+    text-align: center;
+    padding: 100px 150px;
+}
+
+#errorBodyContainer {
+    margin-left: 10%;
+    margin-top: 50px;
+    margin-right: 10%;
+    padding: 5px;
+}
+
+/* Error pages style */
+.errorBody #errorTitle {
+    height: 100px;
+    line-height: 100px;
+    display: inline-block;
+}
+
+.errorBody #errorTitle #errorTitleHeader {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.errorBody #errorMessage {
+    font-size: 18px;
+}
+
+/*
+ * This is used for all angular date pickers. Somehow we cannot pickup this bootstrap css
+ */
+.text-muted {
+    color: #999;
+}
+
+/*
+ * This is used for collapse buttons in advance report page
+ */
+.collapsing {
+    position: relative;
+    overflow: hidden;
+}
+
+#bodyFooter {
+    height: 20px;
+}
+
+.unstyled-button {
+    background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+}
+
+.css-r462ma {
+    z-index: 200 !important;
+  }

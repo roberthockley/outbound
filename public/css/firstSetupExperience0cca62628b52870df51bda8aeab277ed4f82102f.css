@@ -1,0 +1,831 @@
+/* First setup card container */
+
+.lily-first-setup-card {
+  background-color: #ffffff;
+  box-shadow: 1px 1px 2px #636363;
+  height: 470px;
+  margin: auto;
+  width: 1100px;
+  position: relative;
+  margin-top: 50px;
+  text-align: center;
+}
+
+.lily-first-setup-card .skip-later-link{
+  margin-top: var(--global-margin);
+  display: inline-block;
+}
+
+/* Background image for welcome card*/
+
+.lily-first-setup-top-left-image, .lily-first-setup-bottom-left-image, .lily-first-setup-top-right-image {
+  background-image: url(welcomepage_firstsetup.svg);
+  background-repeat: no-repeat;
+}
+
+/* Top left card image*/
+
+.lily-first-setup-top-left-image {
+  width: 208px;
+  height: 265px;
+  background-position: 5px 13px;
+}
+
+/* Bottom left card image*/
+
+.lily-first-setup-bottom-left-image {
+  width: 195px;
+  height: 85px;
+  background-position: 4px -335px;
+  position: absolute;
+  bottom: 0;
+}
+
+/* Top right card image*/
+
+.lily-first-setup-top-right-image {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 195px;
+  height: 70px;
+  background-position: -782px 8px;
+}
+
+/* First setup card content */
+
+.lily-first-setup-card-content {
+  margin-top: -155px !important;
+  width: 650px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+/* Card header */
+
+.lily-first-setup-page-header {
+  letter-spacing: 0px;
+  line-height: 34px;
+  font-weight: normal;
+  border-bottom: 0;
+  text-align: center;
+}
+
+/* Page description */
+
+.lily-first-setup-page-description {
+  text-align: center;
+  margin-top: 30px;
+  width: 618px;
+}
+
+/* Let's go button container */
+
+.lily-first-setup-go-button-container {
+  margin-top: 60px;
+  text-align: center;
+}
+
+/* Let's go button */
+
+.lily-first-setup-go-button {
+  background-color: #0290B0;
+  color: #fff;
+  border: medium none;
+  border-radius: 3px;
+  height: 38px;
+  width: 135px;
+}
+
+a.lily-first-setup-skip-for-now {
+  margin-top: 20px;
+  color: #444;
+  display: block;
+}
+
+/* Hide the titles on these pages */
+
+.page-header {
+  display: none;
+}
+
+
+/* Alert banner */
+
+.landing-alert-row {
+    display: flex;
+    flex-flow: row-reverse;
+}
+
+.announcement-content {
+  padding-right: var(--spacing-mini);
+}.lily-dashboard-card{
+  box-shadow: var(--card-box-shadow);
+  padding: var(--global-spacing);
+  display: flex;
+  margin-bottom: var(--spacing-medium);
+  background: #ffffff;
+}
+
+.lily-dashboard-card:last-child{
+  margin-bottom: 0;
+}
+
+.lily-dashboard-card .lily-card-section-description{
+  flex: 2;
+  margin-right: 50px;
+}
+
+.lily-dashboard-card .lily-card-title{
+  font-size: 20px;
+  margin: 0;
+  font-weight: 100;
+}
+
+.lily-dashboard-card .lily-card-icon{
+  width: 48px;
+  display: block;
+  padding-right: var(--spacing-medium);
+  background-repeat: no-repeat;
+}
+
+.lily-dashboard-card .lily-card-body{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.lily-dashboard-card .lily-card-section{
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #D8D8D8;
+  padding: var(--spacing-small) 0;
+}
+
+@media(max-width: 560px) {
+   .lily-dashboard-card .lily-card-section {
+      flex-direction: column;
+   }
+}
+
+.lily-dashboard-card .lily-card-section:last-child{
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+@media(min-width: 560px){
+   .lily-dashboard-card .lily-card-section-links{
+      min-width: 270px
+   }
+}
+
+.lily-dashboard-card .lily-card-section-link{
+  display: inline-block;
+  padding-right: var(--spacing-large);
+}
+
+.lily-dashboard-card .lily-card-section-link-top-aligned {
+  vertical-align: top;
+}
+
+.lily-dashboard-card .lily-card-section-link:last-child{
+  padding-right: 0px;
+}
+
+.lily-dashboard-card .lily-card-section-link-second-line-link {
+  padding-top: 4px;
+  display: block;
+}
+
+.lily-dashboard-card .lily-card-section-description-top-aligned {
+  vertical-align: top;
+}
+
+.lily-dashboard-card .lily-card-section-description-second-line {
+  padding-top: 4px;
+  display: block;
+}
+
+.lily-dashboard-card .lily-card-icon.phone-icon{
+  background-image: url(phone_quickstart.svg);
+}
+
+.lily-dashboard-card .lily-card-icon.phone-chat-icon{
+  background-image: url(phone_chat.svg);
+}
+
+.lily-dashboard-card .lily-card-icon.hours-operation-icon{
+  background-image: url(clock_quickstart.svg);
+}
+
+.lily-dashboard-card .lily-card-icon.create-queue-icon{
+  background-image: url(queue_quickstart.svg);
+}
+
+.lily-dashboard-card .lily-card-icon.create-prompt-icon{
+  background-image: url(prompt-quickstart-v1.svg);
+}
+
+.lily-dashboard-card .lily-card-icon.create-contactflow-icon {
+  background-image: url(contactflow_quickstart.svg);
+}
+
+.lily-dashboard-card .lily-card-icon.create-routing-profile-icon {
+  background-image: url(routing_quickstart.svg);
+}
+
+.lily-dashboard-card .lily-card-icon.configure-user-icon {
+  background-image: url(users_quickstart.svg);
+}
+
+
+.lily-quick-start-guide-page-header-container{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lily-quick-start-guide-page-header {
+   font-size: 28px;
+   color: #333333;
+   letter-spacing: 0px;
+   line-height: 34px;
+   font-weight: normal;
+   border-bottom: 0;
+   margin-top: 20px;
+}
+
+.lily-quick-start-guide-configuration-header {
+   font-size: 18px;
+   font-weight: normal;
+}
+
+.lily-quick-start-guide-description-container {
+   margin-bottom: 30px;
+}
+
+.lily-quick-start-guide-claim-number-container {
+   width: 449px;
+   margin-top: 20px;
+   margin-bottom: 30px;
+   display: inline-block;
+   margin-left: -11px;
+}
+
+.lily-quick-start-guide-phone-actions-container {
+   margin-top: 53px;
+   margin-right: 23px;
+   display: inline-block;
+   width: 291px;
+}
+
+.lily-quick-start-guide-claim-number-description-text {
+   margin-left: 23px;
+   margin-top: 13px;
+}
+
+.lily-quick-start-guide-claim-number-learn-more {
+   float: left;
+   margin-left: 25px;
+}
+
+.lily-quick-start-guide-learn-more-container {
+   float: left;
+}
+
+.lily-quick-start-guide-claim-number-view-phone {
+   float: left;
+   clear: left;
+   margin-left: 25px;
+}
+
+/* Quick start guide 6 cards container */
+.lily-quick-start-guide-cards-middle {
+   height: 360px;
+   padding: 29.5px;
+   width: 311px;
+}
+
+.card-place-holder {
+   float: left;
+   height: 260px;
+   width: 20px;
+}
+
+.card-row {
+   display: inline-block;
+}
+
+.lily-quick-start-guide-card-row-claim-container {
+   margin-bottom: 19px;
+}
+
+.lily-quick-start-guide-card-row-container {
+   margin-bottom: 20px;
+   display: flex !important;
+}
+
+.lily-quick-start-guide-cards-text {
+   float: left;
+   width: 236px;
+   height: 100px;
+   margin-left: 20px;
+}
+
+.lily-quick-start-guide-phone-icon {
+   background-image: url(phone_quickstart.svg);
+   background-position: 28px 18px !important;
+   height: 64px !important;
+   width: 108px !important;
+   margin-top: 5px;
+}
+
+.lily-quick-start-guide-hours-icon {
+   background-image: url(clock_quickstart.svg);
+}
+
+.lily-quick-start-guide-queue-icon {
+   background-image: url(queue_quickstart.svg);
+}
+
+.lily-quick-start-guide-prompts-icon {
+   background-image: url(prompt-quickstart.svg);
+}
+
+.lily-quick-start-guide-contact-flow-icon {
+   background-image: url(contactflow_quickstart.svg);
+}
+
+.lily-quick-start-guide-routing-profile-icon {
+   background-image: url(routing_quickstart.svg);
+}
+
+.lily-quick-start-guide-add-users-icon {
+   background-image: url(users_quickstart.svg);
+}
+
+.lily-quick-start-guide-cards-icon {
+   background-position: 0 0;
+   background-repeat: no-repeat;
+   float: left;
+   height: 57px;
+   left: 0;
+   top: 0;
+   width: 54px;
+}
+
+.lily-quick-start-guide-card-header {
+   font-size: 17px;
+   color: black;
+}
+
+.lily-quick-start-guide-next-steps-container {
+   margin-top: 20px;
+   margin-bottom: 30px;
+   margin-left: 26px;
+   display: inline-block;
+}
+
+.lily-quick-start-guide-next-steps-description {
+   margin-top: 13px;
+   margin-left: 0px;
+}
+
+/* Begin button */
+.lily-quick-start-guide-begin-button {
+   background-color: #0290B0;
+   color: #fff;
+   border: medium none;
+   border-radius: 3px;
+   height: 32px;
+   min-width: 80px;
+}
+
+/* Begin button link */
+a.lily-quick-start-guide-begin-button-link {
+   color: #fff;
+   text-decoration: none !important;
+}
+
+a.lily-quick-start-guide-link {
+   color: #00649E;
+}
+
+.lily-quick-start-guide-actions-container {
+   position: relative;
+   display: inline-block;
+   width: 80%;
+   float: right;
+   margin-right: -10px;
+}
+
+.lily-quick-start-guide-cards-begin-button-container {
+   bottom: -20px;
+   right: 154px;
+   float: left;
+   clear: left;
+}
+
+.lily-quick-start-guide-card-row-next-steps-container {
+   display: block;
+}
+
+.lily-quick-start-guide-empty-container {
+   display: inline-block;
+   height: 230px;
+   width: 86%;
+}
+
+/* Checked icon styles for claim phone number card */
+.lily-quick-start-guide-phone-checked-icon {
+   background-image: url(check_quickstart.svg);
+   background-position: 28px 18px;
+   height: 64px;
+   width: 108px;
+}
+
+/* Checked icon for other six cards */
+.lily-quick-start-guide-checked-icon {
+   background-image: url(check_quickstart.svg);
+}
+
+.lily-quick-start-guide-spinner {
+   margin-top: 90px;
+   float: left;
+   margin-left: 350px;
+   height: 50px;
+   width: 50px;
+}
+
+
+.lily-quick-start-guide-header-text {
+   display: inline;
+}
+
+.lily-quick-start-guide-show-hide-actions {
+   display:inline;
+}
+
+.lily-quick-start-guide-show-element {
+   display: block !important;
+}
+
+.lily-quick-start-guide-hide-element {
+   display: none !important;
+}
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
+a:not(metrics-dashboard a) {
+   color: #077398;
+}
+a:not(metrics-dashboard a):hover {
+   text-decoration: underline;
+}.gauge {
+   float: left;
+   width: 152px;
+   display: inline-block;
+   margin-top: -13px;
+}
+
+@media(min-width:768px) {
+   .wrapper {
+      height: 250px;
+   }
+}
+
+.lily-dashboard-queue-header-container {
+   margin-top: 30px;
+}
+
+@media(min-width: 1150) {
+   .lily-dashboard-queue-header-container {
+      width: 1150px;
+   }
+}
+
+.lily-dashboard-queue-header-container>h2 {
+   overflow: hidden;
+   text-align: center;
+   color: #565656;
+   font-weight: normal;
+   font-size: 20px !important;
+}
+
+.lily-dashboard-queue-header-container>h2:before,
+.lily-dashboard-queue-header-container>h2:after {
+   background-color: #565656;
+   content: "";
+   display: inline-block;
+   height: 1px;
+   position: relative;
+   vertical-align: middle;
+   width: 50%;
+}
+
+.lily-dashboard-queue-header-container>h2:before {
+   right: 0.5em;
+   margin-left: -50%;
+}
+
+.lily-dashboard-queue-header-container>h2:after {
+   left: 0.5em;
+   margin-right: -50%;
+}
+
+.refresh-trailing-time-customize-container {
+   display: flex;
+   width: 100%;
+   justify-content: end;
+   flex-flow: row wrap;
+   align-items: center;
+}
+
+.refresh-trailing-time {
+   display: inline;
+   margin: 0 80px 0 0;
+}
+
+.lily-dashboard-queue-chart-container {
+   width: 100%;
+   display: flex;
+   flex-flow: row wrap;
+   margin-top: 50px;
+}
+
+.lily-dashboard-queue-chart-card {
+   float: left;
+   margin-bottom: 20px;
+   margin-right: 20px;
+   width: 22.5rem;
+   height: 22.25rem;
+   display: grid;
+   grid-template-rows: 15% 45% 20% 20%;
+}
+
+hr {
+   margin-left: -30px;
+   position: absolute;
+   width: 364px;
+   border-color: #E6E6E6;
+}
+
+.lily-dashboard-queue-container-aht {
+   padding: 0 29.5px 0 29.5px;
+   align-items: center;
+   display: flex;
+   border-bottom: 2px solid #E6E6E6;
+}
+
+.lily-dashboard-queue-container-avl-connection-npt {
+   display: grid;
+   grid-template-rows: 50% 50%;
+   grid-template-columns: repeat(3, 1fr);
+   padding: 10px 29.5px 15px 29.5px;
+   align-items: center;
+}
+
+.lily-dashboard-queue-avl {
+   display: inline-block;
+   width: auto;
+}
+
+.lily-dashboard-queue-con {
+   display: inline-block;
+   text-align: center;
+}
+
+.lily-dashboard-queue-npt {
+   text-align: right;
+}
+
+.lily-dashboard-queue-aht-text {
+   margin-left: 90px;
+   font-size: 16px;
+}
+
+.lily-dashboard-gauge-chart {
+   display: flex;
+   flex-direction: row;
+   justify-content: space-around;
+   align-items: center;
+   min-height: 100px;
+   width: 100%;
+   border-bottom: 2px solid #E6E6E6;
+}
+
+.lily-dashboard-queue-service-level {
+   margin-left: -98px;
+   float: left;
+   margin-top: 80px;
+}
+
+.lily-dashboard-queue-occupancy {
+   margin-left: -91px;
+   position: absolute;
+   margin-top: 80px;
+}
+
+
+.lily-dashboard-section-header {
+   color: grey !important;
+   white-space: pre;
+}
+
+.lily-dashboard-queue-name {
+   color: black;
+   font-size: 18px;
+   text-overflow: ellipsis;
+   overflow: hidden;
+   white-space: nowrap;
+   display: block;
+   height: 40px;
+   padding: 29.5px 29.5px 0 29.5px;
+}
+
+.section-header-size {
+   font-size: 20px;
+}
+
+.lily-dashboard-config-container {
+   margin-left: 23px;
+}
+
+.lily-dashboard-config-percentage-container {
+   margin-top: 34px;
+   margin-bottom: 35px;
+   margin-left: 20px;
+}
+
+.lily-dashboard-config-previous-hours-text {
+   margin-left: 34px;
+   display: inline;
+}
+
+.lily-dashboard-config-trailing-window-hours {
+   margin-left: 5px !important;
+   display: inline;
+   width: 60px;
+}
+
+.lily-dashboard-config-trailing-hours-text {
+   margin-left: 5px;
+}
+
+.lily-dashboard-config-midnight-to-now {
+   margin-left: 30px !important;
+}
+
+.lily-dashboard-config-time-zone {
+   margin-bottom: 5px;
+   display: block;
+}
+
+.lily-dashboard-config-percentage {
+   margin-bottom: 10px;
+   display: block;
+   color: grey !important;
+   font-size: 15px;
+}
+
+.lily-dashboard-config-section-headers {
+   display: block;
+   margin-left: -6px;
+   margin-top: 20px;
+   margin-bottom: 10px;
+   color: grey !important;
+   font-size: 15px;
+}
+
+.lily-dashboard-config-section-labels {
+   display: block;
+   margin-left: -6px;
+   margin-top: 10px;
+   margin-bottom: 10px;
+   color: black !important;
+   font-size: 15px;
+}
+
+.awsui-modal-header,
+.awsui select,
+.select2-container .select2-choice {
+   border-top: none !important;
+   border-right: none !important;
+   border-left: none !important;
+   border-bottom: 1px solid #e6e6e6 !important;
+}
+
+.metrics-selector-box {
+   width: 280px;
+}
+
+.metrics-selector input {
+   border: none !important;
+   width: 240px;
+}
+
+.lily-dashboard-config-time-range-selector {
+   margin-left: 0px !important;
+}
+
+.lily-dashboard-config-common-selector-margin-left {
+   margin-left: -8px !important;
+}
+
+text {
+   font-weight: normal !important;
+}
+
+.lily-dashboard-config-range-slider-container {
+   margin-top: -9px;
+   width: 260px;
+}
+
+.lily-dashboard-config-range-slider-color-red {
+   background-color: red;
+}
+
+.lily-dashboard-config-range-slider-color-orange {
+   background-color: orange;
+}
+
+.lily-dashboard-config-range-slider-color-green {
+   background-color: green;
+}
+
+.range-color-container-dimensions {
+   display: inline-block;
+   width: 12px;
+   height: 12px;
+
+}
+
+.lily-dashboard-config-range-slider-text {
+   display: block;
+   width: 240px;
+   float: right;
+}
+
+.modal-body-container {
+   background: #FFF;
+   overflow-x: hidden;
+   max-height: 1200px;
+   height: calc(100vh - 300px);
+   min-height: 160px;
+}
+
+.disabledClass {
+   pointer-events: none;
+   opacity: 0.4;
+}
+
+.dropDownMenuContainer {
+   float: right;
+   right: -19px;
+   display: inline-block;
+   position: relative
+}
+
+.saved-report-name-class {
+   font-size: 22px;
+   color: black;
+}
+
+@media(max-width:768px) {
+   .refresh-trailing-time {
+      margin-right: 0;
+   }
+}
+
+.alert-banner-container {
+    padding: 6px var(--spacing-extra-small);
+    border: 1px solid var(--color-alert);
+}
+
+.alert-banner-message-text {
+    color: var(--color-light-gray);
+    height: 100%;
+    display:inline-block;
+    width: calc(100% - var(--spacing-large));
+    vertical-align: middle;
+}
+
+.alert-banner-icon {
+    height: 100%;
+    vertical-align: middle;
+}
+
+.alert-banner-icon::after {
+    content: "";
+    background-image: url("ic_info_orange.svg");
+    background-repeat:no-repeat;
+    display: inline-block;
+    margin-right: var(--spacing-extra-small);
+    width: var(--global-spacing);
+    height: var(--global-spacing);
+    background-position: center;
+    vertical-align: middle;
+    margin-top:  calc(-1 * var(--spacing-mini));
+}

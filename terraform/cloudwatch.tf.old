@@ -1,0 +1,4 @@
+resource "aws_cloudwatch_log_group" "connect_admin" {
+  name = "/aws/lambda/admin"
+  retention_in_days = 7
+}

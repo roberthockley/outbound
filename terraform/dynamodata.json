@@ -1,0 +1,159 @@
+{
+    "country": {
+     "S": "New Zealand"
+    },
+    "format": {
+     "S": "dd/mm/yyyy"
+    },
+    "holidays": {
+     "L": [
+      {
+       "M": {
+        "date": {
+         "S": "01/08/2024"
+        },
+        "name": {
+         "S": "Jacob Day"
+        }
+       }
+      }
+     ]
+    },
+    "hours": {
+     "L": [
+      {
+       "M": {
+        "End1": {
+         "M": {
+          "Friday": {
+           "S": "17:00:00"
+          },
+          "Monday": {
+           "S": "Closed"
+          },
+          "Saturday": {
+           "S": "Closed"
+          },
+          "Sunday": {
+           "S": "Closed"
+          },
+          "Thursday": {
+           "S": "17:00:00"
+          },
+          "Tuesday": {
+           "S": "17:00:00"
+          },
+          "Wednesday": {
+           "S": "17:00:00"
+          }
+         }
+        },
+        "End2": {
+         "M": {
+          "Friday": {
+           "S": "17:00:00"
+          },
+          "Monday": {
+           "S": "Closed"
+          },
+          "Saturday": {
+           "S": "Closed"
+          },
+          "Sunday": {
+           "S": "Closed"
+          },
+          "Thursday": {
+           "S": "17:00:00"
+          },
+          "Tuesday": {
+           "S": "17:00:00"
+          },
+          "Wednesday": {
+           "S": "17:00:00"
+          }
+         }
+        },
+        "Start1": {
+         "M": {
+          "Friday": {
+           "S": "09:00:00"
+          },
+          "Monday": {
+           "S": "Closed"
+          },
+          "Saturday": {
+           "S": "Closed"
+          },
+          "Sunday": {
+           "S": "Closed"
+          },
+          "Thursday": {
+           "S": "09:00:00"
+          },
+          "Tuesday": {
+           "S": "09:00:00"
+          },
+          "Wednesday": {
+           "S": "09:00:00"
+          }
+         }
+        },
+        "Start2": {
+         "M": {
+          "Friday": {
+           "S": "13:00:00"
+          },
+          "Monday": {
+           "S": "Closed"
+          },
+          "Saturday": {
+           "S": "Closed"
+          },
+          "Sunday": {
+           "S": "Closed"
+          },
+          "Thursday": {
+           "S": "13:00:00"
+          },
+          "Tuesday": {
+           "S": "13:00:00"
+          },
+          "Wednesday": {
+           "S": "13:00:00"
+          }
+         }
+        }
+       }
+      }
+     ]
+    },
+    "outage": {
+     "S": "false"
+    },
+    "prompts": {
+     "L": [
+      {
+       "M": {
+        "engine": {
+         "S": "neural"
+        },
+        "language": {
+         "S": "ca-ES"
+        },
+        "name": {
+         "S": "1"
+        },
+        "text": {
+         "S": "dsdsd"
+        },
+        "voice": {
+         "S": "Arlet"
+        }
+       }
+      }
+     ]
+    },
+    "shift": {
+     "S": "normal"
+    }
+   }
