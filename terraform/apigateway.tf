@@ -88,19 +88,26 @@ resource "aws_api_gateway_integration" "connect_outbound_options" {
 }
 
 resource "aws_api_gateway_integration" "connect_outbound_scan" {
-  cache_namespace      = aws_api_gateway_resource.connect_outbound.id
-  connection_type      = "INTERNET"
   http_method          = "POST"
-  passthrough_behavior = "WHEN_NO_MATCH"
-  request_templates = {
-    "application/json" = "{\"statusCode\": 200}"
-  }
   resource_id          = aws_api_gateway_resource.connect_outbound.id
   rest_api_id          = aws_api_gateway_rest_api.connect_outbound.id
-  timeout_milliseconds = "29000"
   type                 = "AWS"
-  credentials             = aws_iam_role.RoleForDynamoDB.arn
+  integration_http_method = "POST"
+  uri                  = "arn:aws:apigateway:${var.aws_region}:dynamodb:action/Scan"
+  credentials          = aws_iam_role.RoleForDynamoDB.arn
+  passthrough_behavior = "WHEN_NO_MATCH"
+  timeout_milliseconds = 29000
+
+  request_templates = {
+    "application/json" = <<EOF
+{
+  "TableName": "${var.dynamo.table1}",
+  "Limit": 20
 }
+EOF
+  }
+}
+
 
 resource "aws_api_gateway_integration_response" "connect_outbound_options" {
   http_method = "OPTIONS"
