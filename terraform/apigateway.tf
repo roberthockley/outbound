@@ -137,8 +137,14 @@ resource "aws_api_gateway_integration_response" "connect_outbound_post" {
   "items": [
     #foreach($item in $inputRoot.Items)
     {
-      "campaign": "$item.campaign.S",
-      "number": "$item.number.S"
+      #foreach($key in $item.keySet())
+        "$key": 
+        #if($item.get($key).S)"$item.get($key).S"
+        #elseif($item.get($key).N)$item.get($key).N
+        #elseif($item.get($key).BOOL)$item.get($key).BOOL
+        #else"$item.get($key)"#end
+        #if($foreach.hasNext),#end
+      #end
     }#if($foreach.hasNext),#end
     #end
   ],
