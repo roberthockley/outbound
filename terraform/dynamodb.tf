@@ -1,10 +1,10 @@
 resource "aws_dynamodb_table" "outbound_table" {
   name         = var.dynamo.table1
   billing_mode = "PAY_PER_REQUEST"
-  hash_key     = var.dynamo.hash_key
+  hash_key     = var.dynamo.hash_key1
   range_key    = var.dynamo.range_key1
   attribute {
-    name = var.dynamo.hash_key
+    name = var.dynamo.hash_key1
     type = "N"
   }
 
