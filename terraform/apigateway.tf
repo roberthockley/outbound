@@ -158,18 +158,18 @@ EOF
   }
 }
 
-#resource "aws_api_gateway_deployment" "call_service_api_deployment" {
-#  #_on  = [aws_api_gateway_integration.connect_outbound_options, aws_api_gateway_integration.connect_outbound_post]
-#  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
-#ß}
+resource "aws_api_gateway_deployment" "call_service_api_deployment" {
+  #_on  = [aws_api_gateway_integration.connect_outbound_options, aws_api_gateway_integration.connect_outbound_post]
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+}
 
-#resource "aws_api_gateway_stage" "connect_outbound" {
-#  cache_cluster_enabled = "false"
-#  deployment_id         = aws_api_gateway_deployment.call_service_api_deployment.id
-#  rest_api_id           = aws_api_gateway_rest_api.connect_outbound.id
-#  stage_name            = "connect-outbound"
-#  xray_tracing_enabled  = "false"
-#}
+resource "aws_api_gateway_stage" "connect_outbound" {
+  cache_cluster_enabled = "false"
+  deployment_id         = aws_api_gateway_deployment.call_service_api_deployment.id
+  rest_api_id           = aws_api_gateway_rest_api.connect_outbound.id
+  stage_name            = "connect-outbound"
+  xray_tracing_enabled  = "false"
+}
 
 #resource "aws_lambda_permission" "connect_outbound" {
 #  statement_id  = "AllowAPIGatewayInvoke_Connect_Outbound"
