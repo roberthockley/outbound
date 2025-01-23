@@ -88,21 +88,20 @@ resource "aws_api_gateway_integration" "connect_outbound_options" {
 }
 
 resource "aws_api_gateway_integration" "connect_outbound_scan" {
-  http_method          = "POST"
-  resource_id          = aws_api_gateway_resource.connect_outbound.id
-  rest_api_id          = aws_api_gateway_rest_api.connect_outbound.id
-  type                 = "AWS"
+  http_method             = "POST"
+  resource_id             = aws_api_gateway_resource.connect_outbound.id
+  rest_api_id             = aws_api_gateway_rest_api.connect_outbound.id
+  type                    = "AWS"
   integration_http_method = "POST"
-  uri                  = "arn:aws:apigateway:${var.environment.region}:dynamodb:action/Scan"
-  credentials          = aws_iam_role.RoleForDynamoDB.arn
-  passthrough_behavior = "WHEN_NO_MATCH"
-  timeout_milliseconds = 29000
+  uri                     = "arn:aws:apigateway:${var.environment.region}:dynamodb:action/Scan"
+  credentials             = aws_iam_role.RoleForDynamoDB.arn
+  passthrough_behavior    = "WHEN_NO_MATCH"
+  timeout_milliseconds    = 29000
 
   request_templates = {
     "application/json" = <<EOF
 {
-  "TableName": "${var.dynamo.table1}",
-  "Limit": 20
+  "TableName": "${var.dynamo.table1}"
 }
 EOF
   }
@@ -119,18 +118,36 @@ resource "aws_api_gateway_integration_response" "connect_outbound_options" {
   }
   rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
   status_code = "200"
+
 }
 
-#resource "aws_api_gateway_integration_response" "connect_outbound_post" {
-#  #depends_on  = [aws_api_gateway_resource.connect_outbound]
-#  http_method = "POST"
-#  resource_id = aws_api_gateway_resource.connect_outbound.id
-#  response_parameters = {
-#    "method.response.header.Access-Control-Allow-Origin" = "'*'"
-#  }
-#  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
-#  status_code = "200"
-#}
+resource "aws_api_gateway_integration_response" "connect_outbound_post" {
+  #depends_on  = [aws_api_gateway_resource.connect_outbound]
+  http_method = "POST"
+  resource_id = aws_api_gateway_resource.connect_outbound.id
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+  }
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+  status_code = "200"
+  response_templates = {
+    "application/json" = <<EOF
+#set($inputRoot = $input.path('$'))
+{
+  "items": [
+    #foreach($item in $inputRoot.Items)
+    {
+      "campaign": "$item.campaign.S",
+      "number": "$item.number.S"
+    }#if($foreach.hasNext),#end
+    #end
+  ],
+  "count": $inputRoot.Count,
+  "scannedCount": $inputRoot.ScannedCount
+}
+EOF
+  }
+}
 
 #resource "aws_api_gateway_deployment" "call_service_api_deployment" {
 #  #_on  = [aws_api_gateway_integration.connect_outbound_options, aws_api_gateway_integration.connect_outbound_post]
