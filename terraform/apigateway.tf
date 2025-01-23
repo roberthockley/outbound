@@ -87,31 +87,18 @@ resource "aws_api_gateway_integration" "connect_outbound_options" {
   type                 = "MOCK"
 }
 
-resource "aws_api_gateway_integration" "connect_outbound_post" {
-  cache_namespace         = aws_api_gateway_resource.connect_outbound.id
-  connection_type         = "INTERNET"
-  content_handling        = "CONVERT_TO_TEXT"
-  http_method             = "POST"
-  integration_http_method = "POST"
-  passthrough_behavior    = "WHEN_NO_MATCH"
-  resource_id             = aws_api_gateway_resource.connect_outbound.id
-  rest_api_id             = aws_api_gateway_rest_api.connect_outbound.id
-  timeout_milliseconds    = "29000"
-  type                    = "AWS"
-  uri                     = "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:851725611415:function:outbound/invocations"
-}
-
-resource "aws_api_gateway_integration_response" "connect_outbound_options" {
-  http_method = "OPTIONS"
-  resource_id = aws_api_gateway_resource.connect_outbound.id
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST'"
-    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-  }
-  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
-  status_code = "200"
-}
+#
+#resource "aws_api_gateway_integration_response" "connect_outbound_options" {
+#  http_method = "OPTIONS"
+#  resource_id = aws_api_gateway_resource.connect_outbound.id
+#  response_parameters = {
+#    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+#    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST'"
+#    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+#  }
+#  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+#  status_code = "200"
+#}
 
 resource "aws_api_gateway_integration_response" "connect_outbound_post" {
   depends_on  = [aws_api_gateway_resource.connect_outbound]
@@ -137,14 +124,14 @@ resource "aws_api_gateway_stage" "connect_outbound" {
   xray_tracing_enabled  = "false"
 }
 
-resource "aws_lambda_permission" "connect_outbound" {
-  statement_id  = "AllowAPIGatewayInvoke_Connect_Outbound"
-  action        = "lambda:InvokeFunction"
-  function_name = "outbound"
-  principal     = "apigateway.amazonaws.com" # For API Gateway
-  # Define the source ARN for your API Gateway
-  source_arn = "${aws_api_gateway_rest_api.connect_outbound.execution_arn}/*/*/*"
-}
+#resource "aws_lambda_permission" "connect_outbound" {
+#  statement_id  = "AllowAPIGatewayInvoke_Connect_Outbound"
+#  action        = "lambda:InvokeFunction"
+#  function_name = "outbound"
+#  principal     = "apigateway.amazonaws.com" # For API Gateway
+#  # Define the source ARN for your API Gateway
+#  source_arn = "${aws_api_gateway_rest_api.connect_outbound.execution_arn}/*/*/*"
+#}
 
 resource "aws_api_gateway_gateway_response" "connect_outbound_4xx" {
   response_parameters = {
