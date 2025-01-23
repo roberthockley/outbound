@@ -90,7 +90,7 @@ resource "aws_api_gateway_integration" "connect_outbound_options" {
 resource "aws_api_gateway_integration" "connect_outbound_scan" {
   cache_namespace      = aws_api_gateway_resource.connect_outbound.id
   connection_type      = "INTERNET"
-  http_method          = "OPTIONS"
+  http_method          = "POST"
   passthrough_behavior = "WHEN_NO_MATCH"
   request_templates = {
     "application/json" = "{\"statusCode\": 200}"
