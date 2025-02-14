@@ -6,5 +6,5 @@ environment = {
 
 dynamo = {
   table1     = "OutboundRules"
-  range_key1 = "campaign"
+  hash_key1 = "campaign"
 }
