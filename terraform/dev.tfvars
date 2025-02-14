@@ -1,7 +1,3 @@
-project = {
-  tla = "toku"
-}
-
 environment = {
   name            = "uat"
   region          = "ap-southeast-1"
@@ -9,7 +5,6 @@ environment = {
 }
 
 dynamo = {
-  table1     = "Outbound"
+  table1     = "OutboundRules"
   range_key1 = "campaign"
-  hash_key1  = "number"
 }
