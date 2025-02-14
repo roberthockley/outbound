@@ -322,5 +322,5 @@ resource "aws_lambda_permission" "connect_outbound" {
   function_name = aws_lambda_function.lambda_outbound.function_name
   principal     = "apigateway.amazonaws.com" # For API Gateway
   # Define the source ARN for your API Gateway
-  source_arn = "${aws_api_gateway_rest_api.connect_admin.execution_arn}/*/*/*"
+  source_arn = "${aws_api_gateway_rest_api.connect_outbound.execution_arn}/*/*/*"
 }
