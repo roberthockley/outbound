@@ -10,7 +10,7 @@ variable "environment" {
 variable "dynamo" {
   type = object({
     table1     = string
-    range_key1 = string
+    hash_key1 = string
   })
   sensitive = false
 }
