@@ -114,6 +114,18 @@ resource "aws_api_gateway_method_response" "connect_outbound_read_post" {
   status_code = "200"
 }
 
+resource "aws_api_gateway_method_response" "connect_outbound_make_post" {
+  http_method = "POST"
+  resource_id = aws_api_gateway_resource.connect_outbound_make.id
+  response_models = {
+    "application/json" = "Empty"
+  }
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "false"
+  }
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+  status_code = "200"
+}
 
 resource "aws_api_gateway_integration" "connect_outbound_read_options" {
   depends_on           = [aws_api_gateway_method.connect_outbound_read_options]
@@ -165,6 +177,19 @@ EOF
   }
 }
 
+resource "aws_api_gateway_integration" "connect_outbound_make_post" {
+  cache_namespace         = aws_api_gateway_resource.connect_outbound_make.id
+  connection_type         = "INTERNET"
+  content_handling        = "CONVERT_TO_TEXT"
+  http_method             = "POST"
+  integration_http_method = "POST"
+  passthrough_behavior    = "WHEN_NO_MATCH"
+  resource_id             = aws_api_gateway_resource.connect_outbound_make.id
+  rest_api_id             = aws_api_gateway_rest_api.connect_outbound.id
+  timeout_milliseconds    = "29000"
+  type                    = "AWS"
+  uri                     = aws_lambda_function.lambda_outbound.invoke_arn
+}
 
 resource "aws_api_gateway_integration_response" "connect_outbound_read_options" {
   depends_on  = [aws_api_gateway_method.connect_outbound_read_options, aws_api_gateway_integration.connect_outbound_read_options]
@@ -226,6 +251,17 @@ resource "aws_api_gateway_integration_response" "connect_outbound_read_post" {
 }
 EOF
   }
+}
+
+resource "aws_api_gateway_integration_response" "connect_admin_post" {
+  depends_on  = [aws_api_gateway_resource.connect_outbound_make]
+  http_method = "POST"
+  resource_id = aws_api_gateway_resource.connect_outbound_make.id
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+  }
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+  status_code = "200"
 }
 
 resource "aws_api_gateway_deployment" "cconnect_outbound_deployment" {
