@@ -23,26 +23,54 @@ resource "aws_api_gateway_rest_api_policy" "connect_outbound" {
   })
 }
 
-resource "aws_api_gateway_method" "connect_outbound_options" {
+resource "aws_api_gateway_resource" "connect_outbound_read" {
+  parent_id   = aws_api_gateway_rest_api.connect_outbound.root_resource_id
+  path_part   = "read"
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+}
+
+resource "aws_api_gateway_resource" "connect_outbound_make" {
+  parent_id   = aws_api_gateway_rest_api.connect_outbound.root_resource_id
+  path_part   = "make"
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+}
+
+resource "aws_api_gateway_method" "connect_outbound_read_options" {
   api_key_required = "false"
   authorization    = "NONE"
   http_method      = "OPTIONS"
-  resource_id      = aws_api_gateway_resource.connect_outbound.id
+  resource_id      = aws_api_gateway_resource.connect_outbound_read.id
   rest_api_id      = aws_api_gateway_rest_api.connect_outbound.id
 }
 
-resource "aws_api_gateway_method" "connect_outbound_post" {
+resource "aws_api_gateway_method" "connect_outbound_make_options" {
+  api_key_required = "false"
+  authorization    = "NONE"
+  http_method      = "OPTIONS"
+  resource_id      = aws_api_gateway_resource.connect_outbound_make.id
+  rest_api_id      = aws_api_gateway_rest_api.connect_outbound.id
+}
+
+resource "aws_api_gateway_method" "connect_outbound_read_post" {
   api_key_required = "false"
   authorization    = "NONE"
   http_method      = "POST"
-  resource_id      = aws_api_gateway_resource.connect_outbound.id
+  resource_id      = aws_api_gateway_resource.connect_outbound_read.id
   rest_api_id      = aws_api_gateway_rest_api.connect_outbound.id
 }
 
-resource "aws_api_gateway_method_response" "connect_outbound_options" {
+resource "aws_api_gateway_method" "connect_outbound_make_post" {
+  api_key_required = "false"
+  authorization    = "NONE"
+  http_method      = "POST"
+  resource_id      = aws_api_gateway_resource.connect_outbound_make.id
+  rest_api_id      = aws_api_gateway_rest_api.connect_outbound.id
+}
+
+resource "aws_api_gateway_method_response" "connect_outbound_read_options" {
   depends_on  = [aws_api_gateway_method.connect_outbound_options]
   http_method = "OPTIONS"
-  resource_id = aws_api_gateway_resource.connect_outbound.id
+  resource_id = aws_api_gateway_resource.connect_outbound_read.id
   response_models = {
     "application/json" = "Empty"
   }
@@ -55,11 +83,27 @@ resource "aws_api_gateway_method_response" "connect_outbound_options" {
   status_code = "200"
 }
 
-resource "aws_api_gateway_method_response" "connect_outbound_post" {
+resource "aws_api_gateway_method_response" "connect_outbound_make_options" {
+  depends_on  = [aws_api_gateway_method.connect_outbound_options]
+  http_method = "OPTIONS"
+  resource_id = aws_api_gateway_resource.connect_outbound_make.id
+  response_models = {
+    "application/json" = "Empty"
+  }
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "false"
+    "method.response.header.Access-Control-Allow-Methods" = "false"
+    "method.response.header.Access-Control-Allow-Origin"  = "false"
+  }
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+  status_code = "200"
+}
+
+resource "aws_api_gateway_method_response" "connect_outbound_read_post" {
   depends_on = [aws_api_gateway_method.connect_outbound_post]
 
   http_method = "POST"
-  resource_id = aws_api_gateway_resource.connect_outbound.id
+  resource_id = aws_api_gateway_resource.connect_outbound_read.id
   response_models = {
     "application/json" = "Empty"
   }
@@ -70,22 +114,32 @@ resource "aws_api_gateway_method_response" "connect_outbound_post" {
   status_code = "200"
 }
 
-resource "aws_api_gateway_resource" "connect_outbound" {
-  parent_id   = aws_api_gateway_rest_api.connect_outbound.root_resource_id
-  path_part   = "read"
-  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
-}
 
-resource "aws_api_gateway_integration" "connect_outbound_options" {
-  depends_on           = [aws_api_gateway_method.connect_outbound_options]
-  cache_namespace      = aws_api_gateway_resource.connect_outbound.id
+resource "aws_api_gateway_integration" "connect_outbound_read_options" {
+  depends_on           = [aws_api_gateway_method.connect_outbound_read_options]
+  cache_namespace      = aws_api_gateway_resource.connect_outbound_read.id
   connection_type      = "INTERNET"
   http_method          = "OPTIONS"
   passthrough_behavior = "WHEN_NO_MATCH"
   request_templates = {
     "application/json" = "{\"statusCode\": 200}"
   }
-  resource_id          = aws_api_gateway_resource.connect_outbound.id
+  resource_id          = aws_api_gateway_resource.connect_outbound_read.id
+  rest_api_id          = aws_api_gateway_rest_api.connect_outbound.id
+  timeout_milliseconds = "29000"
+  type                 = "MOCK"
+}
+
+resource "aws_api_gateway_integration" "connect_outbound_make_options" {
+  depends_on           = [aws_api_gateway_method.connect_outbound_make_options]
+  cache_namespace      = aws_api_gateway_resource.connect_outbound_make.id
+  connection_type      = "INTERNET"
+  http_method          = "OPTIONS"
+  passthrough_behavior = "WHEN_NO_MATCH"
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+  resource_id          = aws_api_gateway_resource.connect_outbound_make.id
   rest_api_id          = aws_api_gateway_rest_api.connect_outbound.id
   timeout_milliseconds = "29000"
   type                 = "MOCK"
@@ -93,7 +147,7 @@ resource "aws_api_gateway_integration" "connect_outbound_options" {
 
 resource "aws_api_gateway_integration" "connect_outbound_scan" {
   http_method             = "POST"
-  resource_id             = aws_api_gateway_resource.connect_outbound.id
+  resource_id             = aws_api_gateway_resource.connect_outbound_read.id
   rest_api_id             = aws_api_gateway_rest_api.connect_outbound.id
   type                    = "AWS"
   integration_http_method = "POST"
@@ -112,10 +166,10 @@ EOF
 }
 
 
-resource "aws_api_gateway_integration_response" "connect_outbound_options" {
-  depends_on  = [aws_api_gateway_method.connect_outbound_options, aws_api_gateway_integration.connect_outbound_options]
+resource "aws_api_gateway_integration_response" "connect_outbound_read_options" {
+  depends_on  = [aws_api_gateway_method.connect_outbound_read_options, aws_api_gateway_integration.connect_outbound_read_options]
   http_method = "OPTIONS"
-  resource_id = aws_api_gateway_resource.connect_outbound.id
+  resource_id = aws_api_gateway_resource.connect_outbound_read.id
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST'"
@@ -126,10 +180,24 @@ resource "aws_api_gateway_integration_response" "connect_outbound_options" {
 
 }
 
-resource "aws_api_gateway_integration_response" "connect_outbound_post" {
+resource "aws_api_gateway_integration_response" "connect_outbound_make_options" {
+  depends_on  = [aws_api_gateway_method.connect_outbound_make_options, aws_api_gateway_integration.connect_outbound_make_options]
+  http_method = "OPTIONS"
+  resource_id = aws_api_gateway_resource.connect_outbound_make.id
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  }
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+  status_code = "200"
+
+}
+
+resource "aws_api_gateway_integration_response" "connect_outbound_read_post" {
   depends_on  = [aws_api_gateway_method.connect_outbound_post, aws_api_gateway_integration.connect_outbound_scan]
   http_method = "POST"
-  resource_id = aws_api_gateway_resource.connect_outbound.id
+  resource_id = aws_api_gateway_resource.connect_outbound_read.id
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
   }
@@ -160,20 +228,20 @@ EOF
   }
 }
 
-resource "aws_api_gateway_deployment" "call_service_api_deployment" {
+resource "aws_api_gateway_deployment" "cconnect_outbound_deployment" {
   depends_on  = [aws_api_gateway_integration.connect_outbound_options, aws_api_gateway_integration.connect_outbound_scan]
   rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
 }
 
 resource "aws_api_gateway_stage" "connect_outbound" {
   cache_cluster_enabled = "false"
-  deployment_id         = aws_api_gateway_deployment.call_service_api_deployment.id
+  deployment_id         = aws_api_gateway_deployment.cconnect_outbound_deployment.id
   rest_api_id           = aws_api_gateway_rest_api.connect_outbound.id
   stage_name            = "connect-outbound"
   xray_tracing_enabled  = "false"
 }
 
-#resource "aws_lambda_permission" "connect_outbound" {
+#resource "aws_lambda_permission" "connect_outbound_read" {
 #  statement_id  = "AllowAPIGatewayInvoke_Connect_Outbound"
 #  action        = "lambda:InvokeFunction"
 #  function_name = "outbound"
