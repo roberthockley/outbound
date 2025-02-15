@@ -1,5 +1,5 @@
 resource "aws_cloudwatch_log_group" "lambda_outbound" {
-  name              = "/aws/lambda/${aws_lambda_function.lambda_outbound.function_name}"
+  name              = "/aws/lambda/${aws_lambda_function.lambda_makeCampaign.function_name}"
   retention_in_days = 7
 }
 

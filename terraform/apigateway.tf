@@ -188,7 +188,7 @@ resource "aws_api_gateway_integration" "connect_outbound_make_post" {
   rest_api_id             = aws_api_gateway_rest_api.connect_outbound.id
   timeout_milliseconds    = "29000"
   type                    = "AWS"
-  uri                     = aws_lambda_function.lambda_outbound.invoke_arn
+  uri                     = aws_lambda_function.lambda_makeCampaign.invoke_arn
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_read_options" {
@@ -319,7 +319,7 @@ resource "aws_api_gateway_gateway_response" "connect_outbound_5xx" {
 resource "aws_lambda_permission" "connect_outbound" {
   statement_id  = "AllowAPIGatewayInvoke_Connect_Outbound"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.lambda_outbound.function_name
+  function_name = aws_lambda_function.lambda_makeCampaign.function_name
   principal     = "apigateway.amazonaws.com" # For API Gateway
   # Define the source ARN for your API Gateway
   source_arn = "${aws_api_gateway_rest_api.connect_outbound.execution_arn}/*/*/*"
