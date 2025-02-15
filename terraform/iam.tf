@@ -22,14 +22,26 @@ resource "aws_iam_role_policy_attachment" "RoleForDynamoDB_AmazonDynamoDBFullAcc
   role       = "RoleForDynamoDB"
 }
 
-resource "aws_iam_role_policy_attachment" "RoleForDynamoDB_AmazonDynamoDBReadOnlyAccess" {
-  depends_on = [aws_iam_role.RoleForDynamoDB]
-  policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess"
-  role       = "RoleForDynamoDB"
-}
-
 resource "aws_iam_role_policy_attachment" "RoleForDynamoDB_CloudWatchLogsFullAccess" {
   depends_on = [aws_iam_role.RoleForDynamoDB]
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+  role       = "RoleForDynamoDB"
+}
+
+resource "aws_iam_role_policy_attachment" "RoleForDynamoDB_DynamoDBFullAccess" {
+  depends_on = [aws_iam_role.RoleForDynamoDB]
+  policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+  role       = "RoleForDynamoDB"
+}
+
+resource "aws_iam_role_policy_attachment" "RoleForDynamoDB_LambdaFullAccess" {
+  depends_on = [aws_iam_role.RoleForDynamoDB]
+  policy_arn = "arn:aws:iam::aws:policy/AWSLambda_FullAccess"
+  role       = "RoleForDynamoDB"
+}
+
+resource "aws_iam_role_policy_attachment" "RoleForDynamoDB_CloudWatchEventsFullAccess" {
+  depends_on = [aws_iam_role.RoleForDynamoDB]
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchEventsFullAccess"
   role       = "RoleForDynamoDB"
 }
