@@ -1,4 +1,4 @@
-resource "aws_iam_role" "RoleForDynamoDB" {
+resource "aws_iam_role" "RoleForMakeCampaign" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -13,12 +13,11 @@ resource "aws_iam_role" "RoleForDynamoDB" {
     ]
   })
   description = "Allows Lambda functions to call AWS services on your behalf."
-  name        = "RoleForDynamoDB"
+  name        = "RoleForMakeCampaign"
 }
 
-resource "aws_iam_policy" "RoleForDynamoDBIAM" {
-  depends_on  = [aws_kms_key.kms_ihs] #### Ensure this is happening first
-  name        = "${var.project.tla}-${var.environment.name}-secrets_rotation"
+resource "aws_iam_policy" "RoleForMakeCampaignIAM" {
+  name        = "RoleForMakeCampaignIAM"
   path        = "/"
   description = "For the Secret Rotation Lambda"
   policy = jsonencode({
@@ -39,32 +38,38 @@ resource "aws_iam_policy" "RoleForDynamoDBIAM" {
 }
 
 
-resource "aws_iam_role_policy_attachment" "RoleForDynamoDB_AmazonDynamoDBFullAccess" {
-  depends_on = [aws_iam_role.RoleForDynamoDB]
+resource "aws_iam_role_policy_attachment" "RoleForMakeCampaign_AmazonDynamoDBFullAccess" {
+  depends_on = [aws_iam_role.RoleForMakeCampaign]
   policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
-  role       = "RoleForDynamoDB"
+  role       = "RoleForMakeCampaign"
 }
 
-resource "aws_iam_role_policy_attachment" "RoleForDynamoDB_CloudWatchLogsFullAccess" {
-  depends_on = [aws_iam_role.RoleForDynamoDB]
+resource "aws_iam_role_policy_attachment" "RoleForMakeCampaign_CloudWatchLogsFullAccess" {
+  depends_on = [aws_iam_role.RoleForMakeCampaign]
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
-  role       = "RoleForDynamoDB"
+  role       = "RoleForMakeCampaign"
 }
 
-resource "aws_iam_role_policy_attachment" "RoleForDynamoDB_DynamoDBFullAccess" {
-  depends_on = [aws_iam_role.RoleForDynamoDB]
+resource "aws_iam_role_policy_attachment" "RoleForMakeCampaign_DynamoDBFullAccess" {
+  depends_on = [aws_iam_role.RoleForMakeCampaign]
   policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
-  role       = "RoleForDynamoDB"
+  role       = "RoleForMakeCampaign"
 }
 
-resource "aws_iam_role_policy_attachment" "RoleForDynamoDB_LambdaFullAccess" {
-  depends_on = [aws_iam_role.RoleForDynamoDB]
+resource "aws_iam_role_policy_attachment" "RoleForMakeCampaign_LambdaFullAccess" {
+  depends_on = [aws_iam_role.RoleForMakeCampaign]
   policy_arn = "arn:aws:iam::aws:policy/AWSLambda_FullAccess"
-  role       = "RoleForDynamoDB"
+  role       = "RoleForMakeCampaign"
 }
 
-resource "aws_iam_role_policy_attachment" "RoleForDynamoDB_CloudWatchEventsFullAccess" {
-  depends_on = [aws_iam_role.RoleForDynamoDB]
+resource "aws_iam_role_policy_attachment" "RoleForMakeCampaign_CloudWatchEventsFullAccess" {
+  depends_on = [aws_iam_role.RoleForMakeCampaign]
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchEventsFullAccess"
-  role       = "RoleForDynamoDB"
+  role       = "RoleForMakeCampaign"
+}
+
+resource "aws_iam_role_policy_attachment" "RoleForMakeCampaign_IAM" {
+  depends_on = [aws_iam_role.RoleForMakeCampaign]
+  policy_arn = aws_iam_policy.RoleForMakeCampaignIAM.arn
+  role       = "RoleForMakeCampaign"
 }
