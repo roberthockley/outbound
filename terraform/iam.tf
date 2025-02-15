@@ -30,7 +30,7 @@ resource "aws_iam_policy" "RoleForMakeCampaignIAM" {
           "iam:PassRole"
         ],
         "Resource" : [
-          "arn:aws:iam::117134819170:role/Events",
+          "${aws_iam_role.RoleForMakeCampaignEvents.arn}",
         ]
       }
     ]
@@ -71,5 +71,34 @@ resource "aws_iam_role_policy_attachment" "RoleForMakeCampaign_CloudWatchEventsF
 resource "aws_iam_role_policy_attachment" "RoleForMakeCampaign_IAM" {
   depends_on = [aws_iam_role.RoleForMakeCampaign]
   policy_arn = aws_iam_policy.RoleForMakeCampaignIAM.arn
+  role       = "RoleForMakeCampaign"
+}
+
+resource "aws_iam_role" "RoleForMakeCampaignEvents" {
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = ["events.amazonaws.com"]
+        }
+      }
+    ]
+  })
+  description = "Allows Lambda functions to create event rules on your behalf."
+  name        = "RoleForMakeCampaignEvents"
+}
+
+resource "aws_iam_role_policy_attachment" "RoleForMakeCampaignEventsTarget" {
+  depends_on = [aws_iam_role.RoleForMakeCampaignEvents]
+  policy_arn = "arn:aws:iam::aws:policy/service-role/CloudWatchEventsBuiltInTargetExecutionAccess"
+  role       = "RoleForMakeCampaign"
+}
+
+resource "aws_iam_role_policy_attachment" "RoleForMakeCampaignEventsInvoke" {
+  depends_on = [aws_iam_role.RoleForMakeCampaignEvents]
+  policy_arn = "arn:aws:iam::aws:policy/service-role/CloudWatchEventsInvocationAccess"
   role       = "RoleForMakeCampaign"
 }
