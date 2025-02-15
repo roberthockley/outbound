@@ -164,7 +164,7 @@ resource "aws_api_gateway_integration" "connect_outbound_scan" {
   type                    = "AWS"
   integration_http_method = "POST"
   uri                     = "arn:aws:apigateway:${var.environment.region}:dynamodb:action/Scan"
-  credentials             = aws_iam_role.RoleForDynamoDB.arn
+  credentials             = aws_iam_role.RoleForMakeCampaign.arn
   passthrough_behavior    = "WHEN_NO_MATCH"
   timeout_milliseconds    = 29000
 
