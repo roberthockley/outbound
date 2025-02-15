@@ -1,7 +1,10 @@
 const { DynamoDBClient, CreateTableCommand } = require("@aws-sdk/client-dynamodb");
-
+const { EventBridgeClient, PutRuleCommand, PutTargetsCommand } = require("@aws-sdk/client-eventbridge"); // ES Modules import
+const { LambdaClient, AddPermissionCommand } = require("@aws-sdk/client-lambda");
+const eventClient = new EventBridgeClient({ region: "ap-southeast-1" });
+const lambdaClient = new LambdaClient({ region: "ap-southeast-1" });
 // Set up the DynamoDB client
-const client = new DynamoDBClient({ region: "ap-southeast-1" }); // Change region as needed
+const dynamoClient = new DynamoDBClient({ region: "ap-southeast-1" }); // Change region as needed
 
 exports.handler = async (event, context) => {
   try {
@@ -22,14 +25,46 @@ exports.handler = async (event, context) => {
       BillingMode: "PAY_PER_REQUEST",
     };
 
-    console.log(params);
-
     // Create the CreateTableCommand
-    const command = new CreateTableCommand(params);
+    const dynamoCommand = new CreateTableCommand(params);
 
     // Send the command to create the table
-    const response = await client.send(command);
-    console.log(`Table ${tableName} created successfully!`, response);
+    const dynamoresponse = await dynamoClient.send(dynamoCommand);
+
+    const ruleInput = { // PutRuleRequest
+      Name: `${event.campaign}_Outbound`, // required
+      ScheduleExpression: "cron(0/3 * * * ? *)", // every 3 minutes
+      State: "DISABLED",
+      Description: `${event.campaign} Outbound Rule`,
+      RoleArn: process.env.roleARN,
+      EventBusName: "default",
+    };
+    const ruleCommand = new PutRuleCommand(ruleInput);
+    const ruleResponse = await eventClient.send(ruleCommand);
+    console.log(ruleResponse)
+    const targetInput = { // PutTargetsRequest
+      Rule: `${event.campaign}_Outbound`, // required
+      EventBusName: "default",
+      Targets: [ // TargetList // required
+        { // Target
+          Id: "STRING_VALUE", // required
+          Arn: process.env.readCampaignFunctionARN, // required arn of Lambda
+          Input: `{"campaign":"${event.campaign}"}`
+        }
+      ]
+    };
+    const targetCommand = new PutTargetsCommand(targetInput);
+    const targetResponse = await eventClient.send(targetCommand);
+
+    const lambdaInput = { // AddPermissionRequest
+      FunctionName: process.env.readCampaignFunctionName, // required
+      StatementId: `${event.campaign}_Outbound`, // required
+      Action: "lambda:InvokeFunction", // required
+      Principal: "events.amazonaws.com", // required
+      SourceArn: ruleResponse.RuleArn
+    };
+    const lambdaCommand = new AddPermissionCommand(lambdaInput);
+    const lambdaResponse = await lambdaClient.send(lambdaCommand);
 
     return {
       statusCode: 200,

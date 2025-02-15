@@ -188,6 +188,7 @@ export const SiteCampaigns = () => {
                 setSelectedCampaign(true);
                 setShowTimes(true);
                 setUpdateCampaign(false);
+                //Call API Gateway to Create Table, EventBridge Rule and Update Lambda
             }
         }
         const modalHeadingID = useUID();
