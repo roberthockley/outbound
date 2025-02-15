@@ -1,8 +1,8 @@
 
 const { EventBridgeClient, PutRuleCommand, PutTargetsCommand } = require("@aws-sdk/client-eventbridge"); // ES Modules import
-// const { EventBridgeClient, PutRuleCommand } = require("@aws-sdk/client-eventbridge"); // CommonJS import
-const client = new EventBridgeClient({ region: "ap-southeast-1" });
-
+const { LambdaClient, AddPermissionCommand } = require( "@aws-sdk/client-lambda");
+const eventClient = new EventBridgeClient({ region: "ap-southeast-1" });
+const lambdaClient = new LambdaClient({ region: "ap-southeast-1" });
 
 exports.handler = async (event, context) => {
 
@@ -15,7 +15,7 @@ exports.handler = async (event, context) => {
         EventBusName: "default",
     };
     const ruleCommand = new PutRuleCommand(ruleInput);
-    const ruleResponse = await client.send(ruleCommand);
+    const ruleResponse = await eventClient.send(ruleCommand);
     console.log(ruleResponse)
     const targetInput = { // PutTargetsRequest
         Rule: `${event.campaign}_Outbound`, // required
@@ -29,8 +29,15 @@ exports.handler = async (event, context) => {
         ]
     };
     const targetCommand = new PutTargetsCommand(targetInput);
-    const targetResponse = await client.send(targetCommand);
+    const targetResponse = await eventClient.send(targetCommand);
 
-
-    //Need to add Lambda Trigger
+    const lambdaInput = { // AddPermissionRequest
+      FunctionName: "KVS", // required
+      StatementId: `${event.campaign}_Outbound`, // required
+      Action: "lambda:InvokeFunction", // required
+      Principal: "events.amazonaws.com", // required
+      SourceArn: ruleResponse.RuleArn
+    };
+    const lambdaCommand = new AddPermissionCommand(lambdaInput);
+    const response = await lambdaClient.send(lambdaCommand);
 };
