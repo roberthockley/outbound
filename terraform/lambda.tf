@@ -37,7 +37,7 @@ resource "aws_lambda_function" "lambda_makeCampaign" {
     variables = {
       readCampaignFunctionARN  = ""
       readCampaignFunctionName = ""
-      roleARN                  = aws_iam_role.RoleForMakeCampaign.arn
+      roleARN                  = aws_iam_role.RoleForMakeCampaignEvents.arn
     }
   }
 }
