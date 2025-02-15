@@ -23,7 +23,7 @@ resource "aws_lambda_function" "lambda_makeCampaign" {
   filename      = "outbound_makeCamapign.zip"
   function_name = "outbound-makeContactsTable"
   description   = "Lambda to make dedicated DynamoDB table for campaign"
-  role          = aws_iam_role.RoleForDynamoDB.arn
+  role          = aws_iam_role.RoleForMakeCampaign.arn
   handler       = "index.handler"
   publish       = true
   layers        = [aws_lambda_layer_version.lambda_layer_dynamodb.arn, aws_lambda_layer_version.lambda_layer_eventbridge.arn]
@@ -37,7 +37,7 @@ resource "aws_lambda_function" "lambda_makeCampaign" {
     variables = {
       readCampaignFunctionARN  = ""
       readCampaignFunctionName = ""
-      roleARN                  = aws_iam_role.RoleForDynamoDB.arn
+      roleARN                  = aws_iam_role.RoleForMakeCampaign.arn
     }
   }
 }
