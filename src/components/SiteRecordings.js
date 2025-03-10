@@ -8,6 +8,8 @@ import { Input } from '@twilio-paste/core/input';
 import { Table, THead, Tr, Td, Th, TBody } from '@twilio-paste/core/table';
 import { DatePicker, formatReturnDate } from '@twilio-paste/core/date-picker';
 import { useUID } from '@twilio-paste/core/uid-library';
+import { PlayIcon } from "@twilio-paste/icons/esm/PlayIcon";
+
 
 const moment = require('moment');
 
@@ -29,17 +31,15 @@ export const SiteRecordings = () => {
     const [dateStart, setDateStart] = React.useState(null);
     const [dateEnd, setDateEnd] = React.useState(null);
     const [phoneNumber, setPhoneNumber] = React.useState(null);
+    const [sortedData, setSortedData] = React.useState([]);
     const search = () => {
-        console.log((!dateEnd && !dateStart) || !phoneNumber)
-        console.log(!dateEnd && !dateStart)
-        console.log(!phoneNumber)
-        if ((!dateEnd && !dateStart) && !phoneNumber) {
+        if ((!dateEnd || !dateStart) || !phoneNumber) {
             toaster.push({
                 message: `Get better results by searching for a number within a date range`,
                 variant: 'warning',
                 dismissAfter: 3000
             })
-        } else if (!dateEnd && !dateStart) {
+        } /*else if (!dateEnd && !dateStart) {
             toaster.push({
                 message: `Get better results by specifying a date range`,
                 variant: 'warning',
@@ -51,23 +51,44 @@ export const SiteRecordings = () => {
                 variant: 'warning',
                 dismissAfter: 3000
             })
-        }
-        const [startDay, startMonth, startYear] = dateStart.split("/");
-        const [endDay, endMonth, endYear] = dateEnd.split("/");
-        const start = new Date(`${startYear}-${startMonth}-${startDay}`);
-        const end = new Date(`${endYear}-${endMonth}-${endDay}`);
+        }*/
+        if (dateEnd && dateStart && phoneNumber) {
+            const [startDay, startMonth, startYear] = dateStart.split("/");
+            const [endDay, endMonth, endYear] = dateEnd.split("/");
+            const start = new Date(`${startYear}-${startMonth}-${startDay}`);
+            const end = new Date(`${endYear}-${endMonth}-${endDay}`);
 
-        if (start > end) {
-            toaster.push({
-                message: `The start date must be before the end date`,
-                variant: 'error',
-                dismissAfter: 3000
-            })
-        } else {
-            // Add your form submission logic here
+            if (start > end) {
+                toaster.push({
+                    message: `The start date must be before the end date`,
+                    variant: 'error',
+                    dismissAfter: 3000
+                })
+            } else {
+                let recordings = JSON.parse(localStorage.getItem('recordings'))
+                console.log(recordings)
+                const sort = recordings.sort((a, b) => {
+                    return new Date(a.date) - new Date(b.date); // Ascending order
+                });
+                
+                const filteredRecordings = sort.filter(recording => {
+                    const recordingDate = new Date(recording.date);
+                    return recordingDate >= start && recordingDate <= end;
+                });
+        
+                const results = filteredRecordings.filter(recording => 
+                    recording.phoneNumber.includes(phoneNumber)
+                );
+
+                // Update state with filtered and sorted data
+                setSortedData(results);
+
+
+                //setSortedData(sort);
+            }
         }
     }
-
+    const playList= () => {}
     useEffect(() => {
         // setRecordings(JSON.parse(localStorage.getItem('recordings')))
 
@@ -112,11 +133,16 @@ export const SiteRecordings = () => {
                     </Tr>
                 </THead>
                 <TBody>
-                    {filteredHolidays.map((holiday, index) => (
+                    {sortedData.map((holiday, index) => (
                         <Tr key={"row" + index}>
                             <Td key={"date" + index}>{holiday.date}</Td>
-                            <Td key={"name" + index}>{holiday.name}</Td>
-                            <Td key={"button" + index} textAlign='left'>
+                            <Td key={"time" + index}>{holiday.time}</Td>
+                            <Td key={"phoneNumber" + index}>{holiday.phoneNumber}</Td>
+                            <Td key={"recordingName" + index}>{holiday.recordingName}</Td>
+                            <Td key={"button" + index} textAlign='left'><Button variant="secondary" size="small" onClick={() => { playList(prompt.engine, prompt.language, prompt.text, prompt.voice) }
+                            }>
+                                <PlayIcon title='test' />
+                            </Button>
                             </Td>
                         </Tr>
                     ))}
