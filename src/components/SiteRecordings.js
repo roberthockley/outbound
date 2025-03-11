@@ -28,6 +28,8 @@ export const SiteRecordings = () => {
     let data = {}
     let start, end;
     const search = () => {
+        setSortedData([]);
+
         if (!phoneNumber && (dateEnd || dateStart)) {
             console.log("Date Range")
             const [startDay, startMonth, startYear] = dateStart.split("/");
@@ -99,7 +101,7 @@ export const SiteRecordings = () => {
 
 
             console.log(start)
-/*
+
             if (start > end) {
                 toaster.push({
                     message: `The start date must be before the end date`,
@@ -162,7 +164,7 @@ export const SiteRecordings = () => {
                     });
 
 
-            }*/
+            }
         }
         if ((!dateEnd || !dateStart) && phoneNumber) {
             console.log("Phone Only")
@@ -251,11 +253,11 @@ export const SiteRecordings = () => {
                 <div style={{ display: "flex", gap: "30px" }}>
                     <span>
                         <Label htmlFor={uidDPS} >Start</Label>
-                        <DatePicker required id={uidDPS} aria-describedby={uidHT} onChange={(evt) => setDateStart(formatReturnDate(evt.target.value, 'dd/MM/yyyy'))} />
+                        <DatePicker required id={uidDPS} aria-describedby={uidHT} onChange={(evt) => setDateStart(evt.target.value)} />
                     </span>
                     <span>
                         <Label htmlFor={uidDPE} >End</Label>
-                        <DatePicker Label="End" required id={uidDPE} aria-describedby={uidHT} onChange={(evt) => setDateEnd(formatReturnDate(evt.target.value, 'dd/MM/yyyy'))} />
+                        <DatePicker Label="End" required id={uidDPE} aria-describedby={uidHT} onChange={(evt) => setDateEnd(evt.target.value)} />
                     </span>
                     <span>
                         <Label htmlFor={uidDPN} >Phone Number</Label>
