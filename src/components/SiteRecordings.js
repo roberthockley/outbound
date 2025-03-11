@@ -9,6 +9,7 @@ import { DatePicker, formatReturnDate } from '@twilio-paste/core/date-picker';
 import { useUID } from '@twilio-paste/core/uid-library';
 import { PlayIcon } from "@twilio-paste/icons/esm/PlayIcon";
 import ReactAudioPlayer from 'react-audio-player';
+import axios from 'axios';
 
 export const SiteRecordings = () => {
     const uidDPS = useUID();
@@ -23,6 +24,8 @@ export const SiteRecordings = () => {
     const [phoneNumber, setPhoneNumber] = React.useState(null);
     const [recordings, setRecordings] = React.useState(null);
     const [sortedData, setSortedData] = React.useState([]);
+    const [presign, setPresign] = React.useState(null);
+    let data = {}
     const search = () => {
         if ((!dateEnd || !dateStart) || !phoneNumber) {
             toaster.push({
@@ -56,33 +59,90 @@ export const SiteRecordings = () => {
                     dismissAfter: 3000
                 })
             } else {
-                const sort = recordings.sort((a, b) => {
-                    return new Date(a.date) - new Date(b.date); // Ascending order
-                });
+                
+                data.ani = phoneNumber
+                data.startDate = start
+                data.endDate = end
+                data.searchType = "aniWithTime"
+                let config = {
+                    method: 'post',
+                    maxBodyLength: Infinity,
+                    url: `${process.env.REACT_APP_URL}`,
+                    headers: {
+                        'Content-Type': 'application/javascript'
+                    },
+                    data: data
+                };
+                console.log(config)
+                axios.request(config)
+                    .then((response) => {
+                        console.log(response)
+                        let recordingData = JSON.parse(response.data.body).data
+                        for (let i = 0; i < recordingData.length; i++) {
+                            const [datePart, timePartWithOffset] = recordingData[i].audiostarttime.split("T");
+                            const timePart = timePartWithOffset.split("+")[0];
+                            const [year, month, day] = datePart.split("-");
+                            const formattedDate = `${day}/${month}/${year}`;
+                            const formattedTime = timePart.split(".")[0];
+                            recordingData[i].formattedDate = formattedDate
+                            recordingData[i].formattedTime = formattedTime
+                        }
+                        setRecordings(recordingData)
 
-                const filteredRecordings = sort.filter(recording => {
-                    const recordingDate = new Date(recording.date);
-                    return recordingDate >= start && recordingDate <= end;
-                });
+                        const sort = recordingData.sort((a, b) => {
+                            return new Date(a.audiostarttime) - new Date(b.audiostarttime); // Ascending order
+                        });
+                        console.log(sort)
+                        const filteredRecordings = sort.filter(recording => {
+                            const recordingDate = new Date(recording.audiostarttime);
+                            return recordingDate >= start && recordingDate <= end;
+                        });
+                        console.log(filteredRecordings)
+                        const results = filteredRecordings.filter(recording =>
+                            recording.ani.includes(phoneNumber)
+                        );
+                        console.log(results)
 
-                const results = filteredRecordings.filter(recording =>
-                    recording.phoneNumber.includes(phoneNumber)
-                );
-
-                // Update state with filtered and sorted data
-                setSortedData(results);
+                        // Update state with filtered and sorted data
+                        setSortedData(results);
 
 
-                //setSortedData(sort);
+                        //setSortedData(sort);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+
+
             }
         }
     }
-    const handlePlayClick = (index) => {
+    const handlePlayClick = (index, filename) => {
+        data.searchType = "presign"
+        data.filename = filename
+        let config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: `${process.env.REACT_APP_URL}`,
+            headers: {
+                'Content-Type': 'application/javascript'
+            },
+            data: data
+        };
+        axios.request(config)
+            .then((response) => {
+                console.log(response)
+                setPresign(response.data)
+                console.log(response.data)
+            })
+            .catch((error) => {
+                console.log(error);
+            });
         setActiveRow(index); // Set the active row to the clicked index
     };
 
     useEffect(() => {
-        setRecordings(JSON.parse(localStorage.getItem('recordings')))
+        //setRecordings(JSON.parse(localStorage.getItem('recordings')))
 
 
     }, []);
@@ -121,24 +181,27 @@ export const SiteRecordings = () => {
                         <Th >Time</Th>
                         <Th >Phone Number</Th>
                         <Th >Direction</Th>
-                        <Th >Duration</Th>
+                        <Th >Agent</Th>
+                        <Th >Queue</Th>
                         <Th> Recording Name</Th>
                         <Th> Play</Th>
                     </Tr>
                 </THead>
                 <TBody>
                     {sortedData.map((file, index) => (
+
                         <Tr key={"row" + index}>
-                            <Td key={"date" + index}>{file.date}</Td>
-                            <Td key={"time" + index}>{file.time}</Td>
-                            <Td key={"phoneNumber" + index}>{file.phoneNumber}</Td>
-                            <Td key={"direction" + index}>{file.direction}</Td>
-                            <Td key={"duration" + index}>{file.duration}</Td>
-                            <Td key={"recordingLocation" + index}>{file.recordingLocation}</Td>
+                            <Td key={"date" + index}>{file.formattedDate}</Td>
+                            <Td key={"time" + index}>{file.formattedTime}</Td>
+                            <Td key={"phoneNumber" + index}>{file.ani}</Td>
+                            <Td key={"direction" + index}>{file.extendedcallhistory}</Td>
+                            <Td key={"agentName" + index}>{file.agentname}</Td>
+                            <Td key={"queue" + index}>{file.virtual_queue}</Td>
+                            <Td key={"recordingLocation" + index}>{file.filename}</Td>
                             <Td key={"button" + index} textAlign='left'><audio ref={audioRef} />{activeRow === index ? (
                                 // Show Audio Player if this row is active
                                 <ReactAudioPlayer
-                                    src={file.recordingLocation}
+                                    src={presign}
                                     controls
                                     autoPlay
                                     style={{ marginTop: "10px", width: "300px" }}
@@ -149,7 +212,7 @@ export const SiteRecordings = () => {
                                 <Button
                                     variant="secondary"
                                     size="small"
-                                    onClick={() => handlePlayClick(index)}
+                                    onClick={() => handlePlayClick(index, file.filename)}
                                 >
                                     <PlayIcon title="play" />
                                 </Button>
