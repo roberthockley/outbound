@@ -12,7 +12,7 @@ function App() {
     height: '41px',
     backgroundSize: 'cover', // Adjust background size as needed
   };
-  const [showResultsRecordings, setShowResultsRecordings] = React.useState(false)
+  const [showResultsRecordings, setShowResultsRecordings] = React.useState(true)
   const [showResultsVideos, setShowResultsVideos] = React.useState(false)
 
   const showRecordings = () => {
