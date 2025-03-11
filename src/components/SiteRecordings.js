@@ -25,15 +25,13 @@ export const SiteRecordings = () => {
     const [recordings, setRecordings] = React.useState(null);
     const [sortedData, setSortedData] = React.useState([]);
     const [presign, setPresign] = React.useState(null);
-    let startDay, startMonth, startYear
-    let endDay, endMonth, endYear
     let data = {}
     let start, end;
     const search = () => {
-         
         if (!phoneNumber && (dateEnd || dateStart)) {
-            [startDay, startMonth, startYear] = dateStart.split("/");
-            [endDay, endMonth, endYear] = dateEnd.split("/");
+            console.log("Date Range")
+            const [startDay, startMonth, startYear] = dateStart.split("/");
+            const [endDay, endMonth, endYear] = dateEnd.split("/");
             start = new Date(`${startYear}-${startMonth}-${startDay}`);
             end = new Date(`${endYear}-${endMonth}-${endDay}`);
             data.startDate = start
@@ -85,18 +83,23 @@ export const SiteRecordings = () => {
                 });
         }
         if ((!dateEnd || !dateStart) && !phoneNumber) {
+            console.log("No Data")
             toaster.push({
                 message: `Get better results by searching for a number within a date range`,
                 variant: 'warning',
                 dismissAfter: 3000
             })
-        } 
+        }
         if (dateEnd && dateStart && phoneNumber) {
-            [startDay, startMonth, startYear] = dateStart.split("/");
-            [endDay, endMonth, endYear] = dateEnd.split("/");
+            console.log("All Data",dateStart,dateEnd)
+            const [startDay, startMonth, startYear] = dateStart.split("/");
+            const [endDay, endMonth, endYear] = dateEnd.split("/");
             start = new Date(`${startYear}-${startMonth}-${startDay}`);
             end = new Date(`${endYear}-${endMonth}-${endDay}`);
 
+
+            console.log(start)
+/*
             if (start > end) {
                 toaster.push({
                     message: `The start date must be before the end date`,
@@ -159,7 +162,53 @@ export const SiteRecordings = () => {
                     });
 
 
-            }
+            }*/
+        }
+        if ((!dateEnd || !dateStart) && phoneNumber) {
+            console.log("Phone Only")
+            data.ani = phoneNumber
+            data.searchType = "ani"
+            let config = {
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: `${process.env.REACT_APP_URL}`,
+                headers: {
+                    'Content-Type': 'application/javascript'
+                },
+                data: data
+            };
+            console.log(config)
+            axios.request(config)
+                .then((response) => {
+                    console.log(response)
+                    
+                    let recordingData = JSON.parse(response.data.body).data
+                    for (let i = 0; i < recordingData.length; i++) {
+                        const [datePart, timePartWithOffset] = recordingData[i].audiostarttime.split("T");
+                        const timePart = timePartWithOffset.split("+")[0];
+                        const [year, month, day] = datePart.split("-");
+                        const formattedDate = `${day}/${month}/${year}`;
+                        const formattedTime = timePart.split(".")[0];
+                        recordingData[i].formattedDate = formattedDate
+                        recordingData[i].formattedTime = formattedTime
+                    }
+                    setRecordings(recordingData)
+
+                    const sort = recordingData.sort((a, b) => {
+                        return new Date(a.audiostarttime) - new Date(b.audiostarttime); // Ascending order
+                    });
+                    console.log(sort)
+ 
+
+                    // Update state with filtered and sorted data
+                    setSortedData(sort);
+
+
+                    //setSortedData(sort);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         }
     }
     const handlePlayClick = (index, filename) => {
