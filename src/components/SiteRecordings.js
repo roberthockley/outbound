@@ -1,5 +1,4 @@
-import { Combobox } from '@twilio-paste/core/combobox';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Label, Box } from '@twilio-paste/core';
 import { useToaster, Toaster } from '@twilio-paste/core/toast';
 import { Heading } from '@twilio-paste/core/heading';
@@ -9,28 +8,20 @@ import { Table, THead, Tr, Td, Th, TBody } from '@twilio-paste/core/table';
 import { DatePicker, formatReturnDate } from '@twilio-paste/core/date-picker';
 import { useUID } from '@twilio-paste/core/uid-library';
 import { PlayIcon } from "@twilio-paste/icons/esm/PlayIcon";
-
-
-const moment = require('moment');
-
-let newData = []
-let countryHolidays = []
-let dateRanges = [
-    ["All"]
-];
-let monthRanges = []
-let filteredHolidays = []
+import ReactAudioPlayer from 'react-audio-player';
 
 export const SiteRecordings = () => {
     const uidDPS = useUID();
     const uidDPE = useUID();
     const uidDPN = useUID();
     const uidHT = useUID();
-    const [inputItems, setInputItems] = React.useState(newData);
+    const audioRef = useRef(null);
+    const [activeRow, setActiveRow] = React.useState(null); // Track which row's audio player is visible
     const toaster = useToaster();
     const [dateStart, setDateStart] = React.useState(null);
     const [dateEnd, setDateEnd] = React.useState(null);
     const [phoneNumber, setPhoneNumber] = React.useState(null);
+    const [recordings, setRecordings] = React.useState(null);
     const [sortedData, setSortedData] = React.useState([]);
     const search = () => {
         if ((!dateEnd || !dateStart) || !phoneNumber) {
@@ -65,18 +56,16 @@ export const SiteRecordings = () => {
                     dismissAfter: 3000
                 })
             } else {
-                let recordings = JSON.parse(localStorage.getItem('recordings'))
-                console.log(recordings)
                 const sort = recordings.sort((a, b) => {
                     return new Date(a.date) - new Date(b.date); // Ascending order
                 });
-                
+
                 const filteredRecordings = sort.filter(recording => {
                     const recordingDate = new Date(recording.date);
                     return recordingDate >= start && recordingDate <= end;
                 });
-        
-                const results = filteredRecordings.filter(recording => 
+
+                const results = filteredRecordings.filter(recording =>
                     recording.phoneNumber.includes(phoneNumber)
                 );
 
@@ -88,9 +77,12 @@ export const SiteRecordings = () => {
             }
         }
     }
-    const playList= () => {}
+    const handlePlayClick = (index) => {
+        setActiveRow(index); // Set the active row to the clicked index
+    };
+
     useEffect(() => {
-        // setRecordings(JSON.parse(localStorage.getItem('recordings')))
+        setRecordings(JSON.parse(localStorage.getItem('recordings')))
 
 
     }, []);
@@ -122,27 +114,46 @@ export const SiteRecordings = () => {
                 </div>
             </div>
             <div><br /></div>
-            <Table aria-label="holiday-grid" id="holiday-grid" striped="true" >
+            <Table aria-label="file-grid" id="file-grid" striped="true" >
                 <THead stickyHeader top={0}>
                     <Tr>
                         <Th >Date DD/MM/YYYY</Th>
                         <Th >Time</Th>
                         <Th >Phone Number</Th>
+                        <Th >Direction</Th>
+                        <Th >Duration</Th>
                         <Th> Recording Name</Th>
                         <Th> Play</Th>
                     </Tr>
                 </THead>
                 <TBody>
-                    {sortedData.map((holiday, index) => (
+                    {sortedData.map((file, index) => (
                         <Tr key={"row" + index}>
-                            <Td key={"date" + index}>{holiday.date}</Td>
-                            <Td key={"time" + index}>{holiday.time}</Td>
-                            <Td key={"phoneNumber" + index}>{holiday.phoneNumber}</Td>
-                            <Td key={"recordingName" + index}>{holiday.recordingName}</Td>
-                            <Td key={"button" + index} textAlign='left'><Button variant="secondary" size="small" onClick={() => { playList(prompt.engine, prompt.language, prompt.text, prompt.voice) }
-                            }>
-                                <PlayIcon title='test' />
-                            </Button>
+                            <Td key={"date" + index}>{file.date}</Td>
+                            <Td key={"time" + index}>{file.time}</Td>
+                            <Td key={"phoneNumber" + index}>{file.phoneNumber}</Td>
+                            <Td key={"direction" + index}>{file.direction}</Td>
+                            <Td key={"duration" + index}>{file.duration}</Td>
+                            <Td key={"recordingLocation" + index}>{file.recordingLocation}</Td>
+                            <Td key={"button" + index} textAlign='left'><audio ref={audioRef} />{activeRow === index ? (
+                                // Show Audio Player if this row is active
+                                <ReactAudioPlayer
+                                    src={file.recordingLocation}
+                                    controls
+                                    autoPlay
+                                    style={{ marginTop: "10px", width: "300px" }}
+                                    onEnded={() => setActiveRow(null)} // Reset when playback ends
+                                />
+                            ) : (
+                                // Show Play Button if this row is not active
+                                <Button
+                                    variant="secondary"
+                                    size="small"
+                                    onClick={() => handlePlayClick(index)}
+                                >
+                                    <PlayIcon title="play" />
+                                </Button>
+                            )}
                             </Td>
                         </Tr>
                     ))}
