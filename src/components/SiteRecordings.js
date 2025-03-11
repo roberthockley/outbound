@@ -25,32 +25,77 @@ export const SiteRecordings = () => {
     const [recordings, setRecordings] = React.useState(null);
     const [sortedData, setSortedData] = React.useState([]);
     const [presign, setPresign] = React.useState(null);
+    let startDay, startMonth, startYear
+    let endDay, endMonth, endYear
     let data = {}
+    let start, end;
     const search = () => {
-        if ((!dateEnd || !dateStart) || !phoneNumber) {
+         
+        if (!phoneNumber && (dateEnd || dateStart)) {
+            [startDay, startMonth, startYear] = dateStart.split("/");
+            [endDay, endMonth, endYear] = dateEnd.split("/");
+            start = new Date(`${startYear}-${startMonth}-${startDay}`);
+            end = new Date(`${endYear}-${endMonth}-${endDay}`);
+            data.startDate = start
+            data.endDate = end
+            data.searchType = "time"
+            let config = {
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: `${process.env.REACT_APP_URL}`,
+                headers: {
+                    'Content-Type': 'application/javascript'
+                },
+                data: data
+            };
+            console.log(config)
+            axios.request(config)
+                .then((response) => {
+                    console.log(response)
+                    let recordingData = JSON.parse(response.data.body).data
+                    for (let i = 0; i < recordingData.length; i++) {
+                        const [datePart, timePartWithOffset] = recordingData[i].audiostarttime.split("T");
+                        const timePart = timePartWithOffset.split("+")[0];
+                        const [year, month, day] = datePart.split("-");
+                        const formattedDate = `${day}/${month}/${year}`;
+                        const formattedTime = timePart.split(".")[0];
+                        recordingData[i].formattedDate = formattedDate
+                        recordingData[i].formattedTime = formattedTime
+                    }
+                    setRecordings(recordingData)
+
+                    const sort = recordingData.sort((a, b) => {
+                        return new Date(a.audiostarttime) - new Date(b.audiostarttime); // Ascending order
+                    });
+                    console.log(sort)
+                    const filteredRecordings = sort.filter(recording => {
+                        const recordingDate = new Date(recording.audiostarttime);
+                        return recordingDate >= start && recordingDate <= end;
+                    });
+                    console.log(filteredRecordings)
+
+                    // Update state with filtered and sorted data
+                    setSortedData(filteredRecordings);
+
+
+                    //setSortedData(sort);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+        if ((!dateEnd || !dateStart) && !phoneNumber) {
             toaster.push({
                 message: `Get better results by searching for a number within a date range`,
                 variant: 'warning',
                 dismissAfter: 3000
             })
-        } /*else if (!dateEnd && !dateStart) {
-            toaster.push({
-                message: `Get better results by specifying a date range`,
-                variant: 'warning',
-                dismissAfter: 3000
-            })
-        } else if (!phoneNumber) {
-            toaster.push({
-                message: `Get better results by specifying a phone number`,
-                variant: 'warning',
-                dismissAfter: 3000
-            })
-        }*/
+        } 
         if (dateEnd && dateStart && phoneNumber) {
-            const [startDay, startMonth, startYear] = dateStart.split("/");
-            const [endDay, endMonth, endYear] = dateEnd.split("/");
-            const start = new Date(`${startYear}-${startMonth}-${startDay}`);
-            const end = new Date(`${endYear}-${endMonth}-${endDay}`);
+            [startDay, startMonth, startYear] = dateStart.split("/");
+            [endDay, endMonth, endYear] = dateEnd.split("/");
+            start = new Date(`${startYear}-${startMonth}-${startDay}`);
+            end = new Date(`${endYear}-${endMonth}-${endDay}`);
 
             if (start > end) {
                 toaster.push({
@@ -59,7 +104,7 @@ export const SiteRecordings = () => {
                     dismissAfter: 3000
                 })
             } else {
-                
+
                 data.ani = phoneNumber
                 data.startDate = start
                 data.endDate = end
