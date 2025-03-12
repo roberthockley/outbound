@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Label, Box } from '@twilio-paste/core';
 import { useToaster, Toaster } from '@twilio-paste/core/toast';
 import { Heading } from '@twilio-paste/core/heading';
@@ -8,8 +8,10 @@ import { Table, THead, Tr, Td, Th, TBody } from '@twilio-paste/core/table';
 import { DatePicker, formatReturnDate } from '@twilio-paste/core/date-picker';
 import { useUID } from '@twilio-paste/core/uid-library';
 import { PlayIcon } from "@twilio-paste/icons/esm/PlayIcon";
+import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import ReactAudioPlayer from 'react-audio-player';
 import axios from 'axios';
+import { Modal, ModalBody, ModalFooter, ModalFooterActions, ModalHeader, ModalHeading } from '@twilio-paste/core/modal';
 
 export const SiteRecordings = () => {
     const uidDPS = useUID();
@@ -21,10 +23,14 @@ export const SiteRecordings = () => {
     const toaster = useToaster();
     const [dateStart, setDateStart] = React.useState(null);
     const [dateEnd, setDateEnd] = React.useState(null);
+    const [modalData, setModalData] = React.useState(null);
     const [phoneNumber, setPhoneNumber] = React.useState(null);
     const [recordings, setRecordings] = React.useState(null);
     const [sortedData, setSortedData] = React.useState([]);
     const [presign, setPresign] = React.useState(null);
+    const [isModalOpen, setModalOpen] = React.useState(false);
+    const openModal = () => setModalOpen(true);
+    const closeModal = () => setModalOpen(false)
     let data = {}
     let start, end;
     const search = () => {
@@ -93,7 +99,7 @@ export const SiteRecordings = () => {
             })
         }
         if (dateEnd && dateStart && phoneNumber) {
-            console.log("All Data",dateStart,dateEnd)
+            console.log("All Data", dateStart, dateEnd)
             const [startDay, startMonth, startYear] = dateStart.split("/");
             const [endDay, endMonth, endYear] = dateEnd.split("/");
             start = new Date(`${startYear}-${startMonth}-${startDay}`);
@@ -183,7 +189,7 @@ export const SiteRecordings = () => {
             axios.request(config)
                 .then((response) => {
                     console.log(response)
-                    
+
                     let recordingData = JSON.parse(response.data.body).data
                     for (let i = 0; i < recordingData.length; i++) {
                         const [datePart, timePartWithOffset] = recordingData[i].audiostarttime.split("T");
@@ -200,7 +206,7 @@ export const SiteRecordings = () => {
                         return new Date(a.audiostarttime) - new Date(b.audiostarttime); // Ascending order
                     });
                     console.log(sort)
- 
+
 
                     // Update state with filtered and sorted data
                     setSortedData(sort);
@@ -236,9 +242,54 @@ export const SiteRecordings = () => {
             });
         setActiveRow(index); // Set the active row to the clicked index
     };
+    const AddInteractionModal = ({ location, isModalOpen, closeModal }) => { // Receive props for modal state
+        const uidDP = useUID();
+        const uidHT = useUID();
+        const modalHeadingID = useUID();
+        const [date, setDate] = useState('');
+        const [name, setName] = useState('');
+        console.log(modalData)
+        //const [isOpen, setIsOpen] = useState(false); // Remove local isOpen state
+        //const handleOpen = () => setIsOpen(true);  // Remove local open handler
+        //const handleClose = () => setIsOpen(false); // Remove local close handler
+
+        if (!modalData) { } else {
+            return (
+                <div>
+                    <Modal ariaLabelledby={modalHeadingID} isOpen={isModalOpen} onDismiss={closeModal} size="default">
+                        <ModalHeader>
+                            <ModalHeading as="h3" id={modalHeadingID}>
+                                Interaction Data
+                            </ModalHeading>
+                        </ModalHeader>
+                        <ModalBody>
+                            <Table>
+                                <TBody>
+                                    {Object.entries(modalData).map(([key, value]) => (
+                                        <Tr key={key}>
+                                            <Td>
+                                                <Label htmlFor={key}>{key}</Label>
+                                            </Td>
+                                            <Td>{value}</Td>
+                                        </Tr>
+                                    ))}
+                                </TBody>
+                            </Table>
+                        </ModalBody>
+                        <ModalFooter>
+                            <ModalFooterActions>
+                                <Button variant="secondary" onClick={closeModal}>
+                                    Cancel
+                                </Button>
+                            </ModalFooterActions>
+                        </ModalFooter>
+                    </Modal>
+                </div>
+            );
+        }
+    };
 
     useEffect(() => {
-        //setRecordings(JSON.parse(localStorage.getItem('recordings')))
 
 
     }, []);
@@ -273,14 +324,15 @@ export const SiteRecordings = () => {
             <Table aria-label="file-grid" id="file-grid" striped="true" >
                 <THead stickyHeader top={0}>
                     <Tr>
-                        <Th >Date DD/MM/YYYY</Th>
+                        <Th >Date</Th>
                         <Th >Time</Th>
                         <Th >Phone Number</Th>
                         <Th >Direction</Th>
                         <Th >Agent</Th>
                         <Th >Queue</Th>
-                        <Th> Recording Name</Th>
-                        <Th> Play</Th>
+                        <Th >Recording Name</Th>
+                        <Th >Interaction Data</Th>
+                        <Th >Play</Th>
                     </Tr>
                 </THead>
                 <TBody>
@@ -294,6 +346,19 @@ export const SiteRecordings = () => {
                             <Td key={"agentName" + index}>{file.agentname}</Td>
                             <Td key={"queue" + index}>{file.virtual_queue}</Td>
                             <Td key={"recordingLocation" + index}>{file.filename}</Td>
+                            <Td key={"play" + index}><Button
+                                variant="secondary"
+                                size="small"
+                                onClick={() => {
+                                    setModalData(file)
+                                    openModal()
+                                }
+                                }
+                            >
+                                <TextSnippetIcon title="interaction" />
+                            </Button>
+                            </Td>
+
                             <Td key={"button" + index} textAlign='left'><audio ref={audioRef} />{activeRow === index ? (
                                 // Show Audio Player if this row is active
                                 <ReactAudioPlayer
@@ -319,6 +384,7 @@ export const SiteRecordings = () => {
                 </TBody>
             </Table>
             <Toaster left={['space180', 'unset', 'unset']} {...toaster} />
+            <AddInteractionModal isModalOpen={isModalOpen} closeModal={closeModal} />
         </Box>
     )
 };
