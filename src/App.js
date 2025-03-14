@@ -40,36 +40,7 @@ function App() {
             <h3 className="header-title" >Verint Call Recording Portal</h3>
           </div>
           <div id="sideNavigationBar" className="navigation" style={{ zIndex: 'var(--zindex-level-0)' }} >
-            <ul>
-              <li className="lily-side-nav-li">
-                <div className="group-drop-down">
-                  <button className="page-group-category-button" aria-label="Home">
-                    <a onClick={() => showRecordings()}>
-                      <CallIcon style={{ color: 'white' }} onClick={() => showRecordings()} />
-                    </a>
-                  </button>
-                  <ul className="group-content">
-                    <a onClick={() => showRecordings()}>
-                      <li className="clickable-group">Call Recordings</li></a>
-                  </ul>
-                </div>
-              </li>
-              <li className="lily-side-nav-li">
-                <div className="group-drop-down">
-                  <button className="page-group-category-button"
-                    aria-label="Analytics and optimization">
-                    <a onClick={() => showVideos()}>
-                      <TheatersIcon style={{ color: 'white' }} onClick={() => showVideos()} />
-                    </a>
-                  </button>
-                  <ul className="group-content">
-                    <a onClick={() => showVideos()}>
-                      <li className="clickable-group">Desktop Recordings</li>
-                    </a>
-                  </ul>
-                </div>
-              </li>
-            </ul>
+
           </div>
         </div>
         <div>
