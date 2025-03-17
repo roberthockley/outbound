@@ -267,7 +267,7 @@ resource "aws_api_gateway_integration_response" "connect_admin_post" {
 }
 
 resource "aws_api_gateway_deployment" "connect_outbound_deployment" {
-  depends_on  = [aws_api_gateway_method_response.connect_outbound_make_post, aws_api_gateway_integration.connect_outbound_make_options, aws_api_gateway_integration.connect_outbound_read_options, aws_api_gateway_integration.connect_outbound_scan]
+  depends_on  = [aws_api_gateway_integration.connect_outbound_make_post, aws_api_gateway_integration.connect_outbound_make_options, aws_api_gateway_integration.connect_outbound_read_options, aws_api_gateway_integration.connect_outbound_scan]
   rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
 }
 
