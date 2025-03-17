@@ -260,7 +260,7 @@ export const SiteCampaigns = () => {
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: `${process.env.REACT_APP_URL}/read`,
+            url: `${process.env.REACT_APP_URL}/readSettings`,
             headers: { }
         };
         console.log(config)

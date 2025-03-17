@@ -169,7 +169,7 @@ function App() {
                   {campaign ? <Card style>
                     <Stack orientation="horizontal" spacing="space160">
                       <Box>
-                        <CampaignIcon style={{ color: '#607794', fontSize: 60 }} onClick={() => showSettings()}></CampaignIcon>
+                        <CampaignIcon style={{ color: '#607794', fontSize: 60 }} onClick={() => showCampaign()}></CampaignIcon>
                       </Box>
                       <Stack orientation="vertical" spacing="space10">
                         <Box>
