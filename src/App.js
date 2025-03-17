@@ -37,7 +37,7 @@ function App() {
             <span className="header-logo">
               <i className="lily-icon lily-icon-logo" style={svgStyle}></i>
             </span>
-            <h3 className="header-title" >Verint Call Recording Portal</h3>
+            <h3 className="header-title" >Amazon Connect Outbound Manager</h3>
           </div>
           <div id="sideNavigationBar" className="navigation" style={{ zIndex: 'var(--zindex-level-0)' }} >
 
