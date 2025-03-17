@@ -179,6 +179,7 @@ EOF
 }
 
 resource "aws_api_gateway_integration" "connect_outbound_make_post" {
+  depends_on = [aws_api_gateway_method.connect_outbound_make_post]
   cache_namespace         = aws_api_gateway_resource.connect_outbound_make.id
   connection_type         = "INTERNET"
   content_handling        = "CONVERT_TO_TEXT"
@@ -265,14 +266,14 @@ resource "aws_api_gateway_integration_response" "connect_admin_post" {
   status_code = "200"
 }
 
-resource "aws_api_gateway_deployment" "cconnect_outbound_deployment" {
+resource "aws_api_gateway_deployment" "connect_outbound_deployment" {
   depends_on  = [aws_api_gateway_method_response.connect_outbound_make_post, aws_api_gateway_integration.connect_outbound_make_options, aws_api_gateway_integration.connect_outbound_read_options, aws_api_gateway_integration.connect_outbound_scan]
   rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
 }
 
 resource "aws_api_gateway_stage" "connect_outbound" {
   cache_cluster_enabled = "false"
-  deployment_id         = aws_api_gateway_deployment.cconnect_outbound_deployment.id
+  deployment_id         = aws_api_gateway_deployment.connect_outbound_deployment.id
   rest_api_id           = aws_api_gateway_rest_api.connect_outbound.id
   stage_name            = "connect-outbound"
   xray_tracing_enabled  = "false"
