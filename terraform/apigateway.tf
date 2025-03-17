@@ -115,6 +115,7 @@ resource "aws_api_gateway_method_response" "connect_outbound_read_post" {
 }
 
 resource "aws_api_gateway_method_response" "connect_outbound_make_post" {
+  depends_on = [ aws_api_gateway_method.connect_outbound_make_post ]
   http_method = "POST"
   resource_id = aws_api_gateway_resource.connect_outbound_make.id
   response_models = {
@@ -254,7 +255,7 @@ EOF
 }
 
 resource "aws_api_gateway_integration_response" "connect_admin_post" {
-  depends_on  = [aws_api_gateway_method.connect_outbound_make_post, aws_api_gateway_integration.connect_outbound_make_post]
+  depends_on  = [ aws_api_gateway_integration.connect_outbound_make_post, aws_api_gateway_method_response.connect_outbound_make_post,  aws_api_gateway_integration.connect_outbound_read_post, aws_api_gateway_method_response.connect_outbound_read_post]
   http_method = "POST"
   resource_id = aws_api_gateway_resource.connect_outbound_make.id
   response_parameters = {
@@ -265,7 +266,7 @@ resource "aws_api_gateway_integration_response" "connect_admin_post" {
 }
 
 resource "aws_api_gateway_deployment" "cconnect_outbound_deployment" {
-  depends_on  = [aws_api_gateway_integration.connect_outbound_make_options, aws_api_gateway_integration.connect_outbound_read_options, aws_api_gateway_integration.connect_outbound_scan]
+  depends_on  = [aws_api_gateway_method_response.connect_outbound_make_post, aws_api_gateway_integration.connect_outbound_make_options, aws_api_gateway_integration.connect_outbound_read_options, aws_api_gateway_integration.connect_outbound_scan]
   rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
 }
 
