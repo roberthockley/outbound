@@ -256,12 +256,26 @@ export const SiteCampaigns = () => {
 
     useEffect(() => {
         let currentCampaigns = [];
-        setDynamoCampaigns(JSON.parse(localStorage.getItem('campaigns')))
-        let campaigns2 = JSON.parse(localStorage.getItem('campaigns'))
-        for (let i = 0; i < campaigns2.length; i++) {
-            let items = campaigns2[i]
-            currentCampaigns.push(items.campaign)
-        }
+
+        let config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: `${process.env.REACT_APP_URL}/read`,
+            headers: { }
+        };
+        console.log(config)
+        axios.request(config)
+            .then((response) => {
+                let items = response.data.items
+                console.log("I",items)
+                for (let i = 0; i < items.length; i++) {
+                    currentCampaigns.push(items[i].campaign)
+                }
+                console.log("CC",currentCampaigns)
+            })
+            .catch((error) => {
+                console.log(error);
+            });
         setCampaign(currentCampaigns);
         console.log(`Campaign(s) are: ${currentCampaigns}`)
     }, []);

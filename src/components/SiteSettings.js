@@ -877,7 +877,7 @@ export const SiteSettings = () => {
                         <Td></Td>
                         <Td></Td>
                         <Td><Combobox
-                            items={["Global", "Sales", "Collections"]}
+                            //items={["Global", "Sales", "Collections"]}
                             value={dnd}
                             onInputValueChange={({ inputValue }) => {
                                 setDND(inputValue)
