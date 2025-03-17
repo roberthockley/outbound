@@ -1,11 +1,10 @@
 environment = {
-  name       = "dev"
-  region     = "ap-southeast-1"
-  account_id = "117134819170"
-  tla        = "song"
+  name            = "uat"
+  region          = "ap-southeast-1"
+  account_id      = "117134819170"
 }
 
 dynamo = {
-  table1    = "OutboundRules"
+  table1     = "OutboundRules"
   hash_key1 = "campaign"
 }
