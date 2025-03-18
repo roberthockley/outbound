@@ -154,7 +154,7 @@ resource "aws_api_gateway_method_response" "connect_outbound_read_post" {
 }
 
 resource "aws_api_gateway_method_response" "connect_outbound_make_post" {
-  depends_on = [ aws_api_gateway_method.connect_outbound_make_post ]
+  depends_on  = [aws_api_gateway_method.connect_outbound_make_post]
   http_method = "POST"
   resource_id = aws_api_gateway_resource.connect_outbound_make.id
   response_models = {
@@ -168,7 +168,7 @@ resource "aws_api_gateway_method_response" "connect_outbound_make_post" {
 }
 
 resource "aws_api_gateway_method_response" "connect_outbound_numbers_post" {
-  depends_on = [ aws_api_gateway_method.connect_outbound_numbers_post ]
+  depends_on  = [aws_api_gateway_method.connect_outbound_numbers_post]
   http_method = "POST"
   resource_id = aws_api_gateway_resource.connect_outbound_numbers.id
   response_models = {
@@ -247,7 +247,7 @@ EOF
 }
 
 resource "aws_api_gateway_integration" "connect_outbound_make_post" {
-  depends_on = [aws_api_gateway_method.connect_outbound_make_post]
+  depends_on              = [aws_api_gateway_method.connect_outbound_make_post]
   cache_namespace         = aws_api_gateway_resource.connect_outbound_make.id
   connection_type         = "INTERNET"
   content_handling        = "CONVERT_TO_TEXT"
@@ -272,7 +272,9 @@ resource "aws_api_gateway_integration" "connect_outbound_numbers_post" {
   passthrough_behavior    = "WHEN_NO_MATCH"
   timeout_milliseconds    = 29000
 
-
+  request_parameters = {
+    "overwrite:path" = "phone-number/list"
+  }
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_read_options" {
@@ -352,7 +354,7 @@ EOF
 }
 
 resource "aws_api_gateway_integration_response" "connect_admin_post" {
-  depends_on  = [ aws_api_gateway_integration.connect_outbound_make_post, aws_api_gateway_method_response.connect_outbound_make_post,  aws_api_gateway_integration.connect_outbound_scan, aws_api_gateway_method_response.connect_outbound_read_post]
+  depends_on  = [aws_api_gateway_integration.connect_outbound_make_post, aws_api_gateway_method_response.connect_outbound_make_post, aws_api_gateway_integration.connect_outbound_scan, aws_api_gateway_method_response.connect_outbound_read_post]
   http_method = "POST"
   resource_id = aws_api_gateway_resource.connect_outbound_make.id
   response_parameters = {
@@ -363,7 +365,7 @@ resource "aws_api_gateway_integration_response" "connect_admin_post" {
 }
 
 resource "aws_api_gateway_integration_response" "connect_numbers_post" {
-  depends_on  = [ aws_api_gateway_integration.connect_outbound_numbers_post, aws_api_gateway_method_response.connect_outbound_numbers_post,  aws_api_gateway_integration.connect_outbound_scan, aws_api_gateway_method_response.connect_outbound_read_post]
+  depends_on  = [aws_api_gateway_integration.connect_outbound_numbers_post, aws_api_gateway_method_response.connect_outbound_numbers_post, aws_api_gateway_integration.connect_outbound_scan, aws_api_gateway_method_response.connect_outbound_read_post]
   http_method = "POST"
   resource_id = aws_api_gateway_resource.connect_outbound_numbers.id
   response_parameters = {
