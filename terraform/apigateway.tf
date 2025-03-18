@@ -261,7 +261,7 @@ resource "aws_api_gateway_integration" "connect_outbound_make_post" {
   uri                     = aws_lambda_function.lambda_makeCampaign.invoke_arn
 }
 
-resource "aws_api_gateway_integration" "connect_outbound_numbers" {
+resource "aws_api_gateway_integration" "connect_outbound_numbers_post" {
   http_method             = "POST"
   resource_id             = aws_api_gateway_resource.connect_outbound_numbers.id
   rest_api_id             = aws_api_gateway_rest_api.connect_outbound.id
