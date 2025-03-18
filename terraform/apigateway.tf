@@ -462,7 +462,7 @@ resource "aws_api_gateway_integration_response" "connect_outbound_read_options" 
 resource "aws_api_gateway_integration_response" "connect_outbound_update_options" {
   depends_on  = [aws_api_gateway_method.connect_outbound_update_options, aws_api_gateway_integration.connect_outbound_update_options]
   http_method = "OPTIONS"
-  resource_id = aws_api_gateway_resource.connect_outbound_make.id
+  resource_id = aws_api_gateway_resource.connect_outbound_update.id
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST'"
