@@ -268,7 +268,7 @@ resource "aws_api_gateway_integration" "connect_outbound_numbers_post" {
   type                    = "AWS"
   integration_http_method = "POST"
   request_parameters = {
-    "method.request.path.override" = true
+    "method.request.path.override" = "phone-number/list"
   }
   uri                     = "arn:aws:apigateway:${var.environment.region}:connect:action/phone-number/list"
   credentials             = aws_iam_role.RoleForMakeCampaign.arn
