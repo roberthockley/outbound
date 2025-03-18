@@ -120,107 +120,107 @@ export const SiteSettings = () => {
         let data = JSON.stringify({
             "TableName": "OutboundRules",
             "Key": {
-              "campaign": {
-                "S": siteCampaign
-              }
+                "campaign": {
+                    "S": siteCampaign
+                }
             },
             "UpdateExpression": "set callerId = :callerId, dnd = :dnd, callduration = :callduration, enabled = :enabled, scheduleend = :scheduleend, scheduleinterval = :scheduleinterval, intervalBusy = :intervalBusy, retriesWeek = :retriesWeek, retry = :retry, schedulestart = :schedulestart, scheduletimezone = :scheduletimezone",
             "ConditionExpression": "campaign = :campaign",
             "ExpressionAttributeValues": {
-              ":campaign": {
-                "S": siteCampaign
-              },
-              ":callerId": {
-                "S": callerId
-              },
-              ":dnd": {
-                "S": dnd
-              },
-              ":callduration": {
-                "S": duration
-              },
-              ":enabled": {
-                "BOOL": enabled
-              },
-              ":scheduleend": {
-                "S": end
-              },
-              ":scheduleinterval": {
-                "S": "500"
-              },
-              ":intervalBusy": {
-                "S": intervalBusy
-              },
-              ":retriesWeek": {
-                "S": retriesWeek
-              },
-              ":retry": {
-                "S": retries
-              },
-              ":schedulestart": {
-                "S": start
-              },
-              ":scheduletimezone": {
-                "S": tz
-              }
+                ":campaign": {
+                    "S": siteCampaign
+                },
+                ":callerId": {
+                    "S": callerId
+                },
+                ":dnd": {
+                    "S": dnd
+                },
+                ":callduration": {
+                    "S": duration
+                },
+                ":enabled": {
+                    "BOOL": enabled
+                },
+                ":scheduleend": {
+                    "S": end
+                },
+                ":scheduleinterval": {
+                    "S": "500"
+                },
+                ":intervalBusy": {
+                    "S": intervalBusy
+                },
+                ":retriesWeek": {
+                    "S": retriesWeek
+                },
+                ":retry": {
+                    "S": retries
+                },
+                ":schedulestart": {
+                    "S": start
+                },
+                ":scheduletimezone": {
+                    "S": tz
+                }
             }
-          });
-          
-          let updateConfig = {
+        });
+
+        let updateConfig = {
             method: 'post',
             maxBodyLength: Infinity,
             url: 'https://lj3qlnw0qh.execute-api.ap-southeast-1.amazonaws.com/connect-outbound/updateSettings',
-            headers: { 
-              'Content-Type': 'application/json'
+            headers: {
+                'Content-Type': 'application/json'
             },
-            data : data
-          };
-          console.log(updateConfig)
+            data: data
+        };
+        console.log(updateConfig)
 
-          axios.request(updateConfig)
-          .then((response) => {
-            console.log(JSON.stringify(response.data));
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+        axios.request(updateConfig)
+            .then((response) => {
+                console.log(JSON.stringify(response.data));
+            })
+            .catch((error) => {
+                console.log(error);
+            });
 
-/*
-
-        if (updateCamapign === false) {
-            let updates = {};
-            updates.campaign = siteCampaign;
-            updates.retry = retries;
-            updates.duration = duration;
-            updates.intervalBusy = intervalBusy;
-            updates.retriesWeek = retriesWeek;
-            updates.callerId = callerId;
-            updates.dnd = dnd;
-            updates.start = start;
-            updates.end = end;
-            updates.enabled = enabled;
-            updates.timezone = tz;
-            dynamoCampaigns.push(updates);
-            localStorage.setItem('campaigns', JSON.stringify(dynamoCampaigns));
-            setUpdateCampaign(true)
-        } else {
-            for (let i = 0; i < dynamoCampaigns.length; i++) {
-                console.log(dynamoCampaigns[i].campaign, siteCampaign)
-                if (dynamoCampaigns[i].campaign === siteCampaign) {
-                    dynamoCampaigns[i].retry = retries;
-                    dynamoCampaigns[i].duration = duration;
-                    dynamoCampaigns[i].intervalBusy = intervalBusy;
-                    dynamoCampaigns[i].retriesWeek = retriesWeek;
-                    dynamoCampaigns[i].callerId = callerId;
-                    dynamoCampaigns[i].dnd = dnd;
-                    dynamoCampaigns[i].start = start;
-                    dynamoCampaigns[i].end = end;
-                    dynamoCampaigns[i].enabled = enabled;
-                    dynamoCampaigns[i].timezone = tz;
-                }
-            }
-            localStorage.setItem('campaigns', JSON.stringify(dynamoCampaigns));
-        }*/
+        /*
+        
+                if (updateCamapign === false) {
+                    let updates = {};
+                    updates.campaign = siteCampaign;
+                    updates.retry = retries;
+                    updates.duration = duration;
+                    updates.intervalBusy = intervalBusy;
+                    updates.retriesWeek = retriesWeek;
+                    updates.callerId = callerId;
+                    updates.dnd = dnd;
+                    updates.start = start;
+                    updates.end = end;
+                    updates.enabled = enabled;
+                    updates.timezone = tz;
+                    dynamoCampaigns.push(updates);
+                    localStorage.setItem('campaigns', JSON.stringify(dynamoCampaigns));
+                    setUpdateCampaign(true)
+                } else {
+                    for (let i = 0; i < dynamoCampaigns.length; i++) {
+                        console.log(dynamoCampaigns[i].campaign, siteCampaign)
+                        if (dynamoCampaigns[i].campaign === siteCampaign) {
+                            dynamoCampaigns[i].retry = retries;
+                            dynamoCampaigns[i].duration = duration;
+                            dynamoCampaigns[i].intervalBusy = intervalBusy;
+                            dynamoCampaigns[i].retriesWeek = retriesWeek;
+                            dynamoCampaigns[i].callerId = callerId;
+                            dynamoCampaigns[i].dnd = dnd;
+                            dynamoCampaigns[i].start = start;
+                            dynamoCampaigns[i].end = end;
+                            dynamoCampaigns[i].enabled = enabled;
+                            dynamoCampaigns[i].timezone = tz;
+                        }
+                    }
+                    localStorage.setItem('campaigns', JSON.stringify(dynamoCampaigns));
+                }*/
     }
 
     const AddCampaignModal = (prop) => {
@@ -255,29 +255,29 @@ export const SiteSettings = () => {
                 let data = JSON.stringify({
                     "TableName": "OutboundRules",
                     "Item": {
-                      "campaign": {
-                        "S": listName
-                      }
+                        "campaign": {
+                            "S": listName
+                        }
                     }
-                  });
-                  
-                  let config = {
+                });
+
+                let config = {
                     method: 'post',
                     maxBodyLength: Infinity,
                     url: 'https://lj3qlnw0qh.execute-api.ap-southeast-1.amazonaws.com/connect-outbound/makeSettings',
-                    headers: { 
-                      'Content-Type': 'application/json'
+                    headers: {
+                        'Content-Type': 'application/json'
                     },
-                    data : data
-                  };
-                  
-                  axios.request(config)
-                  .then((response) => {
-                    console.log(JSON.stringify(response.data));
-                  })
-                  .catch((error) => {
-                    console.log(error);
-                  });
+                    data: data
+                };
+
+                axios.request(config)
+                    .then((response) => {
+                        console.log(JSON.stringify(response.data));
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
 
 
 
@@ -385,7 +385,7 @@ export const SiteSettings = () => {
                 let numToUse = []
                 let numList = response.data.ListPhoneNumbersSummaryList
                 for (let i = 0; i < numList.length; i++) {
-                    numToUse.push(numList[i].PhoneNumber) 
+                    numToUse.push(numList[i].PhoneNumber)
                 }
                 setNumbers(numToUse)
             })
@@ -407,7 +407,7 @@ export const SiteSettings = () => {
                 let dndToUse = []
                 let dndList = response.data.Items
                 for (let i = 0; i < dndList.length; i++) {
-                    dndToUse.push(dndList[i].name.S) 
+                    dndToUse.push(dndList[i].name.S)
                 }
                 setDNDList(dndToUse)
 
@@ -607,6 +607,18 @@ export const SiteSettings = () => {
                                 setDND(inputValue)
                             }}
                         /></Td>
+                    </Tr>
+                    <Tr>
+                        <Td>Time Zone</Td>
+                        <Td></Td>
+                        <Td></Td>
+                        <Td><Combobox
+                            items={timezones}
+                            value={tz}
+                            onInputValueChange={({ inputValue }) => {
+                                setTZ(inputValue)
+                            }} />
+                        </Td>
                     </Tr>
                     <Tr>
                         <Td>Start Date</Td>
