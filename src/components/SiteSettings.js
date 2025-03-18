@@ -175,7 +175,7 @@ export const SiteSettings = () => {
         let updateConfig = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: 'https://lj3qlnw0qh.execute-api.ap-southeast-1.amazonaws.com/connect-outbound/updateSettings',
+            url: `${process.env.REACT_APP_URL}/updateSettings`,
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -238,7 +238,7 @@ export const SiteSettings = () => {
                 let config = {
                     method: 'post',
                     maxBodyLength: Infinity,
-                    url: 'https://lj3qlnw0qh.execute-api.ap-southeast-1.amazonaws.com/connect-outbound/makeSettings',
+                    url: `${process.env.REACT_APP_URL}/makeSettings`,
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -335,7 +335,7 @@ export const SiteSettings = () => {
         let deleteConfig = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: 'https://lj3qlnw0qh.execute-api.ap-southeast-1.amazonaws.com/connect-outbound/deleteSettings',
+            url: `${process.env.REACT_APP_URL}/deleteSettings`,
             headers: {
                 'Content-Type': 'application/json'
             },
