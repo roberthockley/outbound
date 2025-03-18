@@ -124,7 +124,7 @@ export const SiteSettings = () => {
                     "S": siteCampaign
                 }
             },
-            "UpdateExpression": "set callerId = :callerId, dnd = :dnd, callduration = :callduration, enabled = :enabled, scheduleend = :scheduleend, scheduleinterval = :scheduleinterval, intervalBusy = :intervalBusy, retriesWeek = :retriesWeek, retry = :retry, schedulestart = :schedulestart, scheduletimezone = :scheduletimezone",
+            "UpdateExpression": "set intervalNOAN = :intervalNOAN, intervalAM = :intervalAM, callerId = :callerId, dnd = :dnd, callduration = :callduration, enabled = :enabled, scheduleend = :scheduleend, scheduleinterval = :scheduleinterval, intervalBusy = :intervalBusy, retriesWeek = :retriesWeek, retry = :retry, schedulestart = :schedulestart, scheduletimezone = :scheduletimezone",
             "ConditionExpression": "campaign = :campaign",
             "ExpressionAttributeValues": {
                 ":campaign": {
@@ -140,7 +140,7 @@ export const SiteSettings = () => {
                     "S": duration
                 },
                 ":enabled": {
-                    "BOOL": enabled
+                    "S": enabled
                 },
                 ":scheduleend": {
                     "S": end
@@ -150,6 +150,12 @@ export const SiteSettings = () => {
                 },
                 ":intervalBusy": {
                     "S": intervalBusy
+                },
+                ":intervalAM": {
+                    "S": intervalAM
+                },
+                ":intervalNOAN": {
+                    "S": intervalNOAN
                 },
                 ":retriesWeek": {
                     "S": retriesWeek
@@ -180,47 +186,15 @@ export const SiteSettings = () => {
         axios.request(updateConfig)
             .then((response) => {
                 console.log(JSON.stringify(response.data));
+                toaster.push({
+                    message: 'Campaign Saved',
+                    variant: 'success',
+                    dismissAfter: 3000
+                })
             })
             .catch((error) => {
                 console.log(error);
             });
-
-        /*
-        
-                if (updateCamapign === false) {
-                    let updates = {};
-                    updates.campaign = siteCampaign;
-                    updates.retry = retries;
-                    updates.duration = duration;
-                    updates.intervalBusy = intervalBusy;
-                    updates.retriesWeek = retriesWeek;
-                    updates.callerId = callerId;
-                    updates.dnd = dnd;
-                    updates.start = start;
-                    updates.end = end;
-                    updates.enabled = enabled;
-                    updates.timezone = tz;
-                    dynamoCampaigns.push(updates);
-                    localStorage.setItem('campaigns', JSON.stringify(dynamoCampaigns));
-                    setUpdateCampaign(true)
-                } else {
-                    for (let i = 0; i < dynamoCampaigns.length; i++) {
-                        console.log(dynamoCampaigns[i].campaign, siteCampaign)
-                        if (dynamoCampaigns[i].campaign === siteCampaign) {
-                            dynamoCampaigns[i].retry = retries;
-                            dynamoCampaigns[i].duration = duration;
-                            dynamoCampaigns[i].intervalBusy = intervalBusy;
-                            dynamoCampaigns[i].retriesWeek = retriesWeek;
-                            dynamoCampaigns[i].callerId = callerId;
-                            dynamoCampaigns[i].dnd = dnd;
-                            dynamoCampaigns[i].start = start;
-                            dynamoCampaigns[i].end = end;
-                            dynamoCampaigns[i].enabled = enabled;
-                            dynamoCampaigns[i].timezone = tz;
-                        }
-                    }
-                    localStorage.setItem('campaigns', JSON.stringify(dynamoCampaigns));
-                }*/
     }
 
     const AddCampaignModal = (prop) => {
@@ -274,6 +248,11 @@ export const SiteSettings = () => {
                 axios.request(config)
                     .then((response) => {
                         console.log(JSON.stringify(response.data));
+                        toaster.push({
+                            message: 'Campaign Created',
+                            variant: 'success',
+                            dismissAfter: 3000
+                        })
                     })
                     .catch((error) => {
                         console.log(error);
@@ -344,7 +323,37 @@ export const SiteSettings = () => {
         setSiteCampaign([])
         setSelectedCampaign(false)
         setDynamoCampaigns(campaignToUpdate)
-        localStorage.setItem('campaigns', JSON.stringify(campaignToUpdate));
+        let data = JSON.stringify({
+            "TableName": "OutboundRules",
+            "Key": {
+                "campaign": {
+                    "S": siteCampaign
+                }
+            }
+        });
+
+        let deleteConfig = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: 'https://lj3qlnw0qh.execute-api.ap-southeast-1.amazonaws.com/connect-outbound/deleteSettings',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
+        console.log(deleteConfig)
+        axios.request(deleteConfig)
+            .then((response) => {
+                console.log(JSON.stringify(response.data));
+                toaster.push({
+                    message: 'Campaign Deleted',
+                    variant: 'success',
+                    dismissAfter: 3000
+                })
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
     useEffect(() => {
@@ -360,6 +369,7 @@ export const SiteSettings = () => {
         axios.request(config)
             .then((response) => {
                 let items = response.data.items
+                console.log("I", items)
                 setDynamoCampaigns(items)
                 for (let i = 0; i < items.length; i++) {
                     currentCampaigns.push(items[i].campaign)
@@ -442,13 +452,15 @@ export const SiteSettings = () => {
                                             setRetries(dynamoCampaigns[i].retry)
                                             setRetriesWeek(dynamoCampaigns[i].retriesWeek)
                                             setIntervalBusy(dynamoCampaigns[i].intervalBusy)
-                                            setDuration(dynamoCampaigns[i].duration)
+                                            setIntervalAM(dynamoCampaigns[i].intervalAM)
+                                            setIntervalNOAN(dynamoCampaigns[i].intervalNOAN)
+                                            setDuration(dynamoCampaigns[i].callduration)
                                             setCallerId(dynamoCampaigns[i].callerId)
                                             setDND(dynamoCampaigns[i].dnd)
-                                            setStart(dynamoCampaigns[i].start)
-                                            setEnd(dynamoCampaigns[i].end)
+                                            setStart(dynamoCampaigns[i].schedulestart)
+                                            setEnd(dynamoCampaigns[i].scheduleend)
                                             setEnabled(dynamoCampaigns[i].enabled)
-                                            setTZ(dynamoCampaigns[i].timezone)
+                                            setTZ(dynamoCampaigns[i].scheduletimezone)
                                         }
                                     }
                                 }}
@@ -491,9 +503,9 @@ export const SiteSettings = () => {
                             value={enabled}
                             onInputValueChange={({ inputValue }) => {
                                 if (inputValue === "True") {
-                                    setEnabled(true)
+                                    setEnabled("true")
                                 } else {
-                                    setEnabled(false)
+                                    setEnabled("false")
                                 }
                             }}
                         /></Td>
