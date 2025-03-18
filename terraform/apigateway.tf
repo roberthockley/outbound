@@ -57,7 +57,7 @@ resource "aws_api_gateway_method" "connect_outbound_make_options" {
   rest_api_id      = aws_api_gateway_rest_api.connect_outbound.id
 }
 
-resource "aws_api_gateway_method" "connect_outbound_number_options" {
+resource "aws_api_gateway_method" "connect_outbound_numbers_options" {
   api_key_required = "false"
   authorization    = "NONE"
   http_method      = "OPTIONS"
@@ -82,7 +82,7 @@ resource "aws_api_gateway_method" "connect_outbound_make_post" {
 }
 
 
-resource "aws_api_gateway_method" "connect_outbound_number_post" {
+resource "aws_api_gateway_method" "connect_outbound_numbers_post" {
   api_key_required = "false"
   authorization    = "NONE"
   http_method      = "POST"
