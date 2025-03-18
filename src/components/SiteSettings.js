@@ -294,6 +294,26 @@ export const SiteSettings = () => {
         setCampaign(currentCampaigns);
         console.log(`Campaign(s) are: ${currentCampaigns}`)
 
+        config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: `${process.env.REACT_APP_URL}/getDND`,
+            headers: {},
+            data: data
+        };
+        axios.request(config)
+            .then((response) => {
+                console.log(response)
+                let dndToUse = []
+                let dndList = response.data.Items
+                for (let i = 0; i < dndList.length; i++) {
+                    dndToUse.push(numList[i].number.S) 
+                }
+                setNumbers(numToUse)
+            })
+            .catch((error) => {
+                console.log(error);
+            });
 
     }, []);
 
