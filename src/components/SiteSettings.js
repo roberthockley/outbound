@@ -116,6 +116,77 @@ export const SiteSettings = () => {
             })
         }
         console.log(updateCamapign)
+
+        let data = JSON.stringify({
+            "TableName": "OutboundRules",
+            "Key": {
+              "campaign": {
+                "S": siteCampaign
+              }
+            },
+            "UpdateExpression": "set callerId = :callerId, dnd = :dnd, callduration = :callduration, enabled = :enabled, scheduleend = :scheduleend, scheduleinterval = :scheduleinterval, intervalBusy = :intervalBusy, retriesWeek = :retriesWeek, retry = :retry, schedulestart = :schedulestart, scheduletimezone = :scheduletimezone",
+            "ConditionExpression": "campaign = :campaign",
+            "ExpressionAttributeValues": {
+              ":campaign": {
+                "S": siteCampaign
+              },
+              ":callerId": {
+                "S": callerId
+              },
+              ":dnd": {
+                "S": dnd
+              },
+              ":callduration": {
+                "S": duration
+              },
+              ":enabled": {
+                "BOOL": enabled
+              },
+              ":scheduleend": {
+                "S": end
+              },
+              ":scheduleinterval": {
+                "S": "500"
+              },
+              ":intervalBusy": {
+                "S": intervalBusy
+              },
+              ":retriesWeek": {
+                "S": retriesWeek
+              },
+              ":retry": {
+                "S": retries
+              },
+              ":schedulestart": {
+                "S": start
+              },
+              ":scheduletimezone": {
+                "S": tz
+              }
+            }
+          });
+          
+          let updateConfig = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: 'https://lj3qlnw0qh.execute-api.ap-southeast-1.amazonaws.com/connect-outbound/makeSettings',
+            headers: { 
+              'Content-Type': 'application/json'
+            },
+            data : data
+          };
+          console.log(updateConfig)
+
+          axios.request(updateConfig)
+          .then((response) => {
+            console.log(JSON.stringify(response.data));
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+
+/*
+
         if (updateCamapign === false) {
             let updates = {};
             updates.campaign = siteCampaign;
@@ -149,7 +220,7 @@ export const SiteSettings = () => {
                 }
             }
             localStorage.setItem('campaigns', JSON.stringify(dynamoCampaigns));
-        }
+        }*/
     }
 
     const AddCampaignModal = (prop) => {
@@ -181,6 +252,10 @@ export const SiteSettings = () => {
                 setSiteCampaign(listName);
                 setSelectedCampaign(true);
                 setUpdateCampaign(false);
+
+
+
+                
             }
         }
         const modalHeadingID = useUID();
@@ -298,18 +373,18 @@ export const SiteSettings = () => {
             method: 'post',
             maxBodyLength: Infinity,
             url: `${process.env.REACT_APP_URL}/getDND`,
-            headers: {},
-            data: data
+            headers: {}
         };
+        console.log(config)
         axios.request(config)
             .then((response) => {
-                console.log(response)
                 let dndToUse = []
                 let dndList = response.data.Items
                 for (let i = 0; i < dndList.length; i++) {
-                    dndToUse.push(numList[i].number.S) 
+                    dndToUse.push(dndList[i].name.S) 
                 }
-                setNumbers(numToUse)
+                setDNDList(dndToUse)
+
             })
             .catch((error) => {
                 console.log(error);
