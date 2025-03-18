@@ -456,14 +456,6 @@ resource "aws_api_gateway_integration" "connect_outbound_update_post" {
   credentials             = aws_iam_role.RoleForMakeCampaign.arn
   passthrough_behavior    = "WHEN_NO_MATCH"
   timeout_milliseconds    = 29000
-
-  request_templates = {
-    "application/json" = <<EOF
-{
-  "TableName": "${var.dynamo.table2}"
-}
-EOF
-  }
 }
 
 resource "aws_api_gateway_integration" "connect_outbound_make_post" {
