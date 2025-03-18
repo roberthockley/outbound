@@ -8,4 +8,6 @@ environment = {
 dynamo = {
   table1    = "OutboundRules"
   hash_key1 = "campaign"
+  table2    = "DND"
+  hash_key2 = "number"
 }

@@ -12,3 +12,18 @@ resource "aws_dynamodb_table" "outbound_table" {
     Environment = "${var.environment.name}"
   }
 }
+
+resource "aws_dynamodb_table" "dnd_table" {
+  name         = var.dynamo.table2
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key    = var.dynamo.hash_key2
+  attribute {
+    name = var.dynamo.hash_key2
+    type = "S"
+  }
+
+  tags = {
+    Name        = "${var.dynamo.table2}"
+    Environment = "${var.environment.name}"
+  }
+}

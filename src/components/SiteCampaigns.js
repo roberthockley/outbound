@@ -278,6 +278,7 @@ export const SiteCampaigns = () => {
             });
         setCampaign(currentCampaigns);
         console.log(`Campaign(s) are: ${currentCampaigns}`)
+
     }, []);
     return (
         <div id="body" style={{ width: '50%' }}>

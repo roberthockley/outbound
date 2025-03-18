@@ -43,13 +43,14 @@ export const SiteSettings = () => {
     const [duration, setDuration] = React.useState();
     const [callerId, setCallerId] = React.useState();
     const [enabled, setEnabled] = React.useState();
+    const [numbers, setNumbers] = React.useState([]);
+    const [dndList, setDNDList] = React.useState([]);
     const [dnd, setDND] = React.useState();
     const [tz, setTZ] = React.useState("Asia/Singapore");
     const [start, setStart] = React.useState('');
     const [end, setEnd] = React.useState('');
     const [updateCamapign, setUpdateCampaign] = React.useState(true);
     const [selectedCampaign, setSelectedCampaign] = React.useState(false);
-    const [multiTimes, setMultiTimes] = React.useState(false);
     const [dynamoCampaigns, setDynamoCampaigns] = React.useState([]);
     const openModal = () => setModalOpen(true);
     const closeModal = () => setModalOpen(false)
@@ -82,16 +83,6 @@ export const SiteSettings = () => {
         if (!duration) {
             toaster.push({
                 message: 'Set Minimum Ring Duration first',
-                variant: 'error',
-                dismissAfter: 3000
-            })
-        }
-        if (multiTimes === true || multiTimes === false) {
-            console.log("Multitimes set")
-        }
-        else {
-            toaster.push({
-                message: 'Set Multiple Schedules first',
                 variant: 'error',
                 dismissAfter: 3000
             })
@@ -134,7 +125,6 @@ export const SiteSettings = () => {
             updates.retriesWeek = retriesWeek;
             updates.callerId = callerId;
             updates.dnd = dnd;
-            updates.shift = multiTimes;
             updates.start = start;
             updates.end = end;
             updates.enabled = enabled;
@@ -152,7 +142,6 @@ export const SiteSettings = () => {
                     dynamoCampaigns[i].retriesWeek = retriesWeek;
                     dynamoCampaigns[i].callerId = callerId;
                     dynamoCampaigns[i].dnd = dnd;
-                    dynamoCampaigns[i].shift = multiTimes;
                     dynamoCampaigns[i].start = start;
                     dynamoCampaigns[i].end = end;
                     dynamoCampaigns[i].enabled = enabled;
@@ -242,9 +231,9 @@ export const SiteSettings = () => {
         let campaignToUpdate = []
         let newCampaign = []
         for (let i = 0; i < dynamoCampaigns.length; i++) {
-            if(dynamoCampaigns[i].campaign === siteCampaign){
-                console.log(siteCampaign, "found" ,i)
-            }else{
+            if (dynamoCampaigns[i].campaign === siteCampaign) {
+                console.log(siteCampaign, "found", i)
+            } else {
                 campaignToUpdate.push(dynamoCampaigns[i])
                 newCampaign.push(dynamoCampaigns[i].campaign)
             }
@@ -264,7 +253,7 @@ export const SiteSettings = () => {
             method: 'post',
             maxBodyLength: Infinity,
             url: `${process.env.REACT_APP_URL}/readSettings`,
-            headers: { }
+            headers: {}
         };
         console.log(config)
         axios.request(config)
@@ -280,8 +269,34 @@ export const SiteSettings = () => {
             .catch((error) => {
                 console.log(error);
             });
+        let data = JSON.stringify({});
+
+        config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: `${process.env.REACT_APP_URL}/getNumbers`,
+            headers: {},
+            data: data
+        };
+        axios.request(config)
+            .then((response) => {
+                console.log(response)
+                let numToUse = []
+                let numList = response.data.ListPhoneNumbersSummaryList
+                for (let i = 0; i < numList.length; i++) {
+                    numToUse.push(numList[i].PhoneNumber) 
+                }
+                setNumbers(numToUse)
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        setCampaign(currentCampaigns);
+        console.log(`Campaign(s) are: ${currentCampaigns}`)
+
+
     }, []);
-    
+
     return (
         <div id="body" style={{ width: '50%' }}>
             <Heading as="h1" variant="heading10">
@@ -453,7 +468,7 @@ export const SiteSettings = () => {
                         <Td></Td>
                         <Td></Td>
                         <Td><Combobox
-                            items={["+6586115961", "+6589135961"]}
+                            items={numbers}
                             value={callerId}
                             onInputValueChange={({ inputValue }) => {
                                 setCallerId(inputValue)
@@ -465,7 +480,7 @@ export const SiteSettings = () => {
                         <Td></Td>
                         <Td></Td>
                         <Td><Combobox
-                            items={["Global", "Sales", "Collections"]}
+                            items={dndList}
                             value={dnd}
                             onInputValueChange={({ inputValue }) => {
                                 setDND(inputValue)
