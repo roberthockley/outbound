@@ -169,7 +169,7 @@ export const SiteSettings = () => {
           let updateConfig = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: 'https://lj3qlnw0qh.execute-api.ap-southeast-1.amazonaws.com/connect-outbound/makeSettings',
+            url: 'https://lj3qlnw0qh.execute-api.ap-southeast-1.amazonaws.com/connect-outbound/updateSettings',
             headers: { 
               'Content-Type': 'application/json'
             },
@@ -252,10 +252,36 @@ export const SiteSettings = () => {
                 setSiteCampaign(listName);
                 setSelectedCampaign(true);
                 setUpdateCampaign(false);
+                let data = JSON.stringify({
+                    "TableName": "OutboundRules",
+                    "Item": {
+                      "campaign": {
+                        "S": listName
+                      }
+                    }
+                  });
+                  
+                  let config = {
+                    method: 'post',
+                    maxBodyLength: Infinity,
+                    url: 'https://lj3qlnw0qh.execute-api.ap-southeast-1.amazonaws.com/connect-outbound/makeSettings',
+                    headers: { 
+                      'Content-Type': 'application/json'
+                    },
+                    data : data
+                  };
+                  
+                  axios.request(config)
+                  .then((response) => {
+                    console.log(JSON.stringify(response.data));
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
 
 
 
-                
+
             }
         }
         const modalHeadingID = useUID();
