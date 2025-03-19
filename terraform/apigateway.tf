@@ -104,14 +104,6 @@ resource "aws_api_gateway_integration" "connect_outbound_read_post" {
   credentials             = aws_iam_role.RoleForMakeCampaign.arn
   passthrough_behavior    = "WHEN_NO_MATCH"
   timeout_milliseconds    = 29000
-
-  request_templates = {
-    "application/json" = <<EOF
-{
-  "TableName": "${var.dynamo.table1}"
-}
-EOF
-  }
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_read_options" {
@@ -658,14 +650,6 @@ resource "aws_api_gateway_integration" "connect_outbound_dnd_post" {
   credentials             = aws_iam_role.RoleForMakeCampaign.arn
   passthrough_behavior    = "WHEN_NO_MATCH"
   timeout_milliseconds    = 29000
-
-  request_templates = {
-    "application/json" = <<EOF
-{
-  "TableName": "${var.dynamo.table2}"
-}
-EOF
-  }
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_dnd_options" {
