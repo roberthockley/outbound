@@ -773,46 +773,6 @@ resource "aws_api_gateway_integration_response" "connect_outbound_table_post" {
   status_code = "200"
 }
 
-resource "aws_api_gateway_deployment" "connect_outbound_deployment" {
-  depends_on  = [aws_api_gateway_integration.connect_outbound_table_post, aws_api_gateway_integration.connect_outbound_table_options, aws_api_gateway_integration.connect_outbound_delete_post, aws_api_gateway_integration.connect_outbound_delete_options, aws_api_gateway_integration.connect_outbound_make_post, aws_api_gateway_integration.connect_outbound_make_options, aws_api_gateway_integration.connect_outbound_dnd_post, aws_api_gateway_integration.connect_outbound_dnd_options, aws_api_gateway_integration.connect_outbound_numbers_post, aws_api_gateway_integration.connect_outbound_numbers_options, aws_api_gateway_integration.connect_outbound_update_post, aws_api_gateway_integration.connect_outbound_update_options, aws_api_gateway_integration.connect_outbound_read_options, aws_api_gateway_integration.connect_outbound_read_post]
-  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
-}
-
-resource "aws_api_gateway_stage" "connect_outbound" {
-  cache_cluster_enabled = "false"
-  deployment_id         = aws_api_gateway_deployment.connect_outbound_deployment.id
-  rest_api_id           = aws_api_gateway_rest_api.connect_outbound.id
-  stage_name            = "connect-outbound"
-  xray_tracing_enabled  = "false"
-}
-
-
-resource "aws_api_gateway_gateway_response" "connect_outbound_4xx" {
-  response_parameters = {
-    "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-    "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST'"
-    "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
-  }
-  response_templates = {
-    "application/json" = "{\"message\":$context.error.messageString}"
-  }
-  response_type = "DEFAULT_4XX"
-  rest_api_id   = aws_api_gateway_rest_api.connect_outbound.id
-}
-
-resource "aws_api_gateway_gateway_response" "connect_outbound_5xx" {
-  response_parameters = {
-    "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-    "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST'"
-    "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
-  }
-  response_templates = {
-    "application/json" = "{\"message\":$context.error.messageString}"
-  }
-  response_type = "DEFAULT_5XX"
-  rest_api_id   = aws_api_gateway_rest_api.connect_outbound.id
-}
-
 resource "aws_api_gateway_resource" "connect_outbound_csv" {
   parent_id   = aws_api_gateway_rest_api.connect_outbound.root_resource_id
   path_part   = "csvUpload"
@@ -905,7 +865,7 @@ resource "aws_api_gateway_integration_response" "connect_outbound_csv_options" {
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_csv_post" {
-  depends_on  = [aws_api_gateway_resource.connect_admin]
+  depends_on  = [aws_api_gateway_resource.connect_outbound_csv]
   http_method = "POST"
   resource_id = aws_api_gateway_resource.connect_outbound_csv.id
   response_parameters = {
@@ -913,6 +873,47 @@ resource "aws_api_gateway_integration_response" "connect_outbound_csv_post" {
   }
   rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
   status_code = "200"
+}
+
+
+resource "aws_api_gateway_deployment" "connect_outbound_deployment" {
+  depends_on  = [aws_api_gateway_integration.connect_outbound_csv_post, aws_api_gateway_integration.connect_outbound_csv_options, aws_api_gateway_integration.connect_outbound_table_post, aws_api_gateway_integration.connect_outbound_table_options, aws_api_gateway_integration.connect_outbound_delete_post, aws_api_gateway_integration.connect_outbound_delete_options, aws_api_gateway_integration.connect_outbound_make_post, aws_api_gateway_integration.connect_outbound_make_options, aws_api_gateway_integration.connect_outbound_dnd_post, aws_api_gateway_integration.connect_outbound_dnd_options, aws_api_gateway_integration.connect_outbound_numbers_post, aws_api_gateway_integration.connect_outbound_numbers_options, aws_api_gateway_integration.connect_outbound_update_post, aws_api_gateway_integration.connect_outbound_update_options, aws_api_gateway_integration.connect_outbound_read_options, aws_api_gateway_integration.connect_outbound_read_post]
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+}
+
+resource "aws_api_gateway_stage" "connect_outbound" {
+  cache_cluster_enabled = "false"
+  deployment_id         = aws_api_gateway_deployment.connect_outbound_deployment.id
+  rest_api_id           = aws_api_gateway_rest_api.connect_outbound.id
+  stage_name            = "connect-outbound"
+  xray_tracing_enabled  = "false"
+}
+
+
+resource "aws_api_gateway_gateway_response" "connect_outbound_4xx" {
+  response_parameters = {
+    "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST'"
+    "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
+  }
+  response_templates = {
+    "application/json" = "{\"message\":$context.error.messageString}"
+  }
+  response_type = "DEFAULT_4XX"
+  rest_api_id   = aws_api_gateway_rest_api.connect_outbound.id
+}
+
+resource "aws_api_gateway_gateway_response" "connect_outbound_5xx" {
+  response_parameters = {
+    "gatewayresponse.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "gatewayresponse.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST'"
+    "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
+  }
+  response_templates = {
+    "application/json" = "{\"message\":$context.error.messageString}"
+  }
+  response_type = "DEFAULT_5XX"
+  rest_api_id   = aws_api_gateway_rest_api.connect_outbound.id
 }
 
 resource "aws_lambda_permission" "connect_outbound" {
