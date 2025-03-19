@@ -102,3 +102,50 @@ resource "aws_iam_role_policy_attachment" "RoleForMakeCampaignEventsInvoke" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/CloudWatchEventsInvocationAccess"
   role       = "RoleForMakeCampaign"
 }
+
+resource "aws_iam_role" "RoleForCSV2Dynamo" {
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = ["apigateway.amazonaws.com",
+          "lambda.amazonaws.com"]
+        }
+      }
+    ]
+  })
+  description = "Allows Lambda functions to call AWS services on your behalf."
+  name        = "RoleForCSV2Dynamo"
+}
+
+resource "aws_iam_policy" "RoleForCSV2Dynamo" {
+  name        = "PolicyForCSV2Dynamo"
+  path        = "/"
+  description = "For the Secret Rotation Lambda"
+  policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Sid" : "VisualEditor0",
+        "Effect" : "Allow",
+        "Action" : "dynamodb:BatchWriteItem",
+        "Resource" : "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "RoleForCSV2Dynamo_PolicyForCSV2Dynamo" {
+  depends_on = [aws_iam_role.RoleForCSV2Dynamo]
+  policy_arn = aws_iam_policy.RoleForCSV2Dynamo.arn
+  role       = "RoleForCSV2Dynamo"
+}
+
+resource "aws_iam_role_policy_attachment" "RoleForMakeCampaign_CloudWatchLogsFullAccess" {
+  depends_on = [aws_iam_role.RoleForCSV2Dynamo]
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+  role       = "RoleForCSV2Dynamo"
+}
