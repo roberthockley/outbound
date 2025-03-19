@@ -128,7 +128,7 @@ resource "aws_api_gateway_integration_response" "connect_outbound_read_options" 
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_read_post" {
-  depends_on  = [aws_api_gateway_method.connect_outbound_read_post, aws_api_gateway_integration.connect_outbound_read]
+  depends_on  = [aws_api_gateway_method.connect_outbound_read_post, aws_api_gateway_integration.connect_outbound_read_post]
   http_method = "POST"
   resource_id = aws_api_gateway_resource.connect_outbound_read.id
   response_parameters = {
@@ -781,7 +781,7 @@ resource "aws_api_gateway_integration_response" "connect_outbound_table_options"
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_table_post" {
-  depends_on  = [aws_api_gateway_method.connect_outbound_table_post, aws_api_gateway_integration.connect_outbound_table]
+  depends_on  = [aws_api_gateway_method.connect_outbound_table_post, aws_api_gateway_integration.connect_outbound_table_options]
   http_method = "POST"
   resource_id = aws_api_gateway_resource.connect_outbound_table.id
   response_parameters = {
