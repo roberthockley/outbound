@@ -815,7 +815,7 @@ resource "aws_api_gateway_gateway_response" "connect_outbound_5xx" {
 
 resource "aws_api_gateway_resource" "connect_outbound_csv" {
   parent_id   = aws_api_gateway_rest_api.connect_outbound.root_resource_id
-  path_part   = "newCampaign"
+  path_part   = "csvUpload"
   rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
 }
 
@@ -862,12 +862,6 @@ resource "aws_api_gateway_method_response" "connect_outbound_csv_post" {
   }
   rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
   status_code = "200"
-}
-
-resource "aws_api_gateway_resource" "connect_outbound_csv" {
-  parent_id   = aws_api_gateway_rest_api.connect_outbound.root_resource_id
-  path_part   = "csvUpload"
-  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
 }
 
 resource "aws_api_gateway_integration" "connect_outbound_csv_options" {
