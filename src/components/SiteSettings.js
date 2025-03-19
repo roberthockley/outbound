@@ -258,7 +258,43 @@ export const SiteSettings = () => {
                         console.log(error);
                     });
 
-
+                    let createCampaignData = JSON.stringify({
+                        "AttributeDefinitions": [
+                          {
+                            "AttributeName": "phoneNumber",
+                            "AttributeType": "S"
+                          }
+                        ],
+                        "TableName": `${listName}-Campaign`,
+                        "KeySchema": [
+                          {
+                            "AttributeName": "phoneNumber",
+                            "KeyType": "HASH"
+                          }
+                        ],
+                        "ProvisionedThroughput": {
+                          "ReadCapacityUnits": 5,
+                          "WriteCapacityUnits": 5
+                        }
+                      });
+                      
+                      let createCampaignConfig = {
+                        method: 'post',
+                        maxBodyLength: Infinity,
+                        url: `${process.env.REACT_APP_URL}/newCampaign`,
+                        headers: { 
+                          'Content-Type': 'application/json'
+                        },
+                        data : createCampaignData
+                      };
+                      
+                      axios.request(createCampaignConfig)
+                      .then((response) => {
+                        console.log(JSON.stringify(response.data));
+                      })
+                      .catch((error) => {
+                        console.log(error);
+                      });
 
 
             }
