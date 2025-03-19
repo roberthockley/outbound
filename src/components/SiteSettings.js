@@ -6,10 +6,9 @@ import { Input } from '@twilio-paste/core/input';
 import { Heading } from '@twilio-paste/core/heading';
 import { Button } from '@twilio-paste/core/button';
 import { Table, THead, Tr, Td, Th, TBody, TFoot } from '@twilio-paste/core/table';
-import { Checkbox, HelpText, Label } from '@twilio-paste/core';
-import { DatePicker, formatReturnDate } from '@twilio-paste/core/date-picker';
+import { Label } from '@twilio-paste/core';
+import { DatePicker } from '@twilio-paste/core/date-picker';
 import { Modal, ModalBody, ModalFooter, ModalFooterActions, ModalHeader, ModalHeading } from '@twilio-paste/core/modal';
-import { encode as base64_encode } from 'base-64';
 import { useUID } from '@twilio-paste/core/uid-library';
 
 
@@ -52,8 +51,6 @@ export const SiteSettings = () => {
     const [updateCamapign, setUpdateCampaign] = React.useState(true);
     const [selectedCampaign, setSelectedCampaign] = React.useState(false);
     const [dynamoCampaigns, setDynamoCampaigns] = React.useState([]);
-    const openModal = () => setModalOpen(true);
-    const closeModal = () => setModalOpen(false)
     const [isModalOpen, setModalOpen] = React.useState(false);
     const toaster = useToaster();
     const [allowUpdate, setAllowUpdate] = React.useState(true);
@@ -205,9 +202,6 @@ export const SiteSettings = () => {
     }
 
     const AddCampaignModal = (prop) => {
-        const uidDP = useUID();
-        const uidHT = useUID();
-        let location = prop.location
         const [isOpen, setIsOpen] = React.useState(false);
         const handleOpen = () => {
             setIsOpen(true)
@@ -221,7 +215,7 @@ export const SiteSettings = () => {
             if (campaign.indexOf(listName) !== -1) {
                 console.log("-1")
                 toaster.push({
-                    message: 'List Name already Exists',
+                    message: 'Campaign Name already Exists',
                     variant: 'error',
                     dismissAfter: 3000
                 })
@@ -287,7 +281,7 @@ export const SiteSettings = () => {
                 let createCampaignConfig = {
                     method: 'post',
                     maxBodyLength: Infinity,
-                    url: `${process.env.REACT_APP_URL}/newCampaign`,
+                    url: `${process.env.REACT_APP_URL}/createTable`,
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -305,8 +299,6 @@ export const SiteSettings = () => {
             }
         }
         const modalHeadingID = useUID();
-        const nameInputRef = React.createRef();
-        const dateInputRef = React.createRef();
         const [listName, setListName] = React.useState('');
         return (
             <div>

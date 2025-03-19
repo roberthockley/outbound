@@ -1,52 +1,61 @@
 import { Combobox } from '@twilio-paste/core/combobox';
 import React, { useEffect } from 'react';
-import { Label, Box } from '@twilio-paste/core';
 import { useToaster, Toaster } from '@twilio-paste/core/toast';
+import axios from 'axios';
+import { Input } from '@twilio-paste/core/input';
 import { Heading } from '@twilio-paste/core/heading';
 import { Button } from '@twilio-paste/core/button';
-import { Input } from '@twilio-paste/core/input';
+import { Table, THead, Tr, Td, Th, TBody } from '@twilio-paste/core/table';
+import { Label } from '@twilio-paste/core';
 import { Modal, ModalBody, ModalFooter, ModalFooterActions, ModalHeader, ModalHeading } from '@twilio-paste/core/modal';
 import { useUID } from '@twilio-paste/core/uid-library';
 import ReactFileReader from 'react-file-reader';
-import { Spinner } from '@twilio-paste/core/spinner';
-import { Table, THead, Tr, Td, Th, TBody } from '@twilio-paste/core/table';
 import { DeleteIcon } from "@twilio-paste/icons/esm/DeleteIcon";
-import axios from 'axios';
-
 let newData = []
-let listDND = []
-let numberRanges = [
-    ["All"]
-];
 
 export const SiteDND = () => {
-    const [list, setList] = React.useState(newData);
-    const [dndList, setDNDList] = React.useState("");
-    const [inputItems, setInputItems] = React.useState(newData);
-    const [value, setValue] = React.useState("");
-    const [inputNumber, setInputNumber] = React.useState("");
-    const [dnd, setDND] = React.useState(listDND);
-    const [showResults, setShowResults] = React.useState(false);
-    const [numberData, setNumberData] = React.useState([])
-    const [filteredDND, setFilteredDND] = React.useState(listDND)
+    const [dndList, setDNDList] = React.useState(newData);
+    const [siteDNDList, setSiteDNDList] = React.useState(newData);
+    const [updateDNDList, setUpdateDNDList] = React.useState([]);
+    const [selectedDNDList, setSelectedDNDList] = React.useState(false);
     const [isModalOpen, setModalOpen] = React.useState(false);
-    const [fileData, setFileData] = React.useState("");
-    const [filterDateRange, setFilterDateRange] = React.useState(numberRanges);
-    const [filter, setFilter] = React.useState("All");
-    const [dynamoDND, setDynamoDND] = React.useState("");
-    const openModal = () => setModalOpen(true);
-    const closeModal = () => setModalOpen(false);
     const toaster = useToaster();
-    const [showListDetails, setShowListDetails] = React.useState(true);
-    const [showFoundListDetails, setShowFoundListDetails] = React.useState(true);
-    let handleFormSubmit; //=console.log("Submit")
-    let dndToList = [];
-    let dnd2 = JSON.parse(localStorage.getItem('dnd'));
-    let items;
+    const [fileData, setFileData] = React.useState("");
+    const [isOpen, setIsOpen] = React.useState(false);
 
-    const loadDNDList = (listToUse) => {
+    const removeNumber = (number, name) => {
+        console.log(`****** Remove Number`, number, name);
+        const updatedDNDList = updateDNDList.filter(item => item.phoneNumber !== number);
+        setUpdateDNDList(updatedDNDList);
+        const deleteData = JSON.stringify({
+            TableName: `${siteDNDList}-DND`,
+            Key: {
+                phoneNumber: { S: number }
+            }
+        });
+
+        const deleteConfig = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: `${process.env.REACT_APP_URL}/deleteSettings`,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: deleteData
+        };
+        axios.request(deleteConfig)
+            .then((response) => {
+                console.log(JSON.stringify(response.data));
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
+    const loadDNDList = (dndName) => {
+        console.log("dndName",dndName)
         let readData = JSON.stringify({
-            "TableName": `${listToUse}-DND`
+            "TableName": `${dndName}-DND`
         });
         let config = {
             method: 'post',
@@ -58,157 +67,16 @@ export const SiteDND = () => {
         console.log(config)
         axios.request(config)
             .then((response) => {
-                console.log(response)
                 let items = response.data.items
-                console.log("I", items)
+                console.log("items",items)
+                setUpdateDNDList(items)
             })
             .catch((error) => {
                 console.log(error);
             });
     }
 
-    const removeNumber = (number, name, list) => {
-        console.log(`****** Remove Number ${list}`, number, name)
-        let numberToUpdate;
-        let listDND = []
-        for (let i = 0; i < dynamoDND.length; i++) {
-            if (dynamoDND[i].list === list) {
-                for (let j = 0; j < dynamoDND[i].dnds.length; j++) {
-                    console.log(dynamoDND[i].dnds[j])
-
-                    if (dynamoDND[i].dnds[j].number == number) {
-                    } else {
-                        listDND.push(dynamoDND[i].dnds[j])
-                        //listPrompts.push(dynamoPrompts[i].prompts[j])
-                    }
-
-
-                }
-                dynamoDND[i].dnds = listDND
-                console.log("update", listDND)
-
-            }
-        }
-        localStorage.setItem('dnd', JSON.stringify(dynamoDND));
-        loadDNDList(list)
-        toaster.push({
-            message: 'Number removed',
-            variant: 'warning',
-            dismissAfter: 3000
-        })
-    }
-
-    const AddNumberModal = (prop) => {
-        const uidDP = useUID();
-        const uidHT = useUID();
-        let list = prop.list
-        const [isOpen, setIsOpen] = React.useState(false);
-        const handleOpen = () => {
-            if (list.length === 0) {
-                toaster.push({
-                    message: 'Select List first',
-                    variant: 'error',
-                    dismissAfter: 3000
-                })
-                setIsOpen(false)
-                console.log("List not set - Modal closed!")
-            } else {
-                setIsOpen(true)
-                console.log("Modal Open");
-            }
-        }
-        const handleClose = () => {
-            setIsOpen(false)
-            console.log("Modal closed")
-        };
-
-        const addNumber = () => {
-            console.log("HD", numberData)
-            if (!number) {
-                toaster.push({
-                    message: 'Select a number first',
-                    variant: 'error',
-                    dismissAfter: 3000
-                })
-                setIsOpen(false);
-            } else {
-                let numberToAdd = {}
-                numberToAdd.number = number;
-                numberToAdd.name = name;
-                console.log(dnd)
-                listDND = dnd
-                listDND.push(numberToAdd)
-                for (let i = 0; i < dynamoDND.length; i++) {
-                    if (dynamoDND[i].list === list) {
-
-                        dynamoDND[i].dnds = listDND
-                        console.log("update", listDND)
-
-                    }
-                }
-                localStorage.setItem('dnd', JSON.stringify(dynamoDND));
-                loadDNDList(list)
-                setIsOpen(false);
-                toaster.push({
-                    message: 'Number added',
-                    variant: 'success',
-                    dismissAfter: 3000
-                })
-
-            }
-        };
-
-        const modalHeadingID = useUID();
-        const nameInputRef = React.createRef();
-        const numberInputRef = React.createRef();
-        const [number, setNumber] = React.useState('');
-        const [name, setName] = React.useState('');
-        return (
-            <div>
-                <Button variant="primary" onClick={handleOpen}>
-                    New Number
-                </Button>
-                <Modal ariaLabelledby={modalHeadingID} isOpen={isOpen} onDismiss={handleClose} size="default">
-                    <ModalHeader>
-                        <ModalHeading as="h3" id={modalHeadingID}>
-                            New Number
-                        </ModalHeading>
-                    </ModalHeader>
-                    <ModalBody>
-                        <Label htmlFor={uidDP + 2} required>
-                        </Label>
-                        <Label>Customer Number</Label>
-                        <Input
-                            type="text"
-                            id={modalHeadingID + 2}
-                            onChange={e => setNumber(e.currentTarget.value)}
-                        />
-                        <Label htmlFor={uidDP} required>
-                        </Label>
-                        <Label>Customer Name</Label>
-                        <Input
-                            type="text"
-                            id={modalHeadingID}
-                            onChange={e => setName(e.currentTarget.value)}
-                        />
-                    </ModalBody>
-                    <ModalFooter>
-                        <ModalFooterActions>
-                            <Button variant="secondary" onClick={handleClose}>
-                                Cancel
-                            </Button>
-                            <Button variant="primary" onClick={addNumber}>Submit</Button>
-                        </ModalFooterActions>
-                    </ModalFooter>
-                </Modal>
-            </div>
-        );
-    }
-
     const AddListModal = (prop) => {
-        const uidDP = useUID();
-        const uidHT = useUID();
-        let location = prop.location
         const [isOpen, setIsOpen] = React.useState(false);
         const handleOpen = () => {
             setIsOpen(true)
@@ -218,8 +86,9 @@ export const SiteDND = () => {
             setIsOpen(false)
             console.log("Modal closed")
         };
-        const addList = () => {
-            if (list.indexOf(listName) !== -1) {
+        const addCampaign = () => {
+
+            if (dndList.indexOf(listName) !== -1) {
                 console.log("-1")
                 toaster.push({
                     message: 'List Name already Exists',
@@ -227,23 +96,82 @@ export const SiteDND = () => {
                     dismissAfter: 3000
                 })
             } else {
-                let updatedDrop = list
+                let updatedDrop = dndList
                 updatedDrop.push(listName)
-                setList(updatedDrop)
-                setInputItems(updatedDrop)
-                setDNDList(listName);
+                setUpdateDNDList([])
+                setSiteDNDList(listName)
                 setIsOpen(false)
-                let update = {}
-                update.list = listName;
-                update.dnds = [];
-                dynamoDND.push(update)
-                localStorage.setItem('dnd', JSON.stringify(dynamoDND));
-                loadDNDList(listName)
+                setDNDList(updatedDrop)
+                let makeData = JSON.stringify({
+                    "TableName": "DND",
+                    "Item": {
+                        "name": {
+                            "S": listName
+                        }
+                    }
+                });
+
+                let config = {
+                    method: 'post',
+                    maxBodyLength: Infinity,
+                    url: `${process.env.REACT_APP_URL}/makeSettings`,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: makeData
+                };
+
+                axios.request(config)
+                    .then((response) => {
+                        toaster.push({
+                            message: 'DND List Created',
+                            variant: 'success',
+                            dismissAfter: 3000
+                        })
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+
+                let createCampaignData = JSON.stringify({
+                    "AttributeDefinitions": [
+                        {
+                            "AttributeName": "phoneNumber",
+                            "AttributeType": "S"
+                        }
+                    ],
+                    "TableName": `${listName}-DND`,
+                    "KeySchema": [
+                        {
+                            "AttributeName": "phoneNumber",
+                            "KeyType": "HASH"
+                        }
+                    ],
+                    "ProvisionedThroughput": {
+                        "ReadCapacityUnits": 5,
+                        "WriteCapacityUnits": 5
+                    }
+                });
+
+                let createCampaignConfig = {
+                    method: 'post',
+                    maxBodyLength: Infinity,
+                    url: `${process.env.REACT_APP_URL}/createTable`,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: createCampaignData
+                };
+
+                axios.request(createCampaignConfig)
+                    .then((response) => {
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
             }
         }
         const modalHeadingID = useUID();
-        const nameInputRef = React.createRef();
-        const dateInputRef = React.createRef();
         const [listName, setListName] = React.useState('');
         return (
             <div>
@@ -253,7 +181,7 @@ export const SiteDND = () => {
                 <Modal ariaLabelledby={modalHeadingID} isOpen={isOpen} onDismiss={handleClose} size="default">
                     <ModalHeader>
                         <ModalHeading as="h3" id={modalHeadingID}>
-                            New Do Not Call List
+                            New List
                         </ModalHeading>
                     </ModalHeader>
                     <ModalBody>
@@ -263,14 +191,13 @@ export const SiteDND = () => {
                             id={modalHeadingID}
                             onChange={e => setListName(e.currentTarget.value)}
                         />
-
                     </ModalBody>
                     <ModalFooter>
                         <ModalFooterActions>
                             <Button variant="secondary" onClick={handleClose}>
                                 Cancel
                             </Button>
-                            <Button variant="primary" onClick={addList}>Submit</Button>
+                            <Button variant="primary" onClick={addCampaign}>Submit</Button>
                         </ModalFooterActions>
                     </ModalFooter>
                 </Modal>
@@ -278,315 +205,255 @@ export const SiteDND = () => {
         );
     }
 
-    const AddFileModal = (prop) => {
-        const uidDP = useUID();
-        const uidHT = useUID();
-        let location = prop.location
-        const [isOpen, setIsOpen] = React.useState(false);
-        const [fileUploaded, setFileUploaded] = React.useState(false);
-        const [fileData, setFileData] = React.useState(null);
-    
+    const UploadDNDListModal = (prop) => {
         const handleOpen = () => {
-            setIsOpen(true)
-            setFileUploaded(false);
-            console.log("Modal Open");
+            if (selectedDNDList) {
+                setIsOpen(true)
+                console.log("Modal Open");
+            } else {
+                toaster.push({
+                    message: 'Select DNDList First',
+                    variant: 'error',
+                    dismissAfter: 3000
+                })
+            }
         }
-    
         const handleClose = () => {
             setIsOpen(false)
             console.log("Modal closed")
         };
-    
-        const handleFiles = files => {
-            console.log(dndList)
-            if (!dndList) {
-                toaster.push({
-                    message: 'List Name Missing',
-                    variant: 'error',
-                    dismissAfter: 3000
-                })
-                return; // Exit the function if there's no dndList
-            }
-            let importFileData = files.base64[0].replace("data:text/csv;base64,", "")
-            setFileData(importFileData)
-            setFileUploaded(true);
-            console.log(atob(importFileData))
-        }
-    
-        const addFileList = (test) => {
-            if (!fileData) {
-                toaster.push({
-                    message: 'No file uploaded',
-                    variant: 'error',
-                    dismissAfter: 3000
-                })
-                return;
-            }
-            let csvContent = atob(fileData)
-            const lines = csvContent.split('\n').map(line => line.replace(/\r/g, ''));
-            const dataWithoutHeader = lines.slice(1);
-            const parsedData = dataWithoutHeader.map(line => {
-                return line.split(','); // Adjust the delimiter if necessary
+
+        const handleFiles = (files) => {
+            let importFileData = files.base64[0].replace("data:text/csv;base64,", "");
+            setFileData(importFileData); // Save file data to state
+            setIsOpen(false);
+            console.log(importFileData)
+            let csvUploadData = JSON.stringify({
+                "data": importFileData,
+                "tableName": `${siteDNDList}-DND`
             });
-            let update = {};
-            update.list = dndList;
-            let newData = [];
-            for (let i = 0; i < parsedData.length; i++) {
-                let item = {};
-                item.number = parsedData[i][0]
-                item.name = parsedData[i][1]
-                newData.push(item)
-            }
-            update.dnds = newData
-            let newListToUpdate=[]
-            for (let i = 0; i < dynamoDND.length; i++) {
-                if(dynamoDND[i].list === dndList){
-                    newListToUpdate.push(update)
-                }else{
-                    newListToUpdate.push(dynamoDND[i])
-                }
-            }
-            localStorage.setItem('dnd', JSON.stringify(newListToUpdate));
-            console.log("LLLL",dndList)
-            setDynamoDND(newListToUpdate)
-            loadDNDList(dndList)
-            handleClose(); // Close the modal after successful submission
-        }
-    
+
+            let csvUploadConfig = {
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: `${process.env.REACT_APP_URL}/csvUpload`,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: csvUploadData
+            };
+
+            axios.request(csvUploadConfig)
+                .then((response) => {
+                    console.log(response)
+                    toaster.push({
+                        message: 'File Uploaded',
+                        variant: 'success',
+                        dismissAfter: 3000
+                    })
+                    loadDNDList(siteDNDList)
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        };
         const modalHeadingID = useUID();
-        const nameInputRef = React.createRef();
-        const dateInputRef = React.createRef();
-        const [listName, setListName] = React.useState('');
-    
         return (
             <div>
                 <Button variant="primary" onClick={handleOpen}>
-                    Upload
+                    Upload List
                 </Button>
                 <Modal ariaLabelledby={modalHeadingID} isOpen={isOpen} onDismiss={handleClose} size="default">
                     <ModalHeader>
                         <ModalHeading as="h3" id={modalHeadingID}>
-                            New Do Not Call List
+                            Upload Contact List
                         </ModalHeading>
                     </ModalHeader>
                     <ModalBody>
-                        <span>
-                            <Label>Select a CSV File</Label>
-                            <ReactFileReader handleFiles={handleFiles} fileTypes={[".csv"]} base64={true} multipleFiles={true}>
-                                <Button className='btn'>Upload</Button>
-                            </ReactFileReader>
-                        </span>
-                        {fileUploaded && <p>File uploaded successfully!</p>}
-                        <span>
-                            {showResults ? <Heading as="h5" variant="heading50">Loading</Heading> : null}
-                            {showResults ? <Spinner size="sizeIcon70" decorative={false} title="Loading" /> : null}
-                        </span>
+                        <div
+                            style={{ width: "90%", margin: "auto" }}>
+                            <div style={{ display: "flex", gap: "300px" }}>
+                                <span>
+                                    <Label>Select a CSV File</Label>
+                                    <ReactFileReader handleFiles={handleFiles} fileTypes={[".csv"]} base64={true} multipleFiles={true}>
+                                        <Button className='btn'>Upload</Button>
+                                    </ReactFileReader>
+                                </span>
+                            </div>
+                        </div>
                     </ModalBody>
                     <ModalFooter>
                         <ModalFooterActions>
                             <Button variant="secondary" onClick={handleClose}>
                                 Cancel
                             </Button>
-                            <Button variant="primary" onClick={addFileList} disabled={!fileUploaded}>Submit</Button>
                         </ModalFooterActions>
                     </ModalFooter>
                 </Modal>
             </div>
         );
     }
-    
-    const findList = (number) => {
-        let foundList = []
-        setShowListDetails(false)
-        for (let i = 0; i < dynamoDND.length; i++) {
-            for (let j = 0; j < dynamoDND[i].dnds.length; j++) {
-                if (number === dynamoDND[i].dnds[j].number) {
-                    foundList.push(dynamoDND[i].list)
-                }
-            }
 
-        }
-        setFilteredDND(foundList)
-    }
-
-    const loadList = (foundlist) => {
-        setValue(foundlist)
-        setInputNumber("")
-        setShowListDetails(true)
-        setInputItems(foundlist)
-        setFilterDateRange(["All"])
-        loadDNDList(foundlist)
-    }
-
-    const removeList = () => {
-        if (dndList === "Global") {
+    const removeDNDList = () => {
+        if (siteDNDList === "Global") {
             toaster.push({
                 message: 'Global List Cannot Be Deleted',
                 variant: 'error',
                 dismissAfter: 3000
             })
-        }
-        console.log(dndList)
-        if (dndList.length === 0) {
+        } else if (selectedDNDList) {
+            let deleteData = JSON.stringify({
+                "TableName": "DND",
+                "Key": {
+                    "name": {
+                        "S": siteDNDList
+                    }
+                }
+            });
+
+            let deleteConfig = {
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: `${process.env.REACT_APP_URL}/deleteSettings`,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: deleteData
+            };
+            console.log(deleteConfig)
+            axios.request(deleteConfig)
+                .then((response) => {
+                    toaster.push({
+                        message: 'List Deleted',
+                        variant: 'success',
+                        dismissAfter: 3000
+                    })
+
+                    const updatedList = dndList.filter((item) => item !== siteDNDList);
+                    setDNDList(updatedList); // Update dropdown options
+                    setSiteDNDList("Global")
+                    loadDNDList("Global");
+                    setUpdateDNDList([]); // Clear current list before reload
+                    setTimeout(() => loadDNDList("Global"), 0); // Force re-render
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+                
+        } else {
             toaster.push({
-                message: 'Select List First',
+                message: 'Select DNDList First',
                 variant: 'error',
                 dismissAfter: 3000
             })
         }
-        let listsToUpdate = []
-        let newList = []
-        for (let i = 0; i < dynamoDND.length; i++) {
-            console.log(dynamoDND[i].list, dndList)
-            if (dynamoDND[i].list === dndList) {
-                console.log(dndList, "found", i)
-            } else {
-                listsToUpdate.push(dynamoDND[i])
-                newList.push(dynamoDND[i].list)
-            }
-        }
-        setList(newList);
-        setDynamoDND(listsToUpdate)
-        setDNDList("Global")
-        setInputItems("Global")
-        loadDNDList("Global")
-        localStorage.setItem('dnd', JSON.stringify(listsToUpdate));
+
+
     }
 
     useEffect(() => {
-        let dndData = JSON.stringify({
+        let currentDNDLists = [];
+        let readData = JSON.stringify({
             "TableName": "DND"
         });
-        let dndConfig = {
+        let config = {
             method: 'post',
             maxBodyLength: Infinity,
             url: `${process.env.REACT_APP_URL}/readSettings`,
             headers: {},
-            data: dndData
+            data: readData
         };
-        axios.request(dndConfig)
+        console.log(config)
+        axios.request(config)
             .then((response) => {
-                let dndToUse = []
-                let dndList = response.data.items
-                for (let i = 0; i < dndList.length; i++) {
-                    dndToUse.push(dndList[i].name)
+                let items = response.data.items
+                console.log("I", items)
+                for (let i = 0; i < items.length; i++) {
+                    currentDNDLists.push(items[i].name)
                 }
-                setList(dndToUse)
+                setDNDList(currentDNDLists);
+                console.log(`DNDList(s) are: ${currentDNDLists}`)
             })
             .catch((error) => {
                 console.log(error);
             });
     }, []);
-
     return (
-        <Box style={{ width: '50%' }}>
+        <div id="body" style={{ width: '50%' }}>
             <Heading as="h1" variant="heading10">
-                Do Not Call Lists
+                Outbound Do Not Disturb List
             </Heading>
-
-            {showListDetails ? <div><br />
-                <div >
-                    <div style={{ display: "flex", gap: "30px" }}>
-                        <span>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>
                             <Combobox
-                                                        items={list}
-                                                        labelText="Select a Do Not Call List"
-                                                        value={dndList}
-                                                        required
-                                                        onInputValueChange={({ inputValue }) => {
-                                                            setDNDList(inputValue);
-                                                            loadDNDList(inputValue);
-                                                        }}
-                                                    />
-                        </span>
-                        <span>
+                                items={dndList}
+                                labelText="Select a DNDList"
+                                value={siteDNDList}
+                                required
+                                onInputValueChange={({ inputValue }) => {
+                                    setSiteDNDList(inputValue);
+                                    setSelectedDNDList(true);
+                                    loadDNDList(inputValue)
+                                }}
+                            />
+                        </td>
+                        <td></td>
+                        <td>
                             <Label>&zwnj;</Label>
-                            <Button onClick={() => removeList(dndList)}>Delete</Button>
-                        </span>
-                        <span>
+                            <UploadDNDListModal
+                                isModalOpen={isModalOpen}
+                            //handleClose={closeModal}
+                            //onSubmit={handleFormSubmit}
+                            />
+                        </td>
+                        <td>
                             <Label>&zwnj;</Label>
                             <AddListModal
                                 isModalOpen={isModalOpen}
-                            //handleClose={closeModal}
-                            //onSubmit={handleFormSubmit}
                             />
-                        </span>
-                        <span>
+                        </td>
+                        <td>
                             <Label>&zwnj;</Label>
-                            <AddFileModal
-                                isModalOpen={isModalOpen}
-                            //handleClose={closeModal}
-                            //onSubmit={handleFormSubmit}
-                            />
-                        </span>
-                        <span>
-                            <Label>Find lists containing:</Label>
-                            <Input
-                                value={inputNumber}
-                                type="text"
-                                id="newNumber"
-                                onChange={e => {
-                                    setFilter(e.currentTarget.value)
-                                    setInputNumber(e.currentTarget.value)
-                                }}
-                            />
-                        </span>
-                        <span>
-                            <Label>&zwnj;</Label>
-                            <Button variant="primary" onClick={() => findList(filter)}>Find</Button>
-                        </span>
-                    </div>
-                </div>
-                <div><br /></div>
-                <Table aria-label="number-grid" id="number-grid" striped="true" >
-                    <THead stickyHeader top={0}>
-                        <Tr>
-                            <Th >Customer Number</Th>
-                            <Th >Customer Name</Th>
-                            <Th>
-                                <AddNumberModal
-                                    isModalOpen={isModalOpen}
-                                    list={inputItems}
-                                    handleClose={closeModal}
-                                    onSubmit={handleFormSubmit}
-                                />
-                            </Th>
-                        </Tr>
-                    </THead>
-                    <TBody>
-                        {filteredDND.map((dndlist, index) => (
-                            <Tr key={"row" + index}>
-                                <Td key={"number" + index}>{dndlist.number}</Td>
-                                <Td key={"name" + index}>{dndlist.name}</Td>
-                                <Td key={"button" + index} textAlign='left'>
-                                    <Button variant="secondary" textAlign='left' size="small" onClick={() => removeNumber(dndlist.number, dndlist.name, inputItems)}><DeleteIcon decorative={false} title="Delete" /></Button>
-                                </Td>
-                            </Tr>
-                        ))}
-                    </TBody>
-                </Table>
-            </div> : <div><br />
-                <Table aria-label="number-grid" id="number-grid" striped="true" >
-                    <THead stickyHeader top={0}>
-                        <Tr>
-                            <Th >List Name</Th>
-                            <Th>
-                            </Th>
-                        </Tr>
-                    </THead>
-                    <TBody>
-                        {filteredDND.map((foundlist, index) => (
-                            <Tr key={"listrow" + index}>
-                                <Td key={"list" + index}>{foundlist}</Td>
-                                <Td key={"loadList" + index}><Button variant="primary" onClick={() => loadList(foundlist)}>Load</Button>
-                                </Td>
-                            </Tr>
+                            <Button variant="primary" onClick={removeDNDList}>
+                                Delete List
+                            </Button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <br />
+            {selectedDNDList ? <Table striped="true">
+                <THead>
+                    <Tr>
+                        <Th><strong>Contacts</strong></Th>
+                        <Th></Th>
+                        <Th></Th>
+                    </Tr>
+                    <Tr>
+                        <Th >Customer Number</Th>
+                        <Th >Customer Name</Th>
+                        <Th></Th>
+                    </Tr>
+                </THead>
+                <TBody>
+                    {updateDNDList.map((dndList, index) => (
 
-                        ))}
-                    </TBody>
-                </Table>
-            </div>}
+                        <Tr key={"row" + index}>
+                            {console.log(dndList)}
+                            <Td key={"number" + index}>{dndList.phoneNumber}</Td>
+                            <Td key={"name" + index}>{dndList.name}</Td>
+                            <Td key={"button" + index} textAlign='left'>
+                                <Button variant="secondary" textAlign='left' size="small" onClick={() => removeNumber(dndList.phoneNumber, dndList.name)}><DeleteIcon decorative={false} title="Delete" /></Button>
+                            </Td>
+                        </Tr>
+                    ))}
+                </TBody>
+            </Table> : null}
+            <br />
+
             <Toaster left={['space180', 'unset', 'unset']} {...toaster} />
-        </Box>
+        </div>
     )
 };
