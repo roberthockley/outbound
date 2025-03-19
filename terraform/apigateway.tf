@@ -115,7 +115,7 @@ EOF
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_read_options" {
-  depends_on  = [aws_api_gateway_method.connect_outbound_read_options, aws_api_gateway_integration.connect_outbound_read_options]
+  depends_on  = [aws_api_gateway_method_response.connect_outbound_read_options, aws_api_gateway_method.connect_outbound_read_options, aws_api_gateway_integration.connect_outbound_read_options]
   http_method = "OPTIONS"
   resource_id = aws_api_gateway_resource.connect_outbound_read.id
   response_parameters = {
@@ -129,7 +129,7 @@ resource "aws_api_gateway_integration_response" "connect_outbound_read_options" 
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_read_post" {
-  depends_on  = [aws_api_gateway_method.connect_outbound_read_post, aws_api_gateway_integration.connect_outbound_read_post]
+  depends_on  = [aws_api_gateway_method_response.connect_outbound_read_post, aws_api_gateway_method.connect_outbound_read_post, aws_api_gateway_integration.connect_outbound_read_post]
   http_method = "POST"
   resource_id = aws_api_gateway_resource.connect_outbound_read.id
   response_parameters = {
@@ -244,7 +244,7 @@ resource "aws_api_gateway_integration" "connect_outbound_update_post" {
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_update_options" {
-  depends_on  = [aws_api_gateway_method.connect_outbound_update_options, aws_api_gateway_integration.connect_outbound_update_options]
+  depends_on  = [aws_api_gateway_method_response.connect_outbound_update_options, aws_api_gateway_method.connect_outbound_update_options, aws_api_gateway_integration.connect_outbound_update_options]
   http_method = "OPTIONS"
   resource_id = aws_api_gateway_resource.connect_outbound_update.id
   response_parameters = {
@@ -258,7 +258,7 @@ resource "aws_api_gateway_integration_response" "connect_outbound_update_options
 }
 
 resource "aws_api_gateway_integration_response" "connect_update_post" {
-  depends_on  = [aws_api_gateway_integration.connect_outbound_update_post, aws_api_gateway_method_response.connect_outbound_update_post, aws_api_gateway_integration.connect_outbound_update_post, aws_api_gateway_method_response.connect_outbound_update_post]
+  depends_on  = [aws_api_gateway_method_response.connect_outbound_update_post, aws_api_gateway_integration.connect_outbound_update_post, aws_api_gateway_method.connect_outbound_update_post]
   http_method = "POST"
   resource_id = aws_api_gateway_resource.connect_outbound_update.id
   response_parameters = {
@@ -349,7 +349,7 @@ resource "aws_api_gateway_integration" "connect_outbound_make_post" {
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_make_options" {
-  depends_on  = [aws_api_gateway_method.connect_outbound_make_options, aws_api_gateway_integration.connect_outbound_make_options]
+  depends_on  = [aws_api_gateway_method_response.connect_outbound_make_options, aws_api_gateway_method.connect_outbound_make_options, aws_api_gateway_integration.connect_outbound_make_options]
   http_method = "OPTIONS"
   resource_id = aws_api_gateway_resource.connect_outbound_make.id
   response_parameters = {
@@ -362,7 +362,7 @@ resource "aws_api_gateway_integration_response" "connect_outbound_make_options" 
 }
 
 resource "aws_api_gateway_integration_response" "connect_make_post" {
-  depends_on  = [aws_api_gateway_integration.connect_outbound_numbers_post, aws_api_gateway_method_response.connect_outbound_numbers_post]
+  depends_on  = [aws_api_gateway_integration.connect_outbound_numbers_post, aws_api_gateway_method_response.connect_outbound_numbers_post, aws_api_gateway_method.connect_outbound_numbers_post]
   http_method = "POST"
   resource_id = aws_api_gateway_resource.connect_outbound_make.id
   response_parameters = {
@@ -453,7 +453,7 @@ resource "aws_api_gateway_integration" "connect_outbound_delete_post" {
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_delete_options" {
-  depends_on  = [aws_api_gateway_method.connect_outbound_delete_options, aws_api_gateway_integration.connect_outbound_delete_options]
+  depends_on  = [aws_api_gateway_method_response.connect_outbound_delete_options, aws_api_gateway_integration.connect_outbound_delete_options]
   http_method = "OPTIONS"
   resource_id = aws_api_gateway_resource.connect_outbound_delete.id
   response_parameters = {
@@ -557,7 +557,7 @@ resource "aws_api_gateway_integration" "connect_outbound_numbers_post" {
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_numbers_options" {
-  depends_on  = [aws_api_gateway_method.connect_outbound_numbers_options, aws_api_gateway_integration.connect_outbound_numbers_options]
+  depends_on  = [aws_api_gateway_method_response.connect_outbound_numbers_options, aws_api_gateway_method.connect_outbound_numbers_options, aws_api_gateway_integration.connect_outbound_numbers_options]
   http_method = "OPTIONS"
   resource_id = aws_api_gateway_resource.connect_outbound_numbers.id
   response_parameters = {
@@ -669,7 +669,7 @@ EOF
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_dnd_options" {
-  depends_on  = [aws_api_gateway_method.connect_outbound_dnd_options, aws_api_gateway_integration.connect_outbound_dnd_options]
+  depends_on  = [aws_api_gateway_method_response.connect_outbound_dnd_options, aws_api_gateway_method.connect_outbound_dnd_options, aws_api_gateway_integration.connect_outbound_dnd_options]
   http_method = "OPTIONS"
   resource_id = aws_api_gateway_resource.connect_outbound_dnd.id
   response_parameters = {
@@ -774,7 +774,7 @@ EOF
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_table_options" {
-  depends_on  = [aws_api_gateway_method.connect_outbound_table_options, aws_api_gateway_integration.connect_outbound_table_options]
+  depends_on  = [aws_api_gateway_method_response.connect_outbound_table_options, aws_api_gateway_method.connect_outbound_table_options, aws_api_gateway_integration.connect_outbound_table_options]
   http_method = "OPTIONS"
   resource_id = aws_api_gateway_resource.connect_outbound_table.id
   response_parameters = {
@@ -788,7 +788,7 @@ resource "aws_api_gateway_integration_response" "connect_outbound_table_options"
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_table_post" {
-  depends_on  = [aws_api_gateway_method.connect_outbound_table_post, aws_api_gateway_integration.connect_outbound_table_options]
+  depends_on  = [aws_api_gateway_method_response.connect_outbound_table_options, aws_api_gateway_integration.connect_outbound_table_options]
   http_method = "POST"
   resource_id = aws_api_gateway_resource.connect_outbound_table.id
   response_parameters = {
