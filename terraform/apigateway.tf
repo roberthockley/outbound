@@ -94,6 +94,7 @@ resource "aws_api_gateway_integration" "connect_outbound_read_options" {
 }
 
 resource "aws_api_gateway_integration" "connect_outbound_read_post" {
+  depends_on              = [aws_api_gateway_method.connect_outbound_read_post]
   http_method             = "POST"
   resource_id             = aws_api_gateway_resource.connect_outbound_read.id
   rest_api_id             = aws_api_gateway_rest_api.connect_outbound.id
@@ -230,6 +231,7 @@ resource "aws_api_gateway_integration" "connect_outbound_update_options" {
 }
 
 resource "aws_api_gateway_integration" "connect_outbound_update_post" {
+  depends_on              = [aws_api_gateway_method.connect_outbound_update_post]
   http_method             = "POST"
   resource_id             = aws_api_gateway_resource.connect_outbound_update.id
   rest_api_id             = aws_api_gateway_rest_api.connect_outbound.id
@@ -334,6 +336,7 @@ resource "aws_api_gateway_integration" "connect_outbound_make_options" {
 }
 
 resource "aws_api_gateway_integration" "connect_outbound_make_post" {
+  depends_on              = [aws_api_gateway_method.connect_outbound_make_post]
   http_method             = "POST"
   resource_id             = aws_api_gateway_resource.connect_outbound_make.id
   rest_api_id             = aws_api_gateway_rest_api.connect_outbound.id
@@ -437,6 +440,7 @@ resource "aws_api_gateway_integration" "connect_outbound_delete_options" {
 }
 
 resource "aws_api_gateway_integration" "connect_outbound_delete_post" {
+  depends_on              = [aws_api_gateway_method.connect_outbound_delete_post]
   http_method             = "POST"
   resource_id             = aws_api_gateway_resource.connect_outbound_delete.id
   rest_api_id             = aws_api_gateway_rest_api.connect_outbound.id
@@ -540,6 +544,7 @@ resource "aws_api_gateway_integration" "connect_outbound_numbers_options" {
 }
 
 resource "aws_api_gateway_integration" "connect_outbound_numbers_post" {
+  depends_on              = [aws_api_gateway_method.connect_outbound_numbers_post]
   http_method             = "POST"
   resource_id             = aws_api_gateway_resource.connect_outbound_numbers.id
   rest_api_id             = aws_api_gateway_rest_api.connect_outbound.id
@@ -643,6 +648,7 @@ resource "aws_api_gateway_integration" "connect_outbound_dnd_options" {
 }
 
 resource "aws_api_gateway_integration" "connect_outbound_dnd_post" {
+  depends_on              = [aws_api_gateway_method.connect_outbound_dnd_post]
   http_method             = "POST"
   resource_id             = aws_api_gateway_resource.connect_outbound_dnd.id
   rest_api_id             = aws_api_gateway_rest_api.connect_outbound.id
@@ -747,6 +753,7 @@ resource "aws_api_gateway_integration" "connect_outbound_table_options" {
 }
 
 resource "aws_api_gateway_integration" "connect_outbound_table_post" {
+  depends_on              = [aws_api_gateway_method.connect_outbound_table_post]
   http_method             = "POST"
   resource_id             = aws_api_gateway_resource.connect_outbound_table.id
   rest_api_id             = aws_api_gateway_rest_api.connect_outbound.id
