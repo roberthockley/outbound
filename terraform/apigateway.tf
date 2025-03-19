@@ -93,7 +93,7 @@ resource "aws_api_gateway_integration" "connect_outbound_read_options" {
   type                 = "MOCK"
 }
 
-resource "aws_api_gateway_integration" "connect_outbound_read" {
+resource "aws_api_gateway_integration" "connect_outbound_read_post" {
   http_method             = "POST"
   resource_id             = aws_api_gateway_resource.connect_outbound_read.id
   rest_api_id             = aws_api_gateway_rest_api.connect_outbound.id
@@ -462,7 +462,7 @@ resource "aws_api_gateway_integration_response" "connect_outbound_delete_options
 }
 
 resource "aws_api_gateway_integration_response" "connect_delete_post" {
-  depends_on  = [aws_api_gateway_integration.connect_outbound_numbers_post, aws_api_gateway_method_response.connect_outbound_numbers_post, aws_api_gateway_integration.connect_outbound_read, aws_api_gateway_method_response.connect_outbound_read_post]
+  depends_on  = [aws_api_gateway_integration.connect_outbound_numbers_post, aws_api_gateway_method_response.connect_outbound_numbers_post, aws_api_gateway_integration.connect_outbound_read_post, aws_api_gateway_method_response.connect_outbound_read_post]
   http_method = "POST"
   resource_id = aws_api_gateway_resource.connect_outbound_delete.id
   response_parameters = {
@@ -565,7 +565,7 @@ resource "aws_api_gateway_integration_response" "connect_outbound_numbers_option
 }
 
 resource "aws_api_gateway_integration_response" "connect_numbers_post" {
-  depends_on  = [aws_api_gateway_integration.connect_outbound_numbers_post, aws_api_gateway_method_response.connect_outbound_numbers_post, aws_api_gateway_integration.connect_outbound_read, aws_api_gateway_method_response.connect_outbound_read_post]
+  depends_on  = [aws_api_gateway_integration.connect_outbound_numbers_post, aws_api_gateway_method_response.connect_outbound_numbers_post, aws_api_gateway_integration.connect_outbound_read_post, aws_api_gateway_method_response.connect_outbound_read_post]
   http_method = "POST"
   resource_id = aws_api_gateway_resource.connect_outbound_numbers.id
   response_parameters = {
@@ -746,7 +746,7 @@ resource "aws_api_gateway_integration" "connect_outbound_table_options" {
   type                 = "MOCK"
 }
 
-resource "aws_api_gateway_integration" "connect_outbound_table" {
+resource "aws_api_gateway_integration" "connect_outbound_table_post" {
   http_method             = "POST"
   resource_id             = aws_api_gateway_resource.connect_outbound_table.id
   rest_api_id             = aws_api_gateway_rest_api.connect_outbound.id
