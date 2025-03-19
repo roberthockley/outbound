@@ -27,3 +27,18 @@ resource "aws_dynamodb_table" "dnd_table" {
     Environment = "${var.environment.name}"
   }
 }
+
+resource "aws_dynamodb_table" "dndGlobal_table" {
+  name         = var.dynamo.table3
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key    = var.dynamo.hash_key3
+  attribute {
+    name = var.dynamo.hash_key3
+    type = "S"
+  }
+
+  tags = {
+    Name        = "${var.dynamo.table3}"
+    Environment = "${var.environment.name}"
+  }
+}

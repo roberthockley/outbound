@@ -113,8 +113,16 @@ const AddCampaignModal = (prop) => {
     const uidHT = useUID();
     let location = prop.location
     const handleOpen = () => {
+        if(selectedCampaign){
         setIsOpen(true)
         console.log("Modal Open");
+        }else{
+            toaster.push({
+                message: 'Select Campaign First',
+                variant: 'error',
+                dismissAfter: 3000
+            })
+        }
     }
     const handleClose = () => {
         setIsOpen(false)
@@ -127,13 +135,14 @@ const AddCampaignModal = (prop) => {
         setIsOpen(false);
         console.log(importFileData)
         let csvUploadData = JSON.stringify({
-            "data": importFileData
+            "data": importFileData,
+            "tableName": `${siteCampaign}-Campaign`
           });
           
           let csvUploadConfig = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: 'https://lj3qlnw0qh.execute-api.ap-southeast-1.amazonaws.com/connect-outbound/csvUpload',
+            url: `${process.env.REACT_APP_URL}/csvUpload`,
             headers: { 
               'Content-Type': 'application/json'
             },
@@ -162,12 +171,12 @@ const AddCampaignModal = (prop) => {
     return (
         <div>
             <Button variant="primary" onClick={handleOpen}>
-                New Contact List
+                Upload Contact List
             </Button>
             <Modal ariaLabelledby={modalHeadingID} isOpen={isOpen} onDismiss={handleClose} size="default">
                 <ModalHeader>
                     <ModalHeading as="h3" id={modalHeadingID}>
-                        New Contact List
+                        Upload Contact List
                     </ModalHeading>
                 </ModalHeader>
                 <ModalBody>
@@ -196,7 +205,14 @@ const AddCampaignModal = (prop) => {
 }
 
 const removeCampaign = () => {
-
+    if(selectedCampaign){
+        }else{
+            toaster.push({
+                message: 'Select Campaign First',
+                variant: 'error',
+                dismissAfter: 3000
+            })
+        }
 }
 
 useEffect(() => {
@@ -250,10 +266,6 @@ return (
                         />
                     </td>
                     <td></td>
-                    <td> <span>
-                        <Label>&zwnj;</Label>
-                        <Button onClick={() => removeCampaign(siteCampaign)}>Delete Contact List</Button>
-                    </span></td>
                     <td></td>
                     <td>
                         <Label>&zwnj;</Label>

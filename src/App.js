@@ -75,8 +75,6 @@ function App() {
   }
 
   useEffect(() => {
-    //localStorage.setItem('dnd', '[{"list":"Global", "dnds":[{"number":"+6586115961", "name":"Robert Hockley"},{"number":"+6589135961", "name":"Ivy Tong"},{"number":"+6588231023", "name":"Jacon Hockley"},{"number":"+64272053900", "name":"Susan Armstrong"}]},{"list":"Collections", "dnds":[{"number":"+6511122223", "name":"Joe Blogs"}]},{"list":"Sales", "dnds":[{"number":"+6511223344", "name":"Accenture Song"}]}]')
-    //localStorage.setItem('dispositions', '[{"code":"test","description": "Test"}]');
   }, []);
 
   return (

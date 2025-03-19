@@ -13,8 +13,6 @@ import { Table, THead, Tr, Td, Th, TBody } from '@twilio-paste/core/table';
 import { DeleteIcon } from "@twilio-paste/icons/esm/DeleteIcon";
 import axios from 'axios';
 
-const moment = require('moment');
-
 let newData = []
 let listDND = []
 let numberRanges = [
@@ -22,12 +20,11 @@ let numberRanges = [
 ];
 
 export const SiteDND = () => {
-    const [listName, setListName] = React.useState('');
     const [list, setList] = React.useState(newData);
-    const [siteList, setSiteList] = React.useState("");
+    const [dndList, setDNDList] = React.useState("");
     const [inputItems, setInputItems] = React.useState(newData);
-    const [value, setValue] = React.useState();
-    const [inputNumber, setInputNumber] = React.useState();
+    const [value, setValue] = React.useState("");
+    const [inputNumber, setInputNumber] = React.useState("");
     const [dnd, setDND] = React.useState(listDND);
     const [showResults, setShowResults] = React.useState(false);
     const [numberData, setNumberData] = React.useState([])
@@ -47,36 +44,27 @@ export const SiteDND = () => {
     let dnd2 = JSON.parse(localStorage.getItem('dnd'));
     let items;
 
-    const fetchListDND = (list) => {
-        console.log("PPP",list)
-        dnd2 = JSON.parse(localStorage.getItem('dnd'))
-        numberRanges = [
-            ["All"]
-        ];
-        for (let i = 0; i < dnd2.length; i++) {
-            console.log(dnd2[i], list)
-            if (dnd2[i].list === list) {
-                items = dnd2[i].dnds;
-            }
-        }
-        for (let i = 0; i < items.length; i++) {
-            let numbers = {}
-            numbers.number = items[i].number
-            numbers.name = items[i].name
-            dndToList.push(numbers)
-        }
-        /*dndToList.sort((a, b) => {
-            const numberA = moment(a.number, "DD/MM/YYYY").toDate();
-            const numberB = moment(b.number, "DD/MM/YYYY").toDate();
-            return numberA - numberB;
-        });*/
-
-        setNumberData(dndToList)
-        setDND(dndToList)
-
-        setFilteredDND(dndToList.sort())
-        setFilter("All")
-
+    const loadDNDList = (listToUse) => {
+        let readData = JSON.stringify({
+            "TableName": `${listToUse}-DND`
+        });
+        let config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: `${process.env.REACT_APP_URL}/readSettings`,
+            headers: {},
+            data: readData
+        };
+        console.log(config)
+        axios.request(config)
+            .then((response) => {
+                console.log(response)
+                let items = response.data.items
+                console.log("I", items)
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
     const removeNumber = (number, name, list) => {
@@ -102,7 +90,7 @@ export const SiteDND = () => {
             }
         }
         localStorage.setItem('dnd', JSON.stringify(dynamoDND));
-        fetchListDND(list)
+        loadDNDList(list)
         toaster.push({
             message: 'Number removed',
             variant: 'warning',
@@ -158,9 +146,8 @@ export const SiteDND = () => {
 
                     }
                 }
-                console.log("PPPPPP", dynamoDND, listDND)
                 localStorage.setItem('dnd', JSON.stringify(dynamoDND));
-                fetchListDND(list)
+                loadDNDList(list)
                 setIsOpen(false);
                 toaster.push({
                     message: 'Number added',
@@ -244,14 +231,14 @@ export const SiteDND = () => {
                 updatedDrop.push(listName)
                 setList(updatedDrop)
                 setInputItems(updatedDrop)
-                setSiteList(listName);
+                setDNDList(listName);
                 setIsOpen(false)
                 let update = {}
                 update.list = listName;
                 update.dnds = [];
                 dynamoDND.push(update)
                 localStorage.setItem('dnd', JSON.stringify(dynamoDND));
-                fetchListDND(listName)
+                loadDNDList(listName)
             }
         }
         const modalHeadingID = useUID();
@@ -311,14 +298,14 @@ export const SiteDND = () => {
         };
     
         const handleFiles = files => {
-            console.log(siteList)
-            if (!siteList) {
+            console.log(dndList)
+            if (!dndList) {
                 toaster.push({
                     message: 'List Name Missing',
                     variant: 'error',
                     dismissAfter: 3000
                 })
-                return; // Exit the function if there's no siteList
+                return; // Exit the function if there's no dndList
             }
             let importFileData = files.base64[0].replace("data:text/csv;base64,", "")
             setFileData(importFileData)
@@ -342,7 +329,7 @@ export const SiteDND = () => {
                 return line.split(','); // Adjust the delimiter if necessary
             });
             let update = {};
-            update.list = siteList;
+            update.list = dndList;
             let newData = [];
             for (let i = 0; i < parsedData.length; i++) {
                 let item = {};
@@ -353,16 +340,16 @@ export const SiteDND = () => {
             update.dnds = newData
             let newListToUpdate=[]
             for (let i = 0; i < dynamoDND.length; i++) {
-                if(dynamoDND[i].list === siteList){
+                if(dynamoDND[i].list === dndList){
                     newListToUpdate.push(update)
                 }else{
                     newListToUpdate.push(dynamoDND[i])
                 }
             }
             localStorage.setItem('dnd', JSON.stringify(newListToUpdate));
-            console.log("LLLL",siteList)
+            console.log("LLLL",dndList)
             setDynamoDND(newListToUpdate)
-            fetchListDND(siteList)
+            loadDNDList(dndList)
             handleClose(); // Close the modal after successful submission
         }
     
@@ -408,7 +395,6 @@ export const SiteDND = () => {
         );
     }
     
-
     const findList = (number) => {
         let foundList = []
         setShowListDetails(false)
@@ -429,19 +415,19 @@ export const SiteDND = () => {
         setShowListDetails(true)
         setInputItems(foundlist)
         setFilterDateRange(["All"])
-        fetchListDND(foundlist)
+        loadDNDList(foundlist)
     }
 
     const removeList = () => {
-        if (siteList === "Global") {
+        if (dndList === "Global") {
             toaster.push({
                 message: 'Global List Cannot Be Deleted',
                 variant: 'error',
                 dismissAfter: 3000
             })
         }
-        console.log(siteList)
-        if (siteList.length === 0) {
+        console.log(dndList)
+        if (dndList.length === 0) {
             toaster.push({
                 message: 'Select List First',
                 variant: 'error',
@@ -451,9 +437,9 @@ export const SiteDND = () => {
         let listsToUpdate = []
         let newList = []
         for (let i = 0; i < dynamoDND.length; i++) {
-            console.log(dynamoDND[i].list, siteList)
-            if (dynamoDND[i].list === siteList) {
-                console.log(siteList, "found", i)
+            console.log(dynamoDND[i].list, dndList)
+            if (dynamoDND[i].list === dndList) {
+                console.log(dndList, "found", i)
             } else {
                 listsToUpdate.push(dynamoDND[i])
                 newList.push(dynamoDND[i].list)
@@ -461,30 +447,35 @@ export const SiteDND = () => {
         }
         setList(newList);
         setDynamoDND(listsToUpdate)
-        setSiteList("Global")
+        setDNDList("Global")
         setInputItems("Global")
-        fetchListDND("Global")
+        loadDNDList("Global")
         localStorage.setItem('dnd', JSON.stringify(listsToUpdate));
     }
 
     useEffect(() => {
-        setDynamoDND(JSON.parse(localStorage.getItem('dnd')))
-        setNumberData([])
-        setDND([])
-        setFilteredDND([])
-        numberRanges = [
-            ["All"]
-        ];
-        let lists = []
-        setList(lists);
-        setNumberData(newData);
-        console.log(`List(s) are: ${list}`)
-        setFilterDateRange(numberRanges)
-        for (let i = 0; i < dnd2.length; i++) {
-            lists.push(dnd2[i].list)
-        }
-        setList(lists);
-
+        let dndData = JSON.stringify({
+            "TableName": "DND"
+        });
+        let dndConfig = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: `${process.env.REACT_APP_URL}/readSettings`,
+            headers: {},
+            data: dndData
+        };
+        axios.request(dndConfig)
+            .then((response) => {
+                let dndToUse = []
+                let dndList = response.data.items
+                for (let i = 0; i < dndList.length; i++) {
+                    dndToUse.push(dndList[i].name)
+                }
+                setList(dndToUse)
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }, []);
 
     return (
@@ -497,16 +488,20 @@ export const SiteDND = () => {
                 <div >
                     <div style={{ display: "flex", gap: "30px" }}>
                         <span>
-                            <Combobox items={list} value={siteList} labelText="Select a List" required onInputValueChange={({ inputValue }) => {
-                                setSiteList(inputValue);
-                                setInputItems(inputValue)
-                                setFilterDateRange(["All"])
-                                fetchListDND(inputValue)
-                            }} />
+                            <Combobox
+                                                        items={list}
+                                                        labelText="Select a Do Not Call List"
+                                                        value={dndList}
+                                                        required
+                                                        onInputValueChange={({ inputValue }) => {
+                                                            setDNDList(inputValue);
+                                                            loadDNDList(inputValue);
+                                                        }}
+                                                    />
                         </span>
                         <span>
                             <Label>&zwnj;</Label>
-                            <Button onClick={() => removeList(siteList)}>Delete</Button>
+                            <Button onClick={() => removeList(dndList)}>Delete</Button>
                         </span>
                         <span>
                             <Label>&zwnj;</Label>

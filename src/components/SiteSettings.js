@@ -458,13 +458,11 @@ export const SiteSettings = () => {
         };
         axios.request(dndConfig)
             .then((response) => {
-                console.log(response,"P")
                 let dndToUse = []
                 let dndList = response.data.items
                 for (let i = 0; i < dndList.length; i++) {
                     dndToUse.push(dndList[i].name)
                 }
-                console.log("PPP",dndToUse)
                 setDNDList(dndToUse)
 
             })
