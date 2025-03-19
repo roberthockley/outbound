@@ -13,6 +13,7 @@ import { Modal, ModalBody, ModalFooter, ModalFooterActions, ModalHeader, ModalHe
 import { encode as base64_encode } from 'base-64';
 import { useUID } from '@twilio-paste/core/uid-library';
 import ReactFileReader from 'react-file-reader';
+import { DeleteIcon } from "@twilio-paste/icons/esm/DeleteIcon";
 
 let newData = []
 
@@ -29,7 +30,7 @@ export const SiteCampaigns = () => {
     const [tz, setTZ] = React.useState("Asia/Singapore");
     const [start, setStart] = React.useState('');
     const [end, setEnd] = React.useState('');
-    const [updateCamapign, setUpdateCampaign] = React.useState(true);
+    const [updateCampaign, setUpdateCampaign] = React.useState([]);
     const [showTimes, setShowTimes] = React.useState(false);
     const [selectedCampaign, setSelectedCampaign] = React.useState(false);
     const [dynamoCampaigns, setDynamoCampaigns] = React.useState("");
@@ -41,189 +42,243 @@ export const SiteCampaigns = () => {
     const [showResults, setShowResults] = React.useState(false)
     const [isOpen, setIsOpen] = React.useState(false);
 
-    const saveRules = () => {
+    const removeNumber = (number, name) => {
+        console.log(`****** Remove Number`, number, name)
+        let listContact = []
+        for (let i = 0; i < updateCampaign.length; i++) {
+            if (updateCampaign[i].phoneNumber === number) {
 
-    }
-
-
-    const AddCampaignModal = (prop) => {
-        const uidDP = useUID();
-        const uidHT = useUID();
-        let location = prop.location
-        const handleOpen = () => {
-            setIsOpen(true)
-            console.log("Modal Open");
-        }
-        const handleClose = () => {
-            setIsOpen(false)
-            console.log("Modal closed")
-        };
-
-        const addContacts = () => {
-            console.log(fileData)
-            setIsOpen(false);
-        };
-        const handleFiles = (files) => {
-            let importFileData = files.base64[0].replace("data:text/csv;base64,", "");
-            setFileData(importFileData); // Save file data to state
-            setIsOpen(false);
-            toaster.push({
-                message: 'File Uploaded',
-                variant: 'success',
-                dismissAfter: 3000
-            })
-
-        };
-        const modalHeadingID = useUID();
-        const nameInputRef = React.createRef();
-        const dateInputRef = React.createRef();
-        const [date, setDate] = React.useState('');
-        const [name, setName] = React.useState('');
-        return (
-            <div>
-                <Button variant="primary" onClick={handleOpen}>
-                    New Contact List
-                </Button>
-                <Modal ariaLabelledby={modalHeadingID} isOpen={isOpen} onDismiss={handleClose} size="default">
-                    <ModalHeader>
-                        <ModalHeading as="h3" id={modalHeadingID}>
-                            New Contact List
-                        </ModalHeading>
-                    </ModalHeader>
-                    <ModalBody>
-                        <div
-                            style={{ width: "90%", margin: "auto" }}>
-                            <div style={{ display: "flex", gap: "300px" }}>
-                                <span>
-                                    <Label>Select a CSV File</Label>
-                                    <ReactFileReader handleFiles={handleFiles} fileTypes={[".csv"]} base64={true} multipleFiles={true}>
-                                        <Button className='btn'>Upload</Button>
-                                    </ReactFileReader>
-                                </span>
-                            </div>
-                        </div>
-                    </ModalBody>
-                    <ModalFooter>
-                        <ModalFooterActions>
-                            <Button variant="secondary" onClick={handleClose}>
-                                Cancel
-                            </Button>
-                        </ModalFooterActions>
-                    </ModalFooter>
-                </Modal>
-            </div>
-        );
-    }
-
-    const removeCampaign = () => {
-
-    }
-
-    useEffect(() => {
-        let currentCampaigns = [];
-
-        let config = {
-            method: 'post',
-            maxBodyLength: Infinity,
-            url: `${process.env.REACT_APP_URL}/readSettings`,
-            headers: {}
-        };
-        console.log(config)
-        axios.request(config)
-            .then((response) => {
-                let items = response.data.items
-                console.log("I", items)
-                for (let i = 0; i < items.length; i++) {
-                    currentCampaigns.push(items[i].campaign)
+            } else {
+                listContact.push(updateCampaign[i])
+                //listPrompts.push(dynamoPrompts[i].prompts[j])
+            }
+            setUpdateCampaign(listContact)
+            let deleteData = JSON.stringify({
+                "TableName": `${siteCampaign}-Campaign`,
+                "Key": {
+                    "phoneNumber": {
+                        "S": number
+                    }
                 }
-                console.log("CC", currentCampaigns)
-            })
-            .catch((error) => {
-                console.log(error);
             });
-        setCampaign(currentCampaigns);
-        console.log(`Campaign(s) are: ${currentCampaigns}`)
+    
+            let deleteConfig = {
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: `${process.env.REACT_APP_URL}/deleteSettings`,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: deleteData
+            };
+            axios.request(deleteConfig)
+                .then((response) => {
+                    console.log(JSON.stringify(response.data));
+                    toaster.push({
+                        message: 'Number removed',
+                        variant: 'warning',
+                        dismissAfter: 3000
+                    })
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+}
 
-        config = {
-            method: 'post',
-            maxBodyLength: Infinity,
-            url: `${process.env.REACT_APP_URL}/getNumbers`,
-            headers: {}
-        };
-        axios.request(config)
-            .then((response) => {
-                console.log(response)
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-        setCampaign(currentCampaigns);
-        console.log(`Campaign(s) are: ${currentCampaigns}`)
+const loadCampaign = (campaignName) => {
+    let currentCampaigns = [];
+    let readData = JSON.stringify({
+        "TableName": `${campaignName}-Campaign`
+    });
+    let config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: `${process.env.REACT_APP_URL}/readSettings`,
+        headers: {},
+        data: readData
+    };
+    console.log(config)
+    axios.request(config)
+        .then((response) => {
+            let items = response.data.items
+            console.log("I", items)
+            setUpdateCampaign(items)
+        })
+        .catch((error) => {
+            console.log(error);
+        });
 
-    }, []);
+
+
+}
+
+const AddCampaignModal = (prop) => {
+    const uidDP = useUID();
+    const uidHT = useUID();
+    let location = prop.location
+    const handleOpen = () => {
+        setIsOpen(true)
+        console.log("Modal Open");
+    }
+    const handleClose = () => {
+        setIsOpen(false)
+        console.log("Modal closed")
+    };
+
+    const handleFiles = (files) => {
+        let importFileData = files.base64[0].replace("data:text/csv;base64,", "");
+        setFileData(importFileData); // Save file data to state
+        setIsOpen(false);
+        console.log(importFileData)
+        toaster.push({
+            message: 'File Uploaded',
+            variant: 'success',
+            dismissAfter: 3000
+        })
+
+    };
+    const modalHeadingID = useUID();
+    const nameInputRef = React.createRef();
+    const dateInputRef = React.createRef();
+    const [date, setDate] = React.useState('');
+    const [name, setName] = React.useState('');
     return (
-        <div id="body" style={{ width: '50%' }}>
-            <Heading as="h1" variant="heading10">
-                Outbound Campaign Contact List
-            </Heading>
-            <table>
-                <tbody>
-                    <tr>
-                        <td>
-                            <Combobox
-                                items={campaign}
-                                labelText="Select a Campaign"
-                                value={siteCampaign}
-                                required
-                                onInputValueChange={({ inputValue }) => {
-                                    setSiteCampaign(inputValue);
-                                    setSelectedCampaign(true);
-                                }}
-                            />
-                        </td>
-                        <td></td>
-                        <td> <span>
-                            <Label>&zwnj;</Label>
-                            <Button onClick={() => removeCampaign(siteCampaign)}>Delete Contact List</Button>
-                        </span></td>
-                        <td></td>
-                        <td>
-                            <Label>&zwnj;</Label>
-                            <AddCampaignModal
-                                isModalOpen={isModalOpen}
-                            //handleClose={closeModal}
-                            //onSubmit={handleFormSubmit}
-                            />
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <br />
-            {selectedCampaign ? <Table striped="true">
-                <THead>
-                    <Tr>
-                        <Th><strong>Contacts</strong></Th>
-                        <Th></Th>
-                        <Th></Th>
-                        <Th></Th>
-                    </Tr>
-                </THead>
-                <TBody>
+        <div>
+            <Button variant="primary" onClick={handleOpen}>
+                New Contact List
+            </Button>
+            <Modal ariaLabelledby={modalHeadingID} isOpen={isOpen} onDismiss={handleClose} size="default">
+                <ModalHeader>
+                    <ModalHeading as="h3" id={modalHeadingID}>
+                        New Contact List
+                    </ModalHeading>
+                </ModalHeader>
+                <ModalBody>
+                    <div
+                        style={{ width: "90%", margin: "auto" }}>
+                        <div style={{ display: "flex", gap: "300px" }}>
+                            <span>
+                                <Label>Select a CSV File</Label>
+                                <ReactFileReader handleFiles={handleFiles} fileTypes={[".csv"]} base64={true} multipleFiles={true}>
+                                    <Button className='btn'>Upload</Button>
+                                </ReactFileReader>
+                            </span>
+                        </div>
+                    </div>
+                </ModalBody>
+                <ModalFooter>
+                    <ModalFooterActions>
+                        <Button variant="secondary" onClick={handleClose}>
+                            Cancel
+                        </Button>
+                    </ModalFooterActions>
+                </ModalFooter>
+            </Modal>
+        </div>
+    );
+}
 
-                </TBody>
-                <TFoot>
-                    <Tr>
-                        <Td></Td>
-                        <Td></Td>
-                        <Td></Td>
-                        <Td align='center'><Button variant="primary" onClick={saveRules}>Refresh</Button>
+const removeCampaign = () => {
+
+}
+
+useEffect(() => {
+    let currentCampaigns = [];
+    let readData = JSON.stringify({
+        "TableName": "OutboundRules"
+    });
+    let config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: `${process.env.REACT_APP_URL}/readSettings`,
+        headers: {},
+        data: readData
+    };
+    console.log(config)
+    axios.request(config)
+        .then((response) => {
+            let items = response.data.items
+            console.log("I", items)
+            for (let i = 0; i < items.length; i++) {
+                currentCampaigns.push(items[i].campaign)
+            }
+            console.log("CC", currentCampaigns)
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    setCampaign(currentCampaigns);
+    console.log(`Campaign(s) are: ${currentCampaigns}`)
+
+}, []);
+return (
+    <div id="body" style={{ width: '50%' }}>
+        <Heading as="h1" variant="heading10">
+            Outbound Campaign Contact List
+        </Heading>
+        <table>
+            <tbody>
+                <tr>
+                    <td>
+                        <Combobox
+                            items={campaign}
+                            labelText="Select a Campaign"
+                            value={siteCampaign}
+                            required
+                            onInputValueChange={({ inputValue }) => {
+                                setSiteCampaign(inputValue);
+                                setSelectedCampaign(true);
+                                loadCampaign(inputValue)
+                            }}
+                        />
+                    </td>
+                    <td></td>
+                    <td> <span>
+                        <Label>&zwnj;</Label>
+                        <Button onClick={() => removeCampaign(siteCampaign)}>Delete Contact List</Button>
+                    </span></td>
+                    <td></td>
+                    <td>
+                        <Label>&zwnj;</Label>
+                        <AddCampaignModal
+                            isModalOpen={isModalOpen}
+                        //handleClose={closeModal}
+                        //onSubmit={handleFormSubmit}
+                        />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <br />
+        {selectedCampaign ? <Table striped="true">
+            <THead>
+                <Tr>
+                    <Th><strong>Contacts</strong></Th>
+                    <Th></Th>
+                    <Th></Th>
+                </Tr>
+                <Tr>
+                    <Th >Customer Number</Th>
+                    <Th >Customer Name</Th>
+                    <Th></Th>
+                </Tr>
+            </THead>
+            <TBody>
+                {updateCampaign.map((campaignList, index) => (
+                    <Tr key={"row" + index}>
+                        <Td key={"number" + index}>{campaignList.phoneNumber}</Td>
+                        <Td key={"name" + index}>{campaignList.name}</Td>
+                        <Td key={"button" + index} textAlign='left'>
+                            <Button variant="secondary" textAlign='left' size="small" onClick={() => removeNumber(campaignList.phoneNumber, campaignList.name)}><DeleteIcon decorative={false} title="Delete" /></Button>
                         </Td>
                     </Tr>
-                </TFoot>
-            </Table> : null}
-            <br />
+                ))}
+            </TBody>
+        </Table> : null}
+        <br />
 
-            <Toaster left={['space180', 'unset', 'unset']} {...toaster} />
-        </div>
-    )
+        <Toaster left={['space180', 'unset', 'unset']} {...toaster} />
+    </div>
+)
 };

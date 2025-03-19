@@ -117,7 +117,7 @@ export const SiteSettings = () => {
         }
         console.log(updateCamapign)
 
-        let data = JSON.stringify({
+        let updateData = JSON.stringify({
             "TableName": "OutboundRules",
             "Key": {
                 "campaign": {
@@ -179,7 +179,7 @@ export const SiteSettings = () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            data: data
+            data: updateData
         };
         console.log(updateConfig)
 
@@ -226,7 +226,7 @@ export const SiteSettings = () => {
                 setSiteCampaign(listName);
                 setSelectedCampaign(true);
                 setUpdateCampaign(false);
-                let data = JSON.stringify({
+                let makeData = JSON.stringify({
                     "TableName": "OutboundRules",
                     "Item": {
                         "campaign": {
@@ -242,7 +242,7 @@ export const SiteSettings = () => {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    data: data
+                    data: makeData
                 };
 
                 axios.request(config)
@@ -359,7 +359,7 @@ export const SiteSettings = () => {
         setSiteCampaign([])
         setSelectedCampaign(false)
         setDynamoCampaigns(campaignToUpdate)
-        let data = JSON.stringify({
+        let deleteData = JSON.stringify({
             "TableName": "OutboundRules",
             "Key": {
                 "campaign": {
@@ -375,7 +375,7 @@ export const SiteSettings = () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            data: data
+            data: deleteData
         };
         console.log(deleteConfig)
         axios.request(deleteConfig)
@@ -394,12 +394,15 @@ export const SiteSettings = () => {
 
     useEffect(() => {
         let currentCampaigns = [];
-
+        let readData = JSON.stringify({
+            "TableName": "OutboundRules"
+          });
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
             url: `${process.env.REACT_APP_URL}/readSettings`,
-            headers: {}
+            headers: {},
+            data: readData
         };
         console.log(config)
         axios.request(config)
@@ -416,14 +419,14 @@ export const SiteSettings = () => {
             .catch((error) => {
                 console.log(error);
             });
-        let data = JSON.stringify({});
+        let getNumbersData = JSON.stringify({});
 
         config = {
             method: 'post',
             maxBodyLength: Infinity,
             url: `${process.env.REACT_APP_URL}/getNumbers`,
             headers: {},
-            data: data
+            data: getNumbersData
         };
         axios.request(config)
             .then((response) => {
