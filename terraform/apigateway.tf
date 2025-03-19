@@ -672,7 +672,6 @@ resource "aws_api_gateway_resource" "connect_outbound_table" {
   rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
 }
 
-
 resource "aws_api_gateway_method" "connect_outbound_table_options" {
   api_key_required = "false"
   authorization    = "NONE"
@@ -814,11 +813,118 @@ resource "aws_api_gateway_gateway_response" "connect_outbound_5xx" {
   rest_api_id   = aws_api_gateway_rest_api.connect_outbound.id
 }
 
+resource "aws_api_gateway_resource" "connect_outbound_csv" {
+  parent_id   = aws_api_gateway_rest_api.connect_outbound.root_resource_id
+  path_part   = "newCampaign"
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+}
+
+
+resource "aws_api_gateway_method" "connect_outbound_csv_options" {
+  api_key_required = "false"
+  authorization    = "NONE"
+  http_method      = "OPTIONS"
+  resource_id      = aws_api_gateway_resource.connect_outbound_csv.id
+  rest_api_id      = aws_api_gateway_rest_api.connect_outbound.id
+}
+
+resource "aws_api_gateway_method" "connect_outbound_csv_post" {
+  api_key_required = "false"
+  authorization    = "NONE"
+  http_method      = "POST"
+  resource_id      = aws_api_gateway_resource.connect_outbound_csv.id
+  rest_api_id      = aws_api_gateway_rest_api.connect_outbound.id
+}
+
+resource "aws_api_gateway_method_response" "connect_outbound_csv_options" {
+  http_method = "OPTIONS"
+  resource_id = aws_api_gateway_resource.connect_outbound_csv.id
+  response_models = {
+    "application/json" = "Empty"
+  }
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "false"
+    "method.response.header.Access-Control-Allow-Methods" = "false"
+    "method.response.header.Access-Control-Allow-Origin"  = "false"
+  }
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+  status_code = "200"
+}
+
+resource "aws_api_gateway_method_response" "connect_outbound_csv_post" {
+  http_method = "POST"
+  resource_id = aws_api_gateway_resource.connect_outbound_csv.id
+  response_models = {
+    "application/json" = "Empty"
+  }
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "false"
+  }
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+  status_code = "200"
+}
+
+resource "aws_api_gateway_resource" "connect_outbound_csv" {
+  parent_id   = aws_api_gateway_rest_api.connect_outbound.root_resource_id
+  path_part   = "csvUpload"
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+}
+
+resource "aws_api_gateway_integration" "connect_outbound_csv_options" {
+  cache_namespace      = aws_api_gateway_resource.connect_outbound_csv.id
+  connection_type      = "INTERNET"
+  http_method          = "OPTIONS"
+  passthrough_behavior = "WHEN_NO_MATCH"
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+  resource_id          = aws_api_gateway_resource.connect_outbound_csv.id
+  rest_api_id          = aws_api_gateway_rest_api.connect_outbound.id
+  timeout_milliseconds = "29000"
+  type                 = "MOCK"
+}
+
+resource "aws_api_gateway_integration" "connect_outbound_csv_post" {
+  cache_namespace         = aws_api_gateway_resource.connect_outbound_csv.id
+  connection_type         = "INTERNET"
+  content_handling        = "CONVERT_TO_TEXT"
+  http_method             = "POST"
+  integration_http_method = "POST"
+  passthrough_behavior    = "WHEN_NO_MATCH"
+  resource_id             = aws_api_gateway_resource.connect_outbound_csv.id
+  rest_api_id             = aws_api_gateway_rest_api.connect_outbound.id
+  timeout_milliseconds    = "29000"
+  type                    = "AWS"
+  uri                     = "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:${var.environment.account_id}:function:csv2Dynamo/invocations"
+}
+
+resource "aws_api_gateway_integration_response" "connect_outbound_csv_options" {
+  http_method = "OPTIONS"
+  resource_id = aws_api_gateway_resource.connect_outbound_csv.id
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  }
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+  status_code = "200"
+}
+
+resource "aws_api_gateway_integration_response" "connect_outbound_csv_post" {
+  depends_on  = [aws_api_gateway_resource.connect_admin]
+  http_method = "POST"
+  resource_id = aws_api_gateway_resource.connect_outbound_csv.id
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+  }
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+  status_code = "200"
+}
 
 resource "aws_lambda_permission" "connect_outbound" {
   statement_id  = "AllowAPIGatewayInvoke_Connect_Outbound"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.lambda_makeCampaign.function_name
+  function_name = "csv2Dynamo"
   principal     = "apigateway.amazonaws.com" # For API Gateway
   # Define the source ARN for your API Gateway
   source_arn = "${aws_api_gateway_rest_api.connect_outbound.execution_arn}/*/*/*"
