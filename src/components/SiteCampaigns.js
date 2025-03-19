@@ -12,27 +12,9 @@ import { DatePicker, formatReturnDate } from '@twilio-paste/core/date-picker';
 import { Modal, ModalBody, ModalFooter, ModalFooterActions, ModalHeader, ModalHeading } from '@twilio-paste/core/modal';
 import { encode as base64_encode } from 'base-64';
 import { useUID } from '@twilio-paste/core/uid-library';
-
+import ReactFileReader from 'react-file-reader';
 
 let newData = []
-let campaigns2;
-let timezones = ["Asia/Bangkok",
-    "Asia/Brunei",
-    "Asia/Calcutta",
-    "Asia/Colombo",
-    "Asia/Dubai",
-    "Asia/Ho_Chi_Minh",
-    "Asia/Hong_Kong",
-    "Asia/Jakarta",
-    "Asia/Kuala_Lumpur",
-    "Asia/Kuwait",
-    "Asia/Manila",
-    "Asia/Qatar",
-    "Asia/Seoul",
-    "Asia/Shanghai",
-    "Asia/Singapore",
-    "Asia/Taipei",
-    "Asia/Tokyo"]
 
 export const SiteCampaigns = () => {
     const [campaign, setCampaign] = React.useState(newData);
@@ -55,114 +37,19 @@ export const SiteCampaigns = () => {
     const closeModal = () => setModalOpen(false)
     const [isModalOpen, setModalOpen] = React.useState(false);
     const toaster = useToaster();
+    const [fileData, setFileData] = React.useState("");
+    const [showResults, setShowResults] = React.useState(false)
+    const [isOpen, setIsOpen] = React.useState(false);
 
     const saveRules = () => {
-        console.log(retries)
-        if (!retries) {
-            toaster.push({
-                message: 'Set Retries per Day first',
-                variant: 'error',
-                dismissAfter: 3000
-            })
-        }
-        if (!retriesWeek) {
-            toaster.push({
-                message: 'Set Retries per Week first',
-                variant: 'error',
-                dismissAfter: 3000
-            })
-        }
-        if (!interval) {
-            toaster.push({
-                message: 'Set Time Between Retries first',
-                variant: 'error',
-                dismissAfter: 3000
-            })
-        }
-        if (!duration) {
-            toaster.push({
-                message: 'Set Minimum Ring Duration first',
-                variant: 'error',
-                dismissAfter: 3000
-            })
-        }
-        else {
-            toaster.push({
-                message: 'Set Multiple Schedules first',
-                variant: 'error',
-                dismissAfter: 3000
-            })
-        }
-        if (!callerId) {
-            toaster.push({
-                message: 'Set Caller Id first',
-                variant: 'error',
-                dismissAfter: 3000
-            })
-        }
-        if (!dnd) {
-            toaster.push({
-                message: 'Set Do Not Call List first',
-                variant: 'error',
-                dismissAfter: 3000
-            })
-        }
-        if (!start) {
-            toaster.push({
-                message: 'Set Start Date first',
-                variant: 'error',
-                dismissAfter: 3000
-            })
-        }
-        if (!end) {
-            toaster.push({
-                message: 'Set End Date first',
-                variant: 'error',
-                dismissAfter: 3000
-            })
-        }
-        console.log(updateCamapign)
-        if (updateCamapign === false) {
-            let updates = {};
-            updates.campaign = siteCampaign;
-            updates.retry = retries;
-            updates.duration = duration;
-            updates.interval = interval;
-            updates.retriesWeek = retriesWeek;
-            updates.callerId = callerId;
-            updates.dnd = dnd;
-            updates.start = start;
-            updates.end = end;
-            updates.enabled = enabled;
-            updates.timezone = tz;
-            dynamoCampaigns.push(updates);
-            localStorage.setItem('campaigns', JSON.stringify(dynamoCampaigns));
-            setUpdateCampaign(true)
-        } else {
-            for (let i = 0; i < dynamoCampaigns.length; i++) {
-                console.log(dynamoCampaigns[i].campaign, siteCampaign)
-                if (dynamoCampaigns[i].campaign === siteCampaign) {
-                    dynamoCampaigns[i].retry = retries;
-                    dynamoCampaigns[i].duration = duration;
-                    dynamoCampaigns[i].interval = interval;
-                    dynamoCampaigns[i].retriesWeek = retriesWeek;
-                    dynamoCampaigns[i].callerId = callerId;
-                    dynamoCampaigns[i].dnd = dnd;
-                    dynamoCampaigns[i].start = start;
-                    dynamoCampaigns[i].end = end;
-                    dynamoCampaigns[i].enabled = enabled;
-                    dynamoCampaigns[i].timezone = tz;
-                }
-            }
-            localStorage.setItem('campaigns', JSON.stringify(dynamoCampaigns));
-        }
+
     }
+
 
     const AddCampaignModal = (prop) => {
         const uidDP = useUID();
         const uidHT = useUID();
         let location = prop.location
-        const [isOpen, setIsOpen] = React.useState(false);
         const handleOpen = () => {
             setIsOpen(true)
             console.log("Modal Open");
@@ -171,54 +58,56 @@ export const SiteCampaigns = () => {
             setIsOpen(false)
             console.log("Modal closed")
         };
-        const addCampaign = () => {
-            if (campaign.indexOf(listName) !== -1) {
-                console.log("-1")
-                toaster.push({
-                    message: 'List Name already Exists',
-                    variant: 'error',
-                    dismissAfter: 3000
-                })
-            } else {
-                let updatedDrop = campaign
-                updatedDrop.push(listName)
-                setCampaign(updatedDrop)
-                setIsOpen(false)
-                setSiteCampaign(listName);
-                setSelectedCampaign(true);
-                setShowTimes(true);
-                setUpdateCampaign(false);
-            }
-        }
+
+        const addContacts = () => {
+            console.log(fileData)
+            setIsOpen(false);
+        };
+        const handleFiles = (files) => {
+            let importFileData = files.base64[0].replace("data:text/csv;base64,", "");
+            setFileData(importFileData); // Save file data to state
+            setIsOpen(false);
+            toaster.push({
+                message: 'File Uploaded',
+                variant: 'success',
+                dismissAfter: 3000
+            })
+
+        };
         const modalHeadingID = useUID();
         const nameInputRef = React.createRef();
         const dateInputRef = React.createRef();
-        const [listName, setListName] = React.useState('');
+        const [date, setDate] = React.useState('');
+        const [name, setName] = React.useState('');
         return (
             <div>
                 <Button variant="primary" onClick={handleOpen}>
-                    New Contact list
+                    New Contact List
                 </Button>
                 <Modal ariaLabelledby={modalHeadingID} isOpen={isOpen} onDismiss={handleClose} size="default">
                     <ModalHeader>
                         <ModalHeading as="h3" id={modalHeadingID}>
-                        New Contact list
+                            New Contact List
                         </ModalHeading>
                     </ModalHeader>
                     <ModalBody>
-                        <Label>Campaign Name</Label>
-                        <Input
-                            type="text"
-                            id={modalHeadingID}
-                            onChange={e => setListName(e.currentTarget.value)}
-                        />
+                        <div
+                            style={{ width: "90%", margin: "auto" }}>
+                            <div style={{ display: "flex", gap: "300px" }}>
+                                <span>
+                                    <Label>Select a CSV File</Label>
+                                    <ReactFileReader handleFiles={handleFiles} fileTypes={[".csv"]} base64={true} multipleFiles={true}>
+                                        <Button className='btn'>Upload</Button>
+                                    </ReactFileReader>
+                                </span>
+                            </div>
+                        </div>
                     </ModalBody>
                     <ModalFooter>
                         <ModalFooterActions>
                             <Button variant="secondary" onClick={handleClose}>
                                 Cancel
                             </Button>
-                            <Button variant="primary" onClick={addCampaign}>Submit</Button>
                         </ModalFooterActions>
                     </ModalFooter>
                 </Modal>
@@ -227,31 +116,7 @@ export const SiteCampaigns = () => {
     }
 
     const removeCampaign = () => {
-        console.log(siteCampaign)
-        if(siteCampaign.length === 0){
-            toaster.push({
-                message: 'Select List First',
-                variant: 'error',
-                dismissAfter: 3000
-            })
-        }
-        let campaignToUpdate = []
-        let newCampaign = []
-        for (let i = 0; i < dynamoCampaigns.length; i++) {
-            if(dynamoCampaigns[i].campaign === siteCampaign){
-                console.log(siteCampaign, "found" ,i)
-            }else{
-                campaignToUpdate.push(dynamoCampaigns[i])
-                newCampaign.push(dynamoCampaigns[i].campaign)
-            }
-        }
 
-        setCampaign(newCampaign);
-        setSiteCampaign([])
-        setSelectedCampaign(false)
-        setShowTimes(false)
-        setDynamoCampaigns(campaignToUpdate)
-        localStorage.setItem('campaigns', JSON.stringify(campaignToUpdate));
     }
 
     useEffect(() => {
@@ -261,17 +126,33 @@ export const SiteCampaigns = () => {
             method: 'post',
             maxBodyLength: Infinity,
             url: `${process.env.REACT_APP_URL}/readSettings`,
-            headers: { }
+            headers: {}
         };
         console.log(config)
         axios.request(config)
             .then((response) => {
                 let items = response.data.items
-                console.log("I",items)
+                console.log("I", items)
                 for (let i = 0; i < items.length; i++) {
                     currentCampaigns.push(items[i].campaign)
                 }
-                console.log("CC",currentCampaigns)
+                console.log("CC", currentCampaigns)
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        setCampaign(currentCampaigns);
+        console.log(`Campaign(s) are: ${currentCampaigns}`)
+
+        config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: `${process.env.REACT_APP_URL}/getNumbers`,
+            headers: {}
+        };
+        axios.request(config)
+            .then((response) => {
+                console.log(response)
             })
             .catch((error) => {
                 console.log(error);
@@ -297,21 +178,6 @@ export const SiteCampaigns = () => {
                                 onInputValueChange={({ inputValue }) => {
                                     setSiteCampaign(inputValue);
                                     setSelectedCampaign(true);
-                                    for (let i = 0; i < dynamoCampaigns.length; i++) {
-                                        if (dynamoCampaigns[i].campaign === inputValue) {
-                                            console.log(dynamoCampaigns[i])
-                                            setRetries(dynamoCampaigns[i].retry)
-                                            setRetriesWeek(dynamoCampaigns[i].retriesWeek)
-                                            setInterval(dynamoCampaigns[i].interval)
-                                            setDuration(dynamoCampaigns[i].duration)
-                                            setCallerId(dynamoCampaigns[i].callerId)
-                                            setDND(dynamoCampaigns[i].dnd)
-                                            setStart(dynamoCampaigns[i].start)
-                                            setEnd(dynamoCampaigns[i].end)
-                                            setEnabled(dynamoCampaigns[i].enabled)
-                                            setTZ(dynamoCampaigns[i].timezone)
-                                        }
-                                    }
                                 }}
                             />
                         </td>
@@ -343,7 +209,7 @@ export const SiteCampaigns = () => {
                     </Tr>
                 </THead>
                 <TBody>
-                    
+
                 </TBody>
                 <TFoot>
                     <Tr>
