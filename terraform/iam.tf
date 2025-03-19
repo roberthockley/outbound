@@ -144,7 +144,7 @@ resource "aws_iam_role_policy_attachment" "RoleForCSV2Dynamo_PolicyForCSV2Dynamo
   role       = "RoleForCSV2Dynamo"
 }
 
-resource "aws_iam_role_policy_attachment" "RoleForMakeCampaign_CloudWatchLogsFullAccess" {
+resource "aws_iam_role_policy_attachment" "RoleForCSV2Dynamo_CloudWatchLogsFullAccess" {
   depends_on = [aws_iam_role.RoleForCSV2Dynamo]
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
   role       = "RoleForCSV2Dynamo"
