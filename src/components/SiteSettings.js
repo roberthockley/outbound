@@ -56,10 +56,11 @@ export const SiteSettings = () => {
     const closeModal = () => setModalOpen(false)
     const [isModalOpen, setModalOpen] = React.useState(false);
     const toaster = useToaster();
+    const [allowUpdate, setAllowUpdate] = React.useState(true);
 
     const saveRules = () => {
-        console.log(retries)
         if (!retries) {
+            setAllowUpdate(false)
             toaster.push({
                 message: 'Set Retries per Day first',
                 variant: 'error',
@@ -67,6 +68,7 @@ export const SiteSettings = () => {
             })
         }
         if (!retriesWeek) {
+            setAllowUpdate(false)
             toaster.push({
                 message: 'Set Retries per Week first',
                 variant: 'error',
@@ -74,6 +76,7 @@ export const SiteSettings = () => {
             })
         }
         if (!intervalBusy) {
+            setAllowUpdate(false)
             toaster.push({
                 message: 'Set Time Between Retries first',
                 variant: 'error',
@@ -81,6 +84,7 @@ export const SiteSettings = () => {
             })
         }
         if (!duration) {
+            setAllowUpdate(false)
             toaster.push({
                 message: 'Set Minimum Ring Duration first',
                 variant: 'error',
@@ -88,6 +92,7 @@ export const SiteSettings = () => {
             })
         }
         if (!callerId) {
+            setAllowUpdate(false)
             toaster.push({
                 message: 'Set Caller Id first',
                 variant: 'error',
@@ -95,6 +100,7 @@ export const SiteSettings = () => {
             })
         }
         if (!dnd) {
+            setAllowUpdate(false)
             toaster.push({
                 message: 'Set Do Not Call List first',
                 variant: 'error',
@@ -102,6 +108,7 @@ export const SiteSettings = () => {
             })
         }
         if (!start) {
+            setAllowUpdate(false)
             toaster.push({
                 message: 'Set Start Date first',
                 variant: 'error',
@@ -109,92 +116,92 @@ export const SiteSettings = () => {
             })
         }
         if (!end) {
+            setAllowUpdate(false)
             toaster.push({
                 message: 'Set End Date first',
                 variant: 'error',
                 dismissAfter: 3000
             })
         }
-        console.log(updateCamapign)
-
-        let updateData = JSON.stringify({
-            "TableName": "OutboundRules",
-            "Key": {
-                "campaign": {
-                    "S": siteCampaign
+        if (allowUpdate) {
+            let updateData = JSON.stringify({
+                "TableName": "OutboundRules",
+                "Key": {
+                    "campaign": {
+                        "S": siteCampaign
+                    }
+                },
+                "UpdateExpression": "set intervalNOAN = :intervalNOAN, intervalAM = :intervalAM, callerId = :callerId, dnd = :dnd, callduration = :callduration, enabled = :enabled, scheduleend = :scheduleend, scheduleinterval = :scheduleinterval, intervalBusy = :intervalBusy, retriesWeek = :retriesWeek, retry = :retry, schedulestart = :schedulestart, scheduletimezone = :scheduletimezone",
+                "ConditionExpression": "campaign = :campaign",
+                "ExpressionAttributeValues": {
+                    ":campaign": {
+                        "S": siteCampaign
+                    },
+                    ":callerId": {
+                        "S": callerId
+                    },
+                    ":dnd": {
+                        "S": dnd
+                    },
+                    ":callduration": {
+                        "S": duration
+                    },
+                    ":enabled": {
+                        "S": enabled
+                    },
+                    ":scheduleend": {
+                        "S": end
+                    },
+                    ":scheduleinterval": {
+                        "S": "500"
+                    },
+                    ":intervalBusy": {
+                        "S": intervalBusy
+                    },
+                    ":intervalAM": {
+                        "S": intervalAM
+                    },
+                    ":intervalNOAN": {
+                        "S": intervalNOAN
+                    },
+                    ":retriesWeek": {
+                        "S": retriesWeek
+                    },
+                    ":retry": {
+                        "S": retries
+                    },
+                    ":schedulestart": {
+                        "S": start
+                    },
+                    ":scheduletimezone": {
+                        "S": tz
+                    }
                 }
-            },
-            "UpdateExpression": "set intervalNOAN = :intervalNOAN, intervalAM = :intervalAM, callerId = :callerId, dnd = :dnd, callduration = :callduration, enabled = :enabled, scheduleend = :scheduleend, scheduleinterval = :scheduleinterval, intervalBusy = :intervalBusy, retriesWeek = :retriesWeek, retry = :retry, schedulestart = :schedulestart, scheduletimezone = :scheduletimezone",
-            "ConditionExpression": "campaign = :campaign",
-            "ExpressionAttributeValues": {
-                ":campaign": {
-                    "S": siteCampaign
-                },
-                ":callerId": {
-                    "S": callerId
-                },
-                ":dnd": {
-                    "S": dnd
-                },
-                ":callduration": {
-                    "S": duration
-                },
-                ":enabled": {
-                    "S": enabled
-                },
-                ":scheduleend": {
-                    "S": end
-                },
-                ":scheduleinterval": {
-                    "S": "500"
-                },
-                ":intervalBusy": {
-                    "S": intervalBusy
-                },
-                ":intervalAM": {
-                    "S": intervalAM
-                },
-                ":intervalNOAN": {
-                    "S": intervalNOAN
-                },
-                ":retriesWeek": {
-                    "S": retriesWeek
-                },
-                ":retry": {
-                    "S": retries
-                },
-                ":schedulestart": {
-                    "S": start
-                },
-                ":scheduletimezone": {
-                    "S": tz
-                }
-            }
-        });
-
-        let updateConfig = {
-            method: 'post',
-            maxBodyLength: Infinity,
-            url: `${process.env.REACT_APP_URL}/updateSettings`,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: updateData
-        };
-        console.log(updateConfig)
-
-        axios.request(updateConfig)
-            .then((response) => {
-                console.log(JSON.stringify(response.data));
-                toaster.push({
-                    message: 'Campaign Saved',
-                    variant: 'success',
-                    dismissAfter: 3000
-                })
-            })
-            .catch((error) => {
-                console.log(error);
             });
+
+            let updateConfig = {
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: `${process.env.REACT_APP_URL}/updateSettings`,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: updateData
+            };
+
+            axios.request(updateConfig)
+                .then((response) => {
+                    console.log(JSON.stringify(response.data));
+                    toaster.push({
+                        message: 'Campaign Saved',
+                        variant: 'success',
+                        dismissAfter: 3000
+                    })
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
     }
 
     const AddCampaignModal = (prop) => {
@@ -247,7 +254,6 @@ export const SiteSettings = () => {
 
                 axios.request(config)
                     .then((response) => {
-                        console.log(JSON.stringify(response.data));
                         toaster.push({
                             message: 'Campaign Created',
                             variant: 'success',
@@ -258,43 +264,42 @@ export const SiteSettings = () => {
                         console.log(error);
                     });
 
-                    let createCampaignData = JSON.stringify({
-                        "AttributeDefinitions": [
-                          {
+                let createCampaignData = JSON.stringify({
+                    "AttributeDefinitions": [
+                        {
                             "AttributeName": "phoneNumber",
                             "AttributeType": "S"
-                          }
-                        ],
-                        "TableName": `${listName}-Campaign`,
-                        "KeySchema": [
-                          {
+                        }
+                    ],
+                    "TableName": `${listName}-Campaign`,
+                    "KeySchema": [
+                        {
                             "AttributeName": "phoneNumber",
                             "KeyType": "HASH"
-                          }
-                        ],
-                        "ProvisionedThroughput": {
-                          "ReadCapacityUnits": 5,
-                          "WriteCapacityUnits": 5
                         }
-                      });
-                      
-                      let createCampaignConfig = {
-                        method: 'post',
-                        maxBodyLength: Infinity,
-                        url: `${process.env.REACT_APP_URL}/newCampaign`,
-                        headers: { 
-                          'Content-Type': 'application/json'
-                        },
-                        data : createCampaignData
-                      };
-                      
-                      axios.request(createCampaignConfig)
-                      .then((response) => {
-                        console.log(JSON.stringify(response.data));
-                      })
-                      .catch((error) => {
+                    ],
+                    "ProvisionedThroughput": {
+                        "ReadCapacityUnits": 5,
+                        "WriteCapacityUnits": 5
+                    }
+                });
+
+                let createCampaignConfig = {
+                    method: 'post',
+                    maxBodyLength: Infinity,
+                    url: `${process.env.REACT_APP_URL}/newCampaign`,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: createCampaignData
+                };
+
+                axios.request(createCampaignConfig)
+                    .then((response) => {
+                    })
+                    .catch((error) => {
                         console.log(error);
-                      });
+                    });
 
 
             }
@@ -380,7 +385,6 @@ export const SiteSettings = () => {
         console.log(deleteConfig)
         axios.request(deleteConfig)
             .then((response) => {
-                console.log(JSON.stringify(response.data));
                 toaster.push({
                     message: 'Campaign Deleted',
                     variant: 'success',
@@ -396,7 +400,7 @@ export const SiteSettings = () => {
         let currentCampaigns = [];
         let readData = JSON.stringify({
             "TableName": "OutboundRules"
-          });
+        });
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
@@ -404,11 +408,9 @@ export const SiteSettings = () => {
             headers: {},
             data: readData
         };
-        console.log(config)
         axios.request(config)
             .then((response) => {
                 let items = response.data.items
-                console.log("I", items)
                 setDynamoCampaigns(items)
                 for (let i = 0; i < items.length; i++) {
                     currentCampaigns.push(items[i].campaign)
@@ -444,20 +446,25 @@ export const SiteSettings = () => {
         setCampaign(currentCampaigns);
         console.log(`Campaign(s) are: ${currentCampaigns}`)
 
-        config = {
+        let dndData = JSON.stringify({
+            "TableName": "DND"
+        });
+        let dndConfig = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: `${process.env.REACT_APP_URL}/getDND`,
-            headers: {}
+            url: `${process.env.REACT_APP_URL}/readSettings`,
+            headers: {},
+            data: dndData
         };
-        console.log(config)
-        axios.request(config)
+        axios.request(dndConfig)
             .then((response) => {
+                console.log(response,"P")
                 let dndToUse = []
-                let dndList = response.data.Items
+                let dndList = response.data.items
                 for (let i = 0; i < dndList.length; i++) {
-                    dndToUse.push(dndList[i].name.S)
+                    dndToUse.push(dndList[i].name)
                 }
+                console.log("PPP",dndToUse)
                 setDNDList(dndToUse)
 
             })
@@ -487,7 +494,6 @@ export const SiteSettings = () => {
                                     for (let i = 0; i < dynamoCampaigns.length; i++) {
 
                                         if (dynamoCampaigns[i].campaign === inputValue) {
-                                            console.log(dynamoCampaigns[i])
                                             setRetries(dynamoCampaigns[i].retry)
                                             setRetriesWeek(dynamoCampaigns[i].retriesWeek)
                                             setIntervalBusy(dynamoCampaigns[i].intervalBusy)

@@ -74,11 +74,6 @@ export const SiteCampaigns = () => {
             axios.request(deleteConfig)
                 .then((response) => {
                     console.log(JSON.stringify(response.data));
-                    toaster.push({
-                        message: 'Number removed',
-                        variant: 'warning',
-                        dismissAfter: 3000
-                    })
                 })
                 .catch((error) => {
                     console.log(error);
@@ -131,12 +126,33 @@ const AddCampaignModal = (prop) => {
         setFileData(importFileData); // Save file data to state
         setIsOpen(false);
         console.log(importFileData)
-        toaster.push({
-            message: 'File Uploaded',
-            variant: 'success',
-            dismissAfter: 3000
-        })
-
+        let csvUploadData = JSON.stringify({
+            "data": importFileData
+          });
+          
+          let csvUploadConfig = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: 'https://lj3qlnw0qh.execute-api.ap-southeast-1.amazonaws.com/connect-outbound/csvUpload',
+            headers: { 
+              'Content-Type': 'application/json'
+            },
+            data : csvUploadData
+          };
+          
+          axios.request(csvUploadConfig)
+          .then((response) => {
+            console.log(response)
+            toaster.push({
+                message: 'File Uploaded',
+                variant: 'success',
+                dismissAfter: 3000
+            })
+            loadCampaign(siteCampaign)
+          })
+          .catch((error) => {
+            console.log(error);
+          });
     };
     const modalHeadingID = useUID();
     const nameInputRef = React.createRef();

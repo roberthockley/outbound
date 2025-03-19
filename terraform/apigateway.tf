@@ -853,7 +853,7 @@ resource "aws_api_gateway_integration" "connect_outbound_csv_post" {
   rest_api_id             = aws_api_gateway_rest_api.connect_outbound.id
   timeout_milliseconds    = "29000"
   type                    = "AWS"
-  uri                     = "arn:aws:apigateway:ap-southeast-1:lambda:path/2015-03-31/functions/arn:aws:lambda:ap-southeast-1:${var.environment.account_id}:function:csv2Dynamo/invocations"
+  uri                     = aws_lambda_function.lambda_csv.invoke_arn
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_csv_options" {
@@ -924,7 +924,7 @@ resource "aws_api_gateway_gateway_response" "connect_outbound_5xx" {
 resource "aws_lambda_permission" "connect_outbound" {
   statement_id  = "AllowAPIGatewayInvoke_Connect_Outbound"
   action        = "lambda:InvokeFunction"
-  function_name = "csv2Dynamo"
+  function_name = aws_lambda_function.lambda_csv.function_name
   principal     = "apigateway.amazonaws.com" # For API Gateway
   # Define the source ARN for your API Gateway
   source_arn = "${aws_api_gateway_rest_api.connect_outbound.execution_arn}/*/*/*"
