@@ -797,6 +797,7 @@ resource "aws_api_gateway_method" "connect_outbound_csv_post" {
 }
 
 resource "aws_api_gateway_method_response" "connect_outbound_csv_options" {
+  depends_on  = [aws_api_gateway_method.connect_outbound_csv_options]
   http_method = "OPTIONS"
   resource_id = aws_api_gateway_resource.connect_outbound_csv.id
   response_models = {
@@ -812,6 +813,7 @@ resource "aws_api_gateway_method_response" "connect_outbound_csv_options" {
 }
 
 resource "aws_api_gateway_method_response" "connect_outbound_csv_post" {
+  depends_on  = [aws_api_gateway_method.connect_outbound_csv_post]
   http_method = "POST"
   resource_id = aws_api_gateway_resource.connect_outbound_csv.id
   response_models = {
@@ -825,6 +827,7 @@ resource "aws_api_gateway_method_response" "connect_outbound_csv_post" {
 }
 
 resource "aws_api_gateway_integration" "connect_outbound_csv_options" {
+  depends_on           = [aws_api_gateway_method_response.connect_outbound_csv_options]
   cache_namespace      = aws_api_gateway_resource.connect_outbound_csv.id
   connection_type      = "INTERNET"
   http_method          = "OPTIONS"
@@ -839,6 +842,7 @@ resource "aws_api_gateway_integration" "connect_outbound_csv_options" {
 }
 
 resource "aws_api_gateway_integration" "connect_outbound_csv_post" {
+  depends_on              = [aws_api_gateway_method_response.connect_outbound_csv_post]
   cache_namespace         = aws_api_gateway_resource.connect_outbound_csv.id
   connection_type         = "INTERNET"
   content_handling        = "CONVERT_TO_TEXT"
@@ -853,6 +857,7 @@ resource "aws_api_gateway_integration" "connect_outbound_csv_post" {
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_csv_options" {
+  depends_on  = [aws_api_gateway_integration.connect_outbound_csv_options]
   http_method = "OPTIONS"
   resource_id = aws_api_gateway_resource.connect_outbound_csv.id
   response_parameters = {
@@ -865,7 +870,7 @@ resource "aws_api_gateway_integration_response" "connect_outbound_csv_options" {
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_csv_post" {
-  depends_on  = [aws_api_gateway_resource.connect_outbound_csv]
+  depends_on  = [aws_api_gateway_integration.connect_outbound_csv_post]
   http_method = "POST"
   resource_id = aws_api_gateway_resource.connect_outbound_csv.id
   response_parameters = {
