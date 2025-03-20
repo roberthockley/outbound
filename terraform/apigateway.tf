@@ -117,7 +117,7 @@ resource "aws_api_gateway_integration_response" "connect_outbound_update_options
 
 }
 
-resource "aws_api_gateway_integration_response" "connect_update_post" {
+resource "aws_api_gateway_integration_response" "connect_outbound_update_post" {
   depends_on  = [aws_api_gateway_method_response.connect_outbound_update_post, aws_api_gateway_integration.connect_outbound_update_post, aws_api_gateway_method.connect_outbound_update_post]
   http_method = "POST"
   resource_id = aws_api_gateway_resource.connect_outbound_update.id
