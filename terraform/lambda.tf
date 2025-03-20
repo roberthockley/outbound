@@ -74,7 +74,7 @@ resource "aws_lambda_function" "lambda_unmarshalledDynamo" {
   filename      = "unmarshalledDynamo.zip"
   function_name = "unmarshalledDynamo"
   description   = "Lambda to upload CSV Call Lists to DynamoDB"
-  role          = aws_iam_role.RoleForCSV2Dynamo.arn
+  role          = aws_iam_role.RoleForMakeCampaign.arn
   handler       = "index.handler"
   publish       = true
   layers        = [aws_lambda_layer_version.lambda_layer_dynamodb.arn]
