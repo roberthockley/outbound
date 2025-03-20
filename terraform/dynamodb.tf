@@ -42,3 +42,18 @@ resource "aws_dynamodb_table" "dndGlobal_table" {
     Environment = "${var.environment.name}"
   }
 }
+
+resource "aws_dynamodb_table" "cshedules_table" {
+  name         = var.dynamo.table4
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key    = var.dynamo.hash_key4
+  attribute {
+    name = var.dynamo.hash_key4
+    type = "S"
+  }
+
+  tags = {
+    Name        = "${var.dynamo.table3}"
+    Environment = "${var.environment.name}"
+  }
+}

@@ -16,6 +16,8 @@ variable "dynamo" {
     hash_key2 = string
     table3    = string
     hash_key3 = string
+    table4    = string
+    hash_key4 = string
   })
   sensitive = false
 }
