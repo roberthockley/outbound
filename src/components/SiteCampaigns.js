@@ -67,7 +67,7 @@ export const SiteCampaigns = () => {
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: `${process.env.REACT_APP_URL}/readSettings`,
+            url: `${process.env.REACT_APP_URL}/scanTable`,
             headers: {},
             data: readData
         };
@@ -200,17 +200,17 @@ export const SiteCampaigns = () => {
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: `${process.env.REACT_APP_URL}/readSettings`,
+            url: `${process.env.REACT_APP_URL}/scanTable`,
             headers: {},
             data: readData
         };
         console.log(config)
         axios.request(config)
             .then((response) => {
-                let items = response.data.items
+                let items = response.data.Items
                 console.log("I", items)
                 for (let i = 0; i < items.length; i++) {
-                    currentCampaigns.push(items[i].campaign)
+                    currentCampaigns.push(items[i].campaign.S)
                 }
                 console.log("CC", currentCampaigns)
             })

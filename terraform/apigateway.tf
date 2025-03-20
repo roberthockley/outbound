@@ -518,6 +518,7 @@ resource "aws_api_gateway_integration" "connect_outbound_scan_post" {
   credentials             = aws_iam_role.RoleForMakeCampaign.arn
   passthrough_behavior    = "WHEN_NO_MATCH"
   timeout_milliseconds    = 29000
+
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_scan_options" {
@@ -542,6 +543,29 @@ resource "aws_api_gateway_integration_response" "connect_outbound_scan_post" {
   }
   rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
   status_code = "200"
+  response_templates = {
+    "application/json" = <<EOF
+#set($inputRoot = $input.path('$'))
+{
+  "items": [
+    #foreach($item in $inputRoot.Items)
+    {
+      #foreach($key in $item.keySet())
+        "$key": 
+        #if($item.get($key).S)"$item.get($key).S"
+        #elseif($item.get($key).N)$item.get($key).N
+        #elseif($item.get($key).BOOL)$item.get($key).BOOL
+        #else"$item.get($key)"#end
+        #if($foreach.hasNext),#end
+      #end
+    }#if($foreach.hasNext),#end
+    #end
+  ],
+  "count": $inputRoot.Count,
+  "scannedCount": $inputRoot.ScannedCount
+}
+EOF
+  }
 }
 
 resource "aws_api_gateway_resource" "connect_outbound_table" {

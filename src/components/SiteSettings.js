@@ -239,7 +239,7 @@ export const SiteSettings = () => {
                 let config = {
                     method: 'post',
                     maxBodyLength: Infinity,
-                    url: `${process.env.REACT_APP_URL}/createTable`,
+                    url: `${process.env.REACT_APP_URL}/putItem`,
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -248,6 +248,7 @@ export const SiteSettings = () => {
 
                 axios.request(config)
                     .then((response) => {
+                        console.log("PPP",response)
                         toaster.push({
                             message: 'Campaign Created',
                             variant: 'success',
@@ -402,10 +403,11 @@ export const SiteSettings = () => {
         };
         axios.request(config)
             .then((response) => {
-                let items = response.data.items
+                let items = response.data.Items
+                console.log("PPP",items)
                 setDynamoCampaigns(items)
                 for (let i = 0; i < items.length; i++) {
-                    currentCampaigns.push(items[i].campaign)
+                    currentCampaigns.push(items[i].campaign.S)
                 }
                 setCampaign(currentCampaigns);
                 console.log(`Campaign(s) are: ${currentCampaigns}`)
@@ -450,10 +452,11 @@ export const SiteSettings = () => {
         };
         axios.request(dndConfig)
             .then((response) => {
+                console.log(response,"DND")
                 let dndToUse = []
-                let dndList = response.data.items
+                let dndList = response.data.Items
                 for (let i = 0; i < dndList.length; i++) {
-                    dndToUse.push(dndList[i].name)
+                    dndToUse.push(dndList[i].name.S)
                 }
                 setDNDList(dndToUse)
 
