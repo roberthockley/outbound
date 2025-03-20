@@ -12,7 +12,7 @@ let newData = []
 let hours2;
 
 export const SiteServiceHours = () => {
-    const [campaign, setCampaign] = React.useState(newData);
+    const [schedule, setSchedule] = React.useState(newData);
     const [sitecampaign, setSitecampaign] = React.useState(newData);
     const [showTimes, setShowTimes] = React.useState(false);
     const [multiTimes, setMultiTimes] = React.useState(false);
@@ -421,16 +421,33 @@ export const SiteServiceHours = () => {
     }
 
     useEffect(() => {
-        let countries = []
-        setCampaign(countries);
-        console.log(`campaign(s) are: ${campaign}`)
-        hours2 = JSON.parse(localStorage.getItem('hours'))
-        for (let i = 0; i < hours2.length; i++) {
-            let items = hours2[i]
-            countries.push(items.country)
-        }
-        setCampaign(countries);
-
+        let scheduleLists = []
+        setSchedule(scheduleLists);
+        console.log(`campaign(s) are: ${sitecampaign}`)
+        let readData = JSON.stringify({
+            "TableName": `Schedules`
+        });
+        let config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: `${process.env.REACT_APP_URL}/scanTable`,
+            headers: {},
+            data: readData
+        };
+        console.log(config)
+        axios.request(config)
+            .then((response) => {
+                let items = response.data.items
+                console.log("items",items)
+                for (let i = 0; i < items.length; i++) {
+                    scheduleLists.push(items[i].campaign)
+                }
+                console.log(scheduleLists)
+                setSchedule(scheduleLists);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }, []);
     return (
         <div id="body" style={{ width: '50%' }}>
@@ -442,7 +459,7 @@ export const SiteServiceHours = () => {
                     <tr>
                         <td>
                             <Combobox
-                                items={campaign}
+                                items={schedule}
                                 labelText="Select a Campaign"
                                 required
                                 onInputValueChange={({ inputValue }) => {

@@ -28,6 +28,17 @@ resource "aws_dynamodb_table" "dnd_table" {
   }
 }
 
+resource "aws_dynamodb_table_item" "dnd_table" {
+  table_name = aws_dynamodb_table.dnd_table.name
+  hash_key   = aws_dynamodb_table.dnd_table.hash_key
+
+  item = <<ITEM
+{
+  "name": {"S": "Global"},
+}
+ITEM
+}
+
 resource "aws_dynamodb_table" "dndGlobal_table" {
   name         = var.dynamo.table3
   billing_mode = "PAY_PER_REQUEST"
