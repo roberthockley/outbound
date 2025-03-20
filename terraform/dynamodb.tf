@@ -34,7 +34,7 @@ resource "aws_dynamodb_table_item" "dnd_table" {
 
   item = <<ITEM
 {
-  "name": {"S": "Global"},
+  "name": {"S": "Global"}
 }
 ITEM
 }
