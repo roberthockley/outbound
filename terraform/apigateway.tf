@@ -894,7 +894,7 @@ resource "aws_api_gateway_integration_response" "connect_outbound_deleteTable_po
 
 resource "aws_api_gateway_resource" "connect_outbound_unmarshalled" {
   parent_id   = aws_api_gateway_rest_api.connect_outbound.root_resource_id
-  path_part   = "unmarshalledUpload"
+  path_part   = "unmarshalledScan"
   rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
 }
 
