@@ -50,6 +50,7 @@ export const SiteDND = () => {
             .catch((error) => {
                 console.log(error);
             });
+            
     };
 
     const loadDNDList = (dndName) => {
@@ -114,7 +115,7 @@ export const SiteDND = () => {
                 let config = {
                     method: 'post',
                     maxBodyLength: Infinity,
-                    url: `${process.env.REACT_APP_URL}/updateItem`,
+                    url: `${process.env.REACT_APP_URL}/putItem`,
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -123,11 +124,7 @@ export const SiteDND = () => {
 
                 axios.request(config)
                     .then((response) => {
-                        toaster.push({
-                            message: 'DND List Created',
-                            variant: 'success',
-                            dismissAfter: 3000
-                        })
+                        console.log(response)
                     })
                     .catch((error) => {
                         console.log(error);
@@ -147,10 +144,7 @@ export const SiteDND = () => {
                             "KeyType": "HASH"
                         }
                     ],
-                    "ProvisionedThroughput": {
-                        "ReadCapacityUnits": 5,
-                        "WriteCapacityUnits": 5
-                    }
+                    "BillingMode": "PAY_PER_REQUEST"
                 });
 
                 let createCampaignConfig = {
@@ -165,6 +159,11 @@ export const SiteDND = () => {
 
                 axios.request(createCampaignConfig)
                     .then((response) => {
+                        toaster.push({
+                            message: 'DND List Created',
+                            variant: 'success',
+                            dismissAfter: 3000
+                        })
                     })
                     .catch((error) => {
                         console.log(error);
@@ -322,23 +321,44 @@ export const SiteDND = () => {
             };
             console.log(deleteConfig)
             axios.request(deleteConfig)
-                .then((response) => {
-                    toaster.push({
-                        message: 'List Deleted',
-                        variant: 'success',
-                        dismissAfter: 3000
-                    })
-
-                    const updatedList = dndList.filter((item) => item !== siteDNDList);
-                    setDNDList(updatedList); // Update dropdown options
-                    setSiteDNDList("Global")
-                    loadDNDList("Global");
-                    setUpdateDNDList([]); // Clear current list before reload
-                    setTimeout(() => loadDNDList("Global"), 0); // Force re-render
+                .then((response) => {                    
                 })
                 .catch((error) => {
                     console.log(error);
                 });
+            
+                let deleteTableData = JSON.stringify({
+                    "TableName": `${siteDNDList}-DND`,
+                });
+    
+                let deleteTableConfig = {
+                    method: 'post',
+                    maxBodyLength: Infinity,
+                    url: `${process.env.REACT_APP_URL}/deleteTable`,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    data: deleteTableData,
+                };
+    
+                console.log(deleteTableConfig);
+                axios.request(deleteTableConfig)
+                    .then((response) => {
+                        toaster.push({
+                            message: 'List Deleted',
+                            variant: 'success',
+                            dismissAfter: 3000,
+                        });
+                        const updatedList = dndList.filter((item) => item !== siteDNDList);
+                        setDNDList(updatedList); // Update dropdown options
+                        setSiteDNDList("Global")
+                        loadDNDList("Global");
+                        setUpdateDNDList([]); // Clear current list before reload
+                        setTimeout(() => loadDNDList("Global"), 0); // Force re-render
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
                 
         } else {
             toaster.push({

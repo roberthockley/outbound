@@ -34,30 +34,32 @@ let timezones = ["Asia/Bangkok",
 export const SiteSettings = () => {
     const [campaign, setCampaign] = React.useState(newData);
     const [siteCampaign, setSiteCampaign] = React.useState(newData);
-    const [retries, setRetries] = React.useState();
-    const [retriesWeek, setRetriesWeek] = React.useState();
-    const [intervalBusy, setIntervalBusy] = React.useState();
-    const [intervalNOAN, setIntervalNOAN] = React.useState();
-    const [intervalAM, setIntervalAM] = React.useState();
-    const [duration, setDuration] = React.useState();
-    const [callerId, setCallerId] = React.useState();
-    const [enabled, setEnabled] = React.useState();
+    const [retries, setRetries] = React.useState("");
+    const [retriesWeek, setRetriesWeek] = React.useState("");
+    const [intervalBusy, setIntervalBusy] = React.useState("");
+    const [intervalNOAN, setIntervalNOAN] = React.useState("");
+    const [intervalAM, setIntervalAM] = React.useState("");
+    const [duration, setDuration] = React.useState("");
+    const [callerId, setCallerId] = React.useState("");
+    const [enabled, setEnabled] = React.useState("");
     const [numbers, setNumbers] = React.useState([]);
     const [dndList, setDNDList] = React.useState([]);
-    const [dnd, setDND] = React.useState();
+    const [dnd, setDND] = React.useState("");
     const [tz, setTZ] = React.useState("Asia/Singapore");
     const [start, setStart] = React.useState('');
     const [end, setEnd] = React.useState('');
     const [updateCamapign, setUpdateCampaign] = React.useState(true);
+    const [savedSettings, setSavedSettings] = React.useState(true);
     const [selectedCampaign, setSelectedCampaign] = React.useState(false);
     const [dynamoCampaigns, setDynamoCampaigns] = React.useState([]);
     const [isModalOpen, setModalOpen] = React.useState(false);
+    const [comboboxKey, setComboboxKey] = React.useState(0);
     const toaster = useToaster();
-    const [allowUpdate, setAllowUpdate] = React.useState(true);
 
     const saveRules = () => {
+        let allowUpdate = true
         if (!retries) {
-            setAllowUpdate(false)
+            allowUpdate = false
             toaster.push({
                 message: 'Set Retries per Day first',
                 variant: 'error',
@@ -65,7 +67,7 @@ export const SiteSettings = () => {
             })
         }
         if (!retriesWeek) {
-            setAllowUpdate(false)
+            allowUpdate = false
             toaster.push({
                 message: 'Set Retries per Week first',
                 variant: 'error',
@@ -73,7 +75,7 @@ export const SiteSettings = () => {
             })
         }
         if (!intervalBusy) {
-            setAllowUpdate(false)
+            allowUpdate = false
             toaster.push({
                 message: 'Set Time Between Retries first',
                 variant: 'error',
@@ -81,7 +83,7 @@ export const SiteSettings = () => {
             })
         }
         if (!duration) {
-            setAllowUpdate(false)
+            allowUpdate = false
             toaster.push({
                 message: 'Set Minimum Ring Duration first',
                 variant: 'error',
@@ -89,7 +91,7 @@ export const SiteSettings = () => {
             })
         }
         if (!callerId) {
-            setAllowUpdate(false)
+            allowUpdate = false
             toaster.push({
                 message: 'Set Caller Id first',
                 variant: 'error',
@@ -97,7 +99,7 @@ export const SiteSettings = () => {
             })
         }
         if (!dnd) {
-            setAllowUpdate(false)
+            allowUpdate = false
             toaster.push({
                 message: 'Set Do Not Call List first',
                 variant: 'error',
@@ -105,7 +107,7 @@ export const SiteSettings = () => {
             })
         }
         if (!start) {
-            setAllowUpdate(false)
+            allowUpdate = false
             toaster.push({
                 message: 'Set Start Date first',
                 variant: 'error',
@@ -113,14 +115,16 @@ export const SiteSettings = () => {
             })
         }
         if (!end) {
-            setAllowUpdate(false)
+            allowUpdate = false
             toaster.push({
                 message: 'Set End Date first',
                 variant: 'error',
                 dismissAfter: 3000
             })
         }
+        console.log("Allow", allowUpdate)
         if (allowUpdate) {
+            setSavedSettings(true)
             let updateData = JSON.stringify({
                 "TableName": "OutboundRules",
                 "Key": {
@@ -201,195 +205,7 @@ export const SiteSettings = () => {
         }
     }
 
-    const AddCampaignModal = (prop) => {
-        const [isOpen, setIsOpen] = React.useState(false);
-        const handleOpen = () => {
-            setIsOpen(true)
-            console.log("Modal Open");
-        }
-        const handleClose = () => {
-            setIsOpen(false)
-            console.log("Modal closed")
-        };
-        const addCampaign = () => {
-            if (campaign.indexOf(listName) !== -1) {
-                console.log("-1")
-                toaster.push({
-                    message: 'Campaign Name already Exists',
-                    variant: 'error',
-                    dismissAfter: 3000
-                })
-            } else {
-                let updatedDrop = campaign
-                updatedDrop.push(listName)
-                setCampaign(updatedDrop)
-                setIsOpen(false)
-                setSiteCampaign(listName);
-                setSelectedCampaign(true);
-                setUpdateCampaign(false);
-                let makeData = JSON.stringify({
-                    "TableName": "OutboundRules",
-                    "Item": {
-                        "campaign": {
-                            "S": listName
-                        }
-                    }
-                });
-
-                let config = {
-                    method: 'post',
-                    maxBodyLength: Infinity,
-                    url: `${process.env.REACT_APP_URL}/putItem`,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    data: makeData
-                };
-
-                axios.request(config)
-                    .then((response) => {
-                        console.log("PPP",response)
-                        toaster.push({
-                            message: 'Campaign Created',
-                            variant: 'success',
-                            dismissAfter: 3000
-                        })
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });
-
-                let createCampaignData = JSON.stringify({
-                    "AttributeDefinitions": [
-                        {
-                            "AttributeName": "phoneNumber",
-                            "AttributeType": "S"
-                        }
-                    ],
-                    "TableName": `${listName}-Campaign`,
-                    "KeySchema": [
-                        {
-                            "AttributeName": "phoneNumber",
-                            "KeyType": "HASH"
-                        }
-                    ],
-                    "ProvisionedThroughput": {
-                        "ReadCapacityUnits": 5,
-                        "WriteCapacityUnits": 5
-                    }
-                });
-
-                let createCampaignConfig = {
-                    method: 'post',
-                    maxBodyLength: Infinity,
-                    url: `${process.env.REACT_APP_URL}/createTable`,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    data: createCampaignData
-                };
-
-                axios.request(createCampaignConfig)
-                    .then((response) => {
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });
-
-
-            }
-        }
-        const modalHeadingID = useUID();
-        const [listName, setListName] = React.useState('');
-        return (
-            <div>
-                <Button variant="primary" onClick={handleOpen}>
-                    New Campaign
-                </Button>
-                <Modal ariaLabelledby={modalHeadingID} isOpen={isOpen} onDismiss={handleClose} size="default">
-                    <ModalHeader>
-                        <ModalHeading as="h3" id={modalHeadingID}>
-                            New Campaign
-                        </ModalHeading>
-                    </ModalHeader>
-                    <ModalBody>
-                        <Label>Campaign Name</Label>
-                        <Input
-                            type="text"
-                            id={modalHeadingID}
-                            onChange={e => setListName(e.currentTarget.value)}
-                        />
-                    </ModalBody>
-                    <ModalFooter>
-                        <ModalFooterActions>
-                            <Button variant="secondary" onClick={handleClose}>
-                                Cancel
-                            </Button>
-                            <Button variant="primary" onClick={addCampaign}>Submit</Button>
-                        </ModalFooterActions>
-                    </ModalFooter>
-                </Modal>
-            </div>
-        );
-    }
-
-    const removeCampaign = () => {
-        console.log(siteCampaign)
-        /*if(siteCampaign.length === 0){
-            toaster.push({
-                message: 'Select List First',
-                variant: 'error',
-                dismissAfter: 3000
-            })
-        }*/
-        let campaignToUpdate = []
-        let newCampaign = []
-        for (let i = 0; i < dynamoCampaigns.length; i++) {
-            if (dynamoCampaigns[i].campaign === siteCampaign) {
-                console.log(siteCampaign, "found", i)
-            } else {
-                campaignToUpdate.push(dynamoCampaigns[i])
-                newCampaign.push(dynamoCampaigns[i].campaign)
-            }
-        }
-
-        setCampaign(newCampaign);
-        setSiteCampaign([])
-        setSelectedCampaign(false)
-        setDynamoCampaigns(campaignToUpdate)
-        let deleteData = JSON.stringify({
-            "TableName": "OutboundRules",
-            "Key": {
-                "campaign": {
-                    "S": siteCampaign
-                }
-            }
-        });
-
-        let deleteConfig = {
-            method: 'post',
-            maxBodyLength: Infinity,
-            url: `${process.env.REACT_APP_URL}/deleteItem`,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: deleteData
-        };
-        console.log(deleteConfig)
-        axios.request(deleteConfig)
-            .then((response) => {
-                toaster.push({
-                    message: 'Campaign Deleted',
-                    variant: 'success',
-                    dismissAfter: 3000
-                })
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }
-
-    useEffect(() => {
+    const loadCampaign = () => {
         let currentCampaigns = [];
         let readData = JSON.stringify({
             "TableName": "OutboundRules"
@@ -404,7 +220,7 @@ export const SiteSettings = () => {
         axios.request(config)
             .then((response) => {
                 let items = response.data.items
-                console.log("PPP",items)
+                console.log("PPP", items)
                 setDynamoCampaigns(items)
                 for (let i = 0; i < items.length; i++) {
                     currentCampaigns.push(items[i].campaign)
@@ -452,7 +268,7 @@ export const SiteSettings = () => {
         };
         axios.request(dndConfig)
             .then((response) => {
-                console.log(response,"DND")
+                console.log(response, "DND")
                 let dndToUse = []
                 let dndList = response.data.items
                 for (let i = 0; i < dndList.length; i++) {
@@ -464,7 +280,238 @@ export const SiteSettings = () => {
             .catch((error) => {
                 console.log(error);
             });
+        setComboboxKey(prevKey => prevKey + 1);
+    }
 
+    const AddCampaignModal = (prop) => {
+        const [isOpen, setIsOpen] = React.useState(false);
+        const modalHeadingID = useUID();
+        const [listName, setListName] = React.useState('');
+        if (!savedSettings) { } else {
+            const handleOpen = () => {
+                setIsOpen(true)
+                console.log("Modal Open");
+            }
+            const handleClose = () => {
+                setIsOpen(false)
+                console.log("Modal closed")
+            };
+            const addCampaign = () => {
+                if (campaign.indexOf(listName) !== -1) {
+                    console.log("-1")
+                    toaster.push({
+                        message: 'Campaign Name already Exists',
+                        variant: 'error',
+                        dismissAfter: 3000
+                    })
+                } else {
+                    let updatedDrop = [...campaign]; // Create a new array
+                    updatedDrop.push(listName); // Push the new campaign
+                    setCampaign(updatedDrop); // Update state
+                    setIsOpen(false)
+                    setSiteCampaign(listName);
+                    setSelectedCampaign(true);
+                    setUpdateCampaign(false);
+                    setRetries("");
+                    setRetriesWeek("");
+                    setIntervalBusy("");
+                    setIntervalNOAN("");
+                    setIntervalAM("");
+                    setDuration("");
+                    setEnabled("");
+                    setTZ("Asia/Singapore");
+                    setStart("");
+                    setEnd("");
+                    setSavedSettings(false);
+                    let makeData = JSON.stringify({
+                        "TableName": "OutboundRules",
+                        "Item": {
+                            "campaign": {
+                                "S": listName
+                            }
+                        }
+                    });
+
+                    let config = {
+                        method: 'post',
+                        maxBodyLength: Infinity,
+                        url: `${process.env.REACT_APP_URL}/putItem`,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        data: makeData
+                    };
+
+                    axios.request(config)
+                        .then((response) => {
+                            toaster.push({
+                                message: 'Campaign Created',
+                                variant: 'success',
+                                dismissAfter: 3000
+                            })
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+
+                    let createCampaignData = JSON.stringify({
+                        "AttributeDefinitions": [
+                            {
+                                "AttributeName": "phoneNumber",
+                                "AttributeType": "S"
+                            }
+                        ],
+                        "TableName": `${listName}-Campaign`,
+                        "KeySchema": [
+                            {
+                                "AttributeName": "phoneNumber",
+                                "KeyType": "HASH"
+                            }
+                        ],
+                        "BillingMode": "PAY_PER_REQUEST"
+                    });
+
+                    let createCampaignConfig = {
+                        method: 'post',
+                        maxBodyLength: Infinity,
+                        url: `${process.env.REACT_APP_URL}/createTable`,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        data: createCampaignData
+                    };
+
+                    axios.request(createCampaignConfig)
+                        .then((response) => {
+                            loadCampaign(false, false)
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                }
+            }
+
+            return (
+                <div>
+                    <Button variant="primary" onClick={handleOpen}>
+                        New Campaign
+                    </Button>
+                    <Modal ariaLabelledby={modalHeadingID} isOpen={isOpen} onDismiss={handleClose} size="default">
+                        <ModalHeader>
+                            <ModalHeading as="h3" id={modalHeadingID}>
+                                New Campaign
+                            </ModalHeading>
+                        </ModalHeader>
+                        <ModalBody>
+                            <Label>Campaign Name</Label>
+                            <Input
+                                type="text"
+                                id={modalHeadingID}
+                                onChange={e => setListName(e.currentTarget.value)}
+                            />
+                        </ModalBody>
+                        <ModalFooter>
+                            <ModalFooterActions>
+                                <Button variant="secondary" onClick={handleClose}>
+                                    Cancel
+                                </Button>
+                                <Button variant="primary" onClick={addCampaign}>Submit</Button>
+                            </ModalFooterActions>
+                        </ModalFooter>
+                    </Modal>
+                </div>
+            );
+        }
+    }
+
+    const removeCampaign = () => {
+        console.log(siteCampaign);
+        if (siteCampaign.length === 0) {
+            toaster.push({
+                message: 'Select List First',
+                variant: 'error',
+                dismissAfter: 3000,
+            });
+        } else {
+            let campaignToUpdate = [];
+
+            console.log(dynamoCampaigns, "dynamoCampaigns");
+
+            // Filter out the selected campaign from dynamoCampaigns and campaign lists
+            let newCampaign = dynamoCampaigns.filter(item => item.campaign !== siteCampaign);
+            // Use filter to create a new array without mutating the original
+            setDynamoCampaigns(newCampaign);
+            setCampaign(newCampaign.map(item => item.campaign)); // Extract campaign names
+            console.log("newCampaign", newCampaign, campaign);
+            // Reset siteCampaign and update states
+            setSiteCampaign(""); // Clear selected site
+            setSelectedCampaign(false); // Reset selection flag
+            // Update campaign list after resetting siteCampaign
+            setDynamoCampaigns(campaignToUpdate);
+            setCampaign(newCampaign);
+
+            let deleteData = JSON.stringify({
+                "TableName": "OutboundRules",
+                "Key": {
+                    "campaign": {
+                        "S": siteCampaign,
+                    },
+                },
+            });
+
+            let deleteConfig = {
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: `${process.env.REACT_APP_URL}/deleteItem`,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: deleteData,
+            };
+
+            console.log(deleteConfig);
+            axios.request(deleteConfig)
+                .then((response) => { })
+                .catch((error) => {
+                    console.log(error);
+                });
+
+            let deleteTableData = JSON.stringify({
+                "TableName": `${siteCampaign}-Campaign`,
+            });
+
+            let deleteTableConfig = {
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: `${process.env.REACT_APP_URL}/deleteTable`,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: deleteTableData,
+            };
+
+            console.log(deleteTableConfig);
+            axios.request(deleteTableConfig)
+                .then((response) => {
+                    toaster.push({
+                        message: 'Campaign Deleted',
+                        variant: 'success',
+                        dismissAfter: 3000,
+                    });
+                    setSavedSettings(true)
+                    setComboboxKey(prevKey => prevKey + 1);
+                    // Reload campaigns to ensure UI reflects changes
+                    loadCampaign();
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    };
+
+
+    useEffect(() => {
+        loadCampaign()
     }, []);
 
     return (
@@ -477,35 +524,61 @@ export const SiteSettings = () => {
                     <tr>
                         <td>
                             <Combobox
+                                key={comboboxKey}
                                 items={campaign}
                                 labelText="Select a Campaign"
                                 value={siteCampaign}
                                 required
                                 onInputValueChange={({ inputValue }) => {
-                                    setSiteCampaign(inputValue);
-                                    setSelectedCampaign(true);
-                                    for (let i = 0; i < dynamoCampaigns.length; i++) {
+                                    if (savedSettings) {
+                                        setSiteCampaign(inputValue); // Update selected campaign
+                                        setSelectedCampaign(true); // Mark as selected
 
-                                        if (dynamoCampaigns[i].campaign === inputValue) {
-                                            setRetries(dynamoCampaigns[i].retry)
-                                            setRetriesWeek(dynamoCampaigns[i].retriesWeek)
-                                            setIntervalBusy(dynamoCampaigns[i].intervalBusy)
-                                            setIntervalAM(dynamoCampaigns[i].intervalAM)
-                                            setIntervalNOAN(dynamoCampaigns[i].intervalNOAN)
-                                            setDuration(dynamoCampaigns[i].callduration)
-                                            setCallerId(dynamoCampaigns[i].callerId)
-                                            setDND(dynamoCampaigns[i].dnd)
-                                            setStart(dynamoCampaigns[i].schedulestart)
-                                            setEnd(dynamoCampaigns[i].scheduleend)
-                                            setEnabled(dynamoCampaigns[i].enabled)
-                                            setTZ(dynamoCampaigns[i].scheduletimezone)
+                                        // Reset other states related to campaigns
+                                        setRetries("");
+                                        setRetriesWeek("");
+                                        setIntervalBusy("");
+                                        setIntervalNOAN("");
+                                        setIntervalAM("");
+                                        setDuration("");
+                                        setCallerId("");
+                                        setEnabled("");
+                                        setNumbers([]);
+                                        setDND("");
+                                        setTZ("Asia/Singapore");
+                                        setStart("");
+                                        setEnd("");
+
+                                        // Populate fields based on selected campaign
+                                        for (let i = 0; i < dynamoCampaigns.length; i++) {
+                                            if (dynamoCampaigns[i].campaign === inputValue) {
+                                                setRetries(dynamoCampaigns[i].retry);
+                                                setRetriesWeek(dynamoCampaigns[i].retriesWeek);
+                                                setIntervalBusy(dynamoCampaigns[i].intervalBusy);
+                                                setIntervalAM(dynamoCampaigns[i].intervalAM);
+                                                setIntervalNOAN(dynamoCampaigns[i].intervalNOAN);
+                                                setDuration(dynamoCampaigns[i].callduration);
+                                                setCallerId(dynamoCampaigns[i].callerId);
+                                                setDND(dynamoCampaigns[i].dnd);
+                                                setStart(dynamoCampaigns[i].schedulestart);
+                                                setEnd(dynamoCampaigns[i].scheduleend);
+                                                setEnabled(dynamoCampaigns[i].enabled);
+                                                setTZ(dynamoCampaigns[i].scheduletimezone);
+                                            }
                                         }
+                                    } else {
+                                        toaster.push({
+                                            message: 'Save Settings first',
+                                            variant: 'error',
+                                            dismissAfter: 3000,
+                                        });
                                     }
                                 }}
                             />
+
                         </td>
                         <td></td>
-                        <td> <span>
+                        <td>  <span>
                             <Label>&zwnj;</Label>
                             <Button onClick={() => removeCampaign(siteCampaign)}>Delete Campaign</Button>
                         </span></td>
