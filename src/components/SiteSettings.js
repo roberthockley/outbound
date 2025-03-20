@@ -403,11 +403,11 @@ export const SiteSettings = () => {
         };
         axios.request(config)
             .then((response) => {
-                let items = response.data.Items
+                let items = response.data.items
                 console.log("PPP",items)
                 setDynamoCampaigns(items)
                 for (let i = 0; i < items.length; i++) {
-                    currentCampaigns.push(items[i].campaign.S)
+                    currentCampaigns.push(items[i].campaign)
                 }
                 setCampaign(currentCampaigns);
                 console.log(`Campaign(s) are: ${currentCampaigns}`)
@@ -454,9 +454,9 @@ export const SiteSettings = () => {
             .then((response) => {
                 console.log(response,"DND")
                 let dndToUse = []
-                let dndList = response.data.Items
+                let dndList = response.data.items
                 for (let i = 0; i < dndList.length; i++) {
-                    dndToUse.push(dndList[i].name.S)
+                    dndToUse.push(dndList[i].name)
                 }
                 setDNDList(dndToUse)
 

@@ -568,33 +568,33 @@ EOF
   }
 }
 
-resource "aws_api_gateway_resource" "connect_outbound_table" {
+resource "aws_api_gateway_resource" "connect_outbound_createTable" {
   parent_id   = aws_api_gateway_rest_api.connect_outbound.root_resource_id
   path_part   = "createTable"
   rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
 }
 
-resource "aws_api_gateway_method" "connect_outbound_table_options" {
+resource "aws_api_gateway_method" "connect_outbound_createTable_options" {
   api_key_required = "false"
   authorization    = "NONE"
   http_method      = "OPTIONS"
-  resource_id      = aws_api_gateway_resource.connect_outbound_table.id
+  resource_id      = aws_api_gateway_resource.connect_outbound_createTable.id
   rest_api_id      = aws_api_gateway_rest_api.connect_outbound.id
 }
 
-resource "aws_api_gateway_method" "connect_outbound_table_post" {
+resource "aws_api_gateway_method" "connect_outbound_createTable_post" {
   api_key_required = "false"
   authorization    = "NONE"
   http_method      = "POST"
-  resource_id      = aws_api_gateway_resource.connect_outbound_table.id
+  resource_id      = aws_api_gateway_resource.connect_outbound_createTable.id
   rest_api_id      = aws_api_gateway_rest_api.connect_outbound.id
 }
 
 
-resource "aws_api_gateway_method_response" "connect_outbound_table_options" {
-  depends_on  = [aws_api_gateway_method.connect_outbound_table_options]
+resource "aws_api_gateway_method_response" "connect_outbound_createTable_options" {
+  depends_on  = [aws_api_gateway_method.connect_outbound_createTable_options]
   http_method = "OPTIONS"
-  resource_id = aws_api_gateway_resource.connect_outbound_table.id
+  resource_id = aws_api_gateway_resource.connect_outbound_createTable.id
   response_models = {
     "application/json" = "Empty"
   }
@@ -607,11 +607,11 @@ resource "aws_api_gateway_method_response" "connect_outbound_table_options" {
   status_code = "200"
 }
 
-resource "aws_api_gateway_method_response" "connect_outbound_table_post" {
-  depends_on = [aws_api_gateway_method.connect_outbound_table_post]
+resource "aws_api_gateway_method_response" "connect_outbound_createTable_post" {
+  depends_on = [aws_api_gateway_method.connect_outbound_createTable_post]
 
   http_method = "POST"
-  resource_id = aws_api_gateway_resource.connect_outbound_table.id
+  resource_id = aws_api_gateway_resource.connect_outbound_createTable.id
   response_models = {
     "application/json" = "Empty"
   }
@@ -622,25 +622,25 @@ resource "aws_api_gateway_method_response" "connect_outbound_table_post" {
   status_code = "200"
 }
 
-resource "aws_api_gateway_integration" "connect_outbound_table_options" {
-  depends_on           = [aws_api_gateway_method.connect_outbound_table_options]
-  cache_namespace      = aws_api_gateway_resource.connect_outbound_table.id
+resource "aws_api_gateway_integration" "connect_outbound_createTable_options" {
+  depends_on           = [aws_api_gateway_method.connect_outbound_createTable_options]
+  cache_namespace      = aws_api_gateway_resource.connect_outbound_createTable.id
   connection_type      = "INTERNET"
   http_method          = "OPTIONS"
   passthrough_behavior = "WHEN_NO_MATCH"
   request_templates = {
     "application/json" = "{\"statusCode\": 200}"
   }
-  resource_id          = aws_api_gateway_resource.connect_outbound_table.id
+  resource_id          = aws_api_gateway_resource.connect_outbound_createTable.id
   rest_api_id          = aws_api_gateway_rest_api.connect_outbound.id
   timeout_milliseconds = "29000"
   type                 = "MOCK"
 }
 
-resource "aws_api_gateway_integration" "connect_outbound_table_post" {
-  depends_on              = [aws_api_gateway_method.connect_outbound_table_post]
+resource "aws_api_gateway_integration" "connect_outbound_createTable_post" {
+  depends_on              = [aws_api_gateway_method.connect_outbound_createTable_post]
   http_method             = "POST"
-  resource_id             = aws_api_gateway_resource.connect_outbound_table.id
+  resource_id             = aws_api_gateway_resource.connect_outbound_createTable.id
   rest_api_id             = aws_api_gateway_rest_api.connect_outbound.id
   type                    = "AWS"
   integration_http_method = "POST"
@@ -650,10 +650,10 @@ resource "aws_api_gateway_integration" "connect_outbound_table_post" {
   timeout_milliseconds    = 29000
 }
 
-resource "aws_api_gateway_integration_response" "connect_outbound_table_options" {
-  depends_on  = [aws_api_gateway_method_response.connect_outbound_table_options, aws_api_gateway_method.connect_outbound_table_options, aws_api_gateway_integration.connect_outbound_table_options]
+resource "aws_api_gateway_integration_response" "connect_outbound_createTable_options" {
+  depends_on  = [aws_api_gateway_method_response.connect_outbound_createTable_options, aws_api_gateway_method.connect_outbound_createTable_options, aws_api_gateway_integration.connect_outbound_createTable_options]
   http_method = "OPTIONS"
-  resource_id = aws_api_gateway_resource.connect_outbound_table.id
+  resource_id = aws_api_gateway_resource.connect_outbound_createTable.id
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST'"
@@ -664,10 +664,10 @@ resource "aws_api_gateway_integration_response" "connect_outbound_table_options"
 
 }
 
-resource "aws_api_gateway_integration_response" "connect_outbound_table_post" {
-  depends_on  = [aws_api_gateway_method_response.connect_outbound_table_post, aws_api_gateway_integration.connect_outbound_table_post]
+resource "aws_api_gateway_integration_response" "connect_outbound_createTable_post" {
+  depends_on  = [aws_api_gateway_method_response.connect_outbound_createTable_post, aws_api_gateway_integration.connect_outbound_createTable_post]
   http_method = "POST"
-  resource_id = aws_api_gateway_resource.connect_outbound_table.id
+  resource_id = aws_api_gateway_resource.connect_outbound_createTable.id
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
   }
@@ -782,8 +782,115 @@ resource "aws_api_gateway_integration_response" "connect_outbound_csv_post" {
 }
 
 
+resource "aws_api_gateway_resource" "connect_outbound_deleteTable" {
+  parent_id   = aws_api_gateway_rest_api.connect_outbound.root_resource_id
+  path_part   = "deleteTable"
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+}
+
+resource "aws_api_gateway_method" "connect_outbound_deleteTable_options" {
+  api_key_required = "false"
+  authorization    = "NONE"
+  http_method      = "OPTIONS"
+  resource_id      = aws_api_gateway_resource.connect_outbound_deleteTable.id
+  rest_api_id      = aws_api_gateway_rest_api.connect_outbound.id
+}
+
+resource "aws_api_gateway_method" "connect_outbound_deleteTable_post" {
+  api_key_required = "false"
+  authorization    = "NONE"
+  http_method      = "POST"
+  resource_id      = aws_api_gateway_resource.connect_outbound_deleteTable.id
+  rest_api_id      = aws_api_gateway_rest_api.connect_outbound.id
+}
+
+
+resource "aws_api_gateway_method_response" "connect_outbound_deleteTable_options" {
+  depends_on  = [aws_api_gateway_method.connect_outbound_deleteTable_options]
+  http_method = "OPTIONS"
+  resource_id = aws_api_gateway_resource.connect_outbound_deleteTable.id
+  response_models = {
+    "application/json" = "Empty"
+  }
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "false"
+    "method.response.header.Access-Control-Allow-Methods" = "false"
+    "method.response.header.Access-Control-Allow-Origin"  = "false"
+  }
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+  status_code = "200"
+}
+
+resource "aws_api_gateway_method_response" "connect_outbound_deleteTable_post" {
+  depends_on = [aws_api_gateway_method.connect_outbound_deleteTable_post]
+
+  http_method = "POST"
+  resource_id = aws_api_gateway_resource.connect_outbound_deleteTable.id
+  response_models = {
+    "application/json" = "Empty"
+  }
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "false"
+  }
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+  status_code = "200"
+}
+
+resource "aws_api_gateway_integration" "connect_outbound_deleteTable_options" {
+  depends_on           = [aws_api_gateway_method.connect_outbound_deleteTable_options]
+  cache_namespace      = aws_api_gateway_resource.connect_outbound_deleteTable.id
+  connection_type      = "INTERNET"
+  http_method          = "OPTIONS"
+  passthrough_behavior = "WHEN_NO_MATCH"
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+  resource_id          = aws_api_gateway_resource.connect_outbound_deleteTable.id
+  rest_api_id          = aws_api_gateway_rest_api.connect_outbound.id
+  timeout_milliseconds = "29000"
+  type                 = "MOCK"
+}
+
+resource "aws_api_gateway_integration" "connect_outbound_deleteTable_post" {
+  depends_on              = [aws_api_gateway_method.connect_outbound_deleteTable_post]
+  http_method             = "POST"
+  resource_id             = aws_api_gateway_resource.connect_outbound_deleteTable.id
+  rest_api_id             = aws_api_gateway_rest_api.connect_outbound.id
+  type                    = "AWS"
+  integration_http_method = "POST"
+  uri                     = "arn:aws:apigateway:${var.environment.region}:dynamodb:action/DeleteTable"
+  credentials             = aws_iam_role.RoleForMakeCampaign.arn
+  passthrough_behavior    = "WHEN_NO_MATCH"
+  timeout_milliseconds    = 29000
+}
+
+resource "aws_api_gateway_integration_response" "connect_outbound_deleteTable_options" {
+  depends_on  = [aws_api_gateway_method_response.connect_outbound_deleteTable_options, aws_api_gateway_method.connect_outbound_deleteTable_options, aws_api_gateway_integration.connect_outbound_deleteTable_options]
+  http_method = "OPTIONS"
+  resource_id = aws_api_gateway_resource.connect_outbound_deleteTable.id
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  }
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+  status_code = "200"
+
+}
+
+resource "aws_api_gateway_integration_response" "connect_outbound_deleteTable_post" {
+  depends_on  = [aws_api_gateway_method_response.connect_outbound_deleteTable_post, aws_api_gateway_integration.connect_outbound_deleteTable_post]
+  http_method = "POST"
+  resource_id = aws_api_gateway_resource.connect_outbound_deleteTable.id
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+  }
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+  status_code = "200"
+}
+
 resource "aws_api_gateway_deployment" "connect_outbound_deployment" {
-  depends_on  = [aws_api_gateway_integration_response.connect_outbound_csv_post, aws_api_gateway_integration_response.connect_outbound_csv_options, aws_api_gateway_integration_response.connect_outbound_table_post, aws_api_gateway_integration_response.connect_outbound_table_options, aws_api_gateway_integration_response.connect_outbound_delete_post, aws_api_gateway_integration_response.connect_outbound_delete_options, aws_api_gateway_integration_response.connect_outbound_make_post, aws_api_gateway_integration_response.connect_outbound_make_options, aws_api_gateway_integration_response.connect_outbound_scan_post, aws_api_gateway_integration_response.connect_outbound_scan_options, aws_api_gateway_integration_response.connect_outbound_numbers_post, aws_api_gateway_integration_response.connect_outbound_numbers_options, aws_api_gateway_integration_response.connect_outbound_update_post, aws_api_gateway_integration_response.connect_outbound_update_options]
+  depends_on  = [aws_api_gateway_integration_response.connect_outbound_csv_post, aws_api_gateway_integration_response.connect_outbound_csv_options, aws_api_gateway_integration_response.connect_outbound_createTable_post, aws_api_gateway_integration_response.connect_outbound_createTable_options, aws_api_gateway_integration_response.connect_outbound_delete_post, aws_api_gateway_integration_response.connect_outbound_delete_options, aws_api_gateway_integration_response.connect_outbound_make_post, aws_api_gateway_integration_response.connect_outbound_make_options, aws_api_gateway_integration_response.connect_outbound_scan_post, aws_api_gateway_integration_response.connect_outbound_scan_options, aws_api_gateway_integration_response.connect_outbound_numbers_post, aws_api_gateway_integration_response.connect_outbound_numbers_options, aws_api_gateway_integration_response.connect_outbound_update_post, aws_api_gateway_integration_response.connect_outbound_update_options, aws_api_gateway_integration_response.connect_outbound_deleteTable_post, aws_api_gateway_integration_response.connect_outbound_deleteTable_options]
   rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
 }
 

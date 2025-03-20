@@ -37,7 +37,7 @@ export const SiteDND = () => {
         const deleteConfig = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: `${process.env.REACT_APP_URL}/deleteSettings`,
+            url: `${process.env.REACT_APP_URL}/deleteItem`,
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -60,7 +60,7 @@ export const SiteDND = () => {
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: `${process.env.REACT_APP_URL}/readSettings`,
+            url: `${process.env.REACT_APP_URL}/scanTable`,
             headers: {},
             data: readData
         };
@@ -114,7 +114,7 @@ export const SiteDND = () => {
                 let config = {
                     method: 'post',
                     maxBodyLength: Infinity,
-                    url: `${process.env.REACT_APP_URL}/makeSettings`,
+                    url: `${process.env.REACT_APP_URL}/updateItem`,
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -314,7 +314,7 @@ export const SiteDND = () => {
             let deleteConfig = {
                 method: 'post',
                 maxBodyLength: Infinity,
-                url: `${process.env.REACT_APP_URL}/deleteSettings`,
+                url: `${process.env.REACT_APP_URL}/deleteItem`,
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -359,7 +359,7 @@ export const SiteDND = () => {
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: `${process.env.REACT_APP_URL}/readSettings`,
+            url: `${process.env.REACT_APP_URL}/scanTable`,
             headers: {},
             data: readData
         };

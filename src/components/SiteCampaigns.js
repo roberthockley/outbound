@@ -43,7 +43,7 @@ export const SiteCampaigns = () => {
         const deleteConfig = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: `${process.env.REACT_APP_URL}/deleteSettings`,
+            url: `${process.env.REACT_APP_URL}/deleteItem`,
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -207,10 +207,10 @@ export const SiteCampaigns = () => {
         console.log(config)
         axios.request(config)
             .then((response) => {
-                let items = response.data.Items
+                let items = response.data.items
                 console.log("I", items)
                 for (let i = 0; i < items.length; i++) {
-                    currentCampaigns.push(items[i].campaign.S)
+                    currentCampaigns.push(items[i].campaign)
                 }
                 console.log("CC", currentCampaigns)
             })
