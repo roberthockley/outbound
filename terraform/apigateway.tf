@@ -325,7 +325,7 @@ resource "aws_api_gateway_integration_response" "connect_outbound_delete_options
   status_code = "200"
 }
 
-resource "aws_api_gateway_integration_response" "connect_delete_post" {
+resource "aws_api_gateway_integration_response" "connect_outbound_delete_post" {
   depends_on  = [aws_api_gateway_integration.connect_outbound_delete_post, aws_api_gateway_method_response.connect_outbound_delete_post]
   http_method = "POST"
   resource_id = aws_api_gateway_resource.connect_outbound_delete.id
@@ -536,7 +536,7 @@ resource "aws_api_gateway_integration_response" "connect_outbound_scan_options" 
 resource "aws_api_gateway_integration_response" "connect_outbound_scan_post" {
   depends_on  = [aws_api_gateway_integration.connect_outbound_scan_post, aws_api_gateway_method_response.connect_outbound_scan_post]
   http_method = "POST"
-  resource_id = aws_api_gateway_resource.connect_outbound_delete.id
+  resource_id = aws_api_gateway_resource.connect_outbound_scan.id
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = "'*'"
   }
