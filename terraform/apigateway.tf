@@ -971,7 +971,7 @@ resource "aws_api_gateway_integration" "connect_outbound_unmarshalled_post" {
   rest_api_id             = aws_api_gateway_rest_api.connect_outbound.id
   timeout_milliseconds    = "29000"
   type                    = "AWS"
-  uri                     = aws_lambda_function.lambda_unmarshalled.invoke_arn
+  uri                     = aws_lambda_function.lambda_unmarshalledDynamo.invoke_arn
 }
 
 resource "aws_api_gateway_integration_response" "connect_outbound_unmarshalled_options" {
