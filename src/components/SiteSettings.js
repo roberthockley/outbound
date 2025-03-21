@@ -220,7 +220,6 @@ export const SiteSettings = () => {
         axios.request(config)
             .then((response) => {
                 let items = response.data.items
-                console.log("PPP", items)
                 setDynamoCampaigns(items)
                 for (let i = 0; i < items.length; i++) {
                     currentCampaigns.push(items[i].campaign)
@@ -268,14 +267,12 @@ export const SiteSettings = () => {
         };
         axios.request(dndConfig)
             .then((response) => {
-                console.log(response, "DND")
                 let dndToUse = []
                 let dndList = response.data.items
                 for (let i = 0; i < dndList.length; i++) {
                     dndToUse.push(dndList[i].name)
                 }
                 setDNDList(dndToUse)
-
             })
             .catch((error) => {
                 console.log(error);
