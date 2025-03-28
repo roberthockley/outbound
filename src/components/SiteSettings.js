@@ -34,6 +34,7 @@ let timezones = ["Asia/Bangkok",
 export const SiteSettings = () => {
     const [campaign, setCampaign] = React.useState(newData);
     const [siteCampaign, setSiteCampaign] = React.useState(newData);
+    const [campaignSchedule, setCampaignSchedule] = React.useState("");
     const [retries, setRetries] = React.useState("");
     const [retriesWeek, setRetriesWeek] = React.useState("");
     const [intervalBusy, setIntervalBusy] = React.useState("");
@@ -46,6 +47,7 @@ export const SiteSettings = () => {
     const [dndList, setDNDList] = React.useState([]);
     const [dnd, setDND] = React.useState("");
     const [tz, setTZ] = React.useState("Asia/Singapore");
+    const [schedule, setSchedule] = React.useState(["Standard"]);
     const [start, setStart] = React.useState('');
     const [end, setEnd] = React.useState('');
     const [updateCamapign, setUpdateCampaign] = React.useState(true);
@@ -122,6 +124,14 @@ export const SiteSettings = () => {
                 dismissAfter: 3000
             })
         }
+        if (!campaignSchedule) {
+            allowUpdate = false
+            toaster.push({
+                message: 'Set Schedule first',
+                variant: 'error',
+                dismissAfter: 3000
+            })
+        }
         console.log("Allow", allowUpdate)
         if (allowUpdate) {
             setSavedSettings(true)
@@ -132,7 +142,7 @@ export const SiteSettings = () => {
                         "S": siteCampaign
                     }
                 },
-                "UpdateExpression": "set intervalNOAN = :intervalNOAN, intervalAM = :intervalAM, callerId = :callerId, dnd = :dnd, callduration = :callduration, enabled = :enabled, scheduleend = :scheduleend, scheduleinterval = :scheduleinterval, intervalBusy = :intervalBusy, retriesWeek = :retriesWeek, retry = :retry, schedulestart = :schedulestart, scheduletimezone = :scheduletimezone",
+                "UpdateExpression": "set scheduleName = :scheduleName, intervalNOAN = :intervalNOAN, intervalAM = :intervalAM, callerId = :callerId, dnd = :dnd, callduration = :callduration, enabled = :enabled, scheduleend = :scheduleend, scheduleinterval = :scheduleinterval, intervalBusy = :intervalBusy, retriesWeek = :retriesWeek, retry = :retry, schedulestart = :schedulestart, scheduletimezone = :scheduletimezone",
                 "ConditionExpression": "campaign = :campaign",
                 "ExpressionAttributeValues": {
                     ":campaign": {
@@ -176,6 +186,9 @@ export const SiteSettings = () => {
                     },
                     ":scheduletimezone": {
                         "S": tz
+                    },
+                    ":scheduleName": {
+                        "S": campaignSchedule
                     }
                 }
             });
@@ -277,6 +290,31 @@ export const SiteSettings = () => {
             .catch((error) => {
                 console.log(error);
             });
+
+            let scheduleLists = []
+            setSchedule(scheduleLists);
+            let readScheduleData = JSON.stringify({
+                "tableName": `Schedules`
+            });
+            let scheduleConfig = {
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: `${process.env.REACT_APP_URL}/unmarshalledScan`,
+                headers: {},
+                data: readScheduleData
+            };
+            axios.request(scheduleConfig)
+                .then((response) => {
+                    let items = response.data
+                    for (let i = 0; i < items.length; i++) {
+                        scheduleLists.push(items[i].campaign)
+                    }
+                    setSchedule(scheduleLists);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+
         setComboboxKey(prevKey => prevKey + 1);
     }
 
@@ -317,6 +355,7 @@ export const SiteSettings = () => {
                     setDuration("");
                     setEnabled("");
                     setTZ("Asia/Singapore");
+                    setCampaignSchedule("Standard")
                     setStart("");
                     setEnd("");
                     setSavedSettings(false);
@@ -543,6 +582,7 @@ export const SiteSettings = () => {
                                         setNumbers([]);
                                         setDND("");
                                         setTZ("Asia/Singapore");
+                                        setCampaignSchedule("Standard");
                                         setStart("");
                                         setEnd("");
 
@@ -560,6 +600,7 @@ export const SiteSettings = () => {
                                                 setStart(dynamoCampaigns[i].schedulestart);
                                                 setEnd(dynamoCampaigns[i].scheduleend);
                                                 setEnabled(dynamoCampaigns[i].enabled);
+                                                setCampaignSchedule(dynamoCampaigns[i].scheduleName);
                                                 setTZ(dynamoCampaigns[i].scheduletimezone);
                                             }
                                         }
@@ -727,6 +768,18 @@ export const SiteSettings = () => {
                                 setDND(inputValue)
                             }}
                         /></Td>
+                    </Tr>
+                    <Tr>
+                        <Td>Schedule</Td>
+                        <Td></Td>
+                        <Td></Td>
+                        <Td><Combobox
+                            items={schedule}
+                            value={campaignSchedule}
+                            onInputValueChange={({ inputValue }) => {
+                                setCampaignSchedule(inputValue)
+                            }} />
+                        </Td>
                     </Tr>
                     <Tr>
                         <Td>Time Zone</Td>

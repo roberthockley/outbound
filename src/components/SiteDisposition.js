@@ -126,7 +126,7 @@ export const SiteDisposition = () => {
 
     useEffect(() => {
         let currentDisposition = [];
-        setDynamoDisposition(JSON.parse(localStorage.getItem('dispositions')))
+        //setDynamoDisposition(JSON.parse(localStorage.getItem('dispositions')))
         console.log(`Disposition(s) are: ${currentDisposition}`)
     }, []);
     return (

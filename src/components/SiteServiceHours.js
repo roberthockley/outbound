@@ -748,7 +748,42 @@ export const SiteServiceHours = () => {
         }
     }
 
+    const refreshList = () => {
+        let scheduleLists = []
+        setSchedule(scheduleLists);
+        console.log(`Schedule(s) are: ${siteSchedule}`)
+        let readData = JSON.stringify({
+            "tableName": `Schedules`
+        });
+        let config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: `${process.env.REACT_APP_URL}/unmarshalledScan`,
+            headers: {},
+            data: readData
+        };
+        axios.request(config)
+            .then((response) => {
+                let items = response.data
+                setDynamoHours(items)
+                for (let i = 0; i < items.length; i++) {
+                    scheduleLists.push(items[i].campaign)
+                }
+                setSchedule(scheduleLists);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
     const deleteSchedule = () => {
+        if (siteSchedule === "Standard") {
+            toaster.push({
+                message: 'Standard Schedule Cannot Be Deleted',
+                variant: 'error',
+                dismissAfter: 3000
+            })
+        } else {
             console.log(siteSchedule);
             if (siteSchedule.length === 0) {
                 toaster.push({
@@ -757,18 +792,20 @@ export const SiteServiceHours = () => {
                     dismissAfter: 3000,
                 });
             } else {
-                let scheduleToUpdate = [];    
+                let scheduleToUpdate = [...schedule];
+                const newArray = scheduleToUpdate.filter(item => item !== siteSchedule);
                 // Filter out the selected campaign from dynamoHours and campaign lists
                 let newSchedule = dynamoHours.filter(item => item.campaign !== siteSchedule);
                 // Use filter to create a new array without mutating the original
                 setDynamoHours(newSchedule);
-                console.log("DH",dynamoHours,siteSchedule)
-                setSchedule(newSchedule.map(item => item.campaign)); // Extract campaign names
+                console.log(newSchedule, "NS", scheduleToUpdate)
+                setSchedule(newArray)
                 // Reset siteSchedule and update states
                 setSiteSchedule(""); // Clear selected site
                 // Update campaign list after resetting siteSchedule
+
                 setDynamoHours(scheduleToUpdate);
-    
+
                 let deleteData = JSON.stringify({
                     "TableName": "Schedules",
                     "Key": {
@@ -777,7 +814,7 @@ export const SiteServiceHours = () => {
                         },
                     },
                 });
-    
+
                 let deleteConfig = {
                     method: 'post',
                     maxBodyLength: Infinity,
@@ -787,19 +824,21 @@ export const SiteServiceHours = () => {
                     },
                     data: deleteData,
                 };
-    
+
                 console.log(deleteConfig);
                 axios.request(deleteConfig)
                     .then((response) => {
                         setSavedSettings(true)
-                        setShowTimes(false)
                         setComboboxKey(prevKey => prevKey + 1);
-                     })
+                        refreshList()
+                    })
                     .catch((error) => {
                         console.log(error);
                     });
+                setShowTimes(false)
             }
-        };
+        }
+    };
 
     useEffect(() => {
         let scheduleLists = []
@@ -838,27 +877,27 @@ export const SiteServiceHours = () => {
                     <tr>
                         <td>
                             <Combobox
-                        
+
                                 key={comboboxKey}
                                 items={schedule}
                                 labelText="Select a Schedule"
                                 required
                                 value={siteSchedule}
                                 onInputValueChange={({ inputValue }) => {
-                                    console.log(schedule,"L")
-                                    if(savedSettings){
-                                    setSiteSchedule(inputValue);
-                                    getHours(inputValue);
-                                
-                            }else{
-                                toaster.push({
-                                    message: 'Save Settings first',
-                                    variant: 'error',
-                                    dismissAfter: 3000,
-                                });
-                            }
-                        }
-                    }
+                                    console.log(schedule, "L")
+                                    if (savedSettings) {
+                                        setSiteSchedule(inputValue);
+                                        getHours(inputValue);
+
+                                    } else {
+                                        toaster.push({
+                                            message: 'Save Settings first',
+                                            variant: 'error',
+                                            dismissAfter: 3000,
+                                        });
+                                    }
+                                }
+                                }
                             />
                         </td>
 
