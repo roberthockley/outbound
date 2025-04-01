@@ -23,6 +23,7 @@ resource "aws_connect_instance_storage_config" "transcripts" {
 
 
 resource "aws_connect_instance_storage_config" "recordings" {
+  depends_on = [ aws_s3_bucket.transcripts ] 
   instance_id   = aws_connect_instance.song.id
   resource_type = "CALL_RECORDINGS"
 
