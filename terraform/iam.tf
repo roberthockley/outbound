@@ -151,7 +151,7 @@ resource "aws_iam_role_policy_attachment" "RoleForCSV2Dynamo_CloudWatchLogsFullA
 }
 
 resource "aws_iam_policy" "bedrock_invoke" {
-  name        = "Bedrock_Invoke"
+  name        = "PolicyForBedrock_Invoke"
   path        = "/"
   description = "Policy to allow a post to Bedrock and get results"
   policy = jsonencode({
@@ -174,7 +174,7 @@ resource "aws_iam_policy" "bedrock_invoke" {
 }
 
 resource "aws_iam_policy" "lambda_cloudwatch" {
-  name        = "Cloudwatch"
+  name        = "PolicyForCloudwatch"
   path        = "/"
   description = "Policy to allow Lambda to write to Cloudwatch on each invokation"
   policy = jsonencode({
