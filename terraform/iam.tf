@@ -17,7 +17,7 @@ resource "aws_iam_role" "RoleForMakeCampaign" {
 }
 
 resource "aws_iam_policy" "RoleForMakeCampaignIAM" {
-  name        = "RoleForMakeCampaignIAM"
+  name        = "PolicyForMakeCampaignIAM"
   path        = "/"
   description = ""
   policy = jsonencode({
@@ -38,7 +38,7 @@ resource "aws_iam_policy" "RoleForMakeCampaignIAM" {
 }
 
 resource "aws_iam_policy" "RoleForMakeCampaignConnect" {
-  name        = "RoleForMakeCampaignIAM"
+  name        = "PolicyForMakeCampaignConnect"
   path        = "/"
   description = "For Connect permissions"
   policy = jsonencode({
