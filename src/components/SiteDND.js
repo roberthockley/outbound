@@ -367,8 +367,6 @@ export const SiteDND = () => {
                 dismissAfter: 3000
             })
         }
-
-
     }
 
     useEffect(() => {

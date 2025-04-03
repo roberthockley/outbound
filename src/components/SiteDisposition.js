@@ -32,7 +32,38 @@ export const SiteDisposition = () => {
                 newDispositionList.push(dispositionsList[i])
             }
         }
-        localStorage.setItem('dispositions', JSON.stringify(newDispositionList));
+        let deleteData = JSON.stringify({
+            "TableName": "Dispositions",
+            "Key": {
+                "value": {
+                    "S": valueToRemove
+                }
+            }
+        });
+
+        let deleteConfig = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: `${process.env.REACT_APP_URL}/deleteItem`,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: deleteData
+        };
+        console.log(deleteConfig)
+        axios.request(deleteConfig)
+            .then((response) => {  
+                toaster.push({
+                    message: 'Disposition Deleted',
+                    variant: 'success',
+                    dismissAfter: 3000
+                })                  
+            })
+            .catch((error) => {
+                console.log(error);
+            });        
+        
+
         setDispositionsList(newDispositionList)
     }
 
@@ -127,7 +158,7 @@ export const SiteDisposition = () => {
                     <ModalBody>
                         <Label htmlFor={uidDP + 2} >
                         </Label>
-                        <Label>Disposition Code Label</Label>
+                        <Label>Disposition Code Description</Label>
                         <Input
                             type="text"
                             id={modalHeadingID + 2}
@@ -135,7 +166,7 @@ export const SiteDisposition = () => {
                         />
                         <Label htmlFor={uidDP}>
                         </Label>
-                        <Label>Disposition Code Value</Label>
+                        <Label>Disposition Code</Label>
                         <Input
                             type="text"
                             id={modalHeadingID}
@@ -190,8 +221,8 @@ export const SiteDisposition = () => {
             <Table aria-label="number-grid" id="number-grid" striped="true" >
                 <THead stickyHeader top={0}>
                     <Tr>
-                        <Th >Disposition Code Label</Th>
-                        <Th >Description Code Value</Th>
+                        <Th >Disposition Code Description</Th>
+                        <Th >Description Code</Th>
                         <Th> <AddDispositionModal
                             isModalOpen={isModalOpen}
                             handleClose={closeModal}
