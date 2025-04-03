@@ -16,24 +16,24 @@ let disposition2;
 
 export const SiteDisposition = () => {
 
-    const [dynamoDisposition, setDynamoDisposition] = React.useState([]);
     const openModal = () => setModalOpen(true);
     const closeModal = () => setModalOpen(false)
     const [isModalOpen, setModalOpen] = React.useState(false);
+    const [dispositionsList, setDispositionsList] = React.useState(newData);
     const toaster = useToaster();
     let handleFormSubmit //=console.log("Submit")
 
-    const removeDisposition = (labelToRemove) => { 
+    const removeDisposition = (labelToRemove, valueToRemove) => {
         let newDispositionList = []
-        for (let i = 0; i < dynamoDisposition.length; i++) {
-            if(dynamoDisposition[i].label == labelToRemove){
-                console.log("Removing", labelToRemove)
-            }else{
-                newDispositionList.push(dynamoDisposition[i])
+        for (let i = 0; i < dispositionsList.length; i++) {
+            if (dispositionsList[i].value == valueToRemove) {
+                console.log("Removing", valueToRemove)
+            } else {
+                newDispositionList.push(dispositionsList[i])
             }
         }
         localStorage.setItem('dispositions', JSON.stringify(newDispositionList));
-        setDynamoDisposition(newDispositionList)
+        setDispositionsList(newDispositionList)
     }
 
     const AddDispositionModal = () => {
@@ -52,29 +52,60 @@ export const SiteDisposition = () => {
         const addDisposition = () => {
             setIsOpen(false);
             let updates = {}
-            let labelsToCheck = []
-            for (let i = 0; i < dynamoDisposition.length; i++) {
-                labelsToCheck.push(dynamoDisposition[i].label)
+            let valuesToCheck = []
+            for (let i = 0; i < dispositionsList.length; i++) {
+                valuesToCheck.push(dispositionsList[i].value)
             }
-            console.log(labelsToCheck)
-            if (labelsToCheck.indexOf(label) !== -1) {
-                    toaster.push({
-                        message: 'Disposition Exists',
-                        variant: 'error',
-                        dismissAfter: 3000
+            console.log(valuesToCheck)
+            if (valuesToCheck.indexOf(value) !== -1) {
+                toaster.push({
+                    message: 'Disposition Exists',
+                    variant: 'error',
+                    dismissAfter: 3000
+                })
+            } else {
+                updates.label = label
+                updates.value = value
+                let labelsToUpdate = dispositionsList
+                labelsToUpdate.push(updates)
+
+                let makeData = JSON.stringify({
+                    "TableName": "Dispositions",
+                    "Item": {
+                        "value": {
+                            "S": value
+                        },
+                        "label": {
+                            "S": label
+                        }
+                    }
+                });
+
+                let config = {
+                    method: 'post',
+                    maxBodyLength: Infinity,
+                    url: `${process.env.REACT_APP_URL}/putItem`,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: makeData
+                };
+
+                axios.request(config)
+                    .then((response) => {
+                        console.log(response)
                     })
-                }else{
-                    updates.label = label
-                    updates.value = value
-                    let labelsToUpdate = dynamoDisposition
-                    labelsToUpdate.push(updates)
-                    localStorage.setItem('dispositions', JSON.stringify(labelsToUpdate));
-                    toaster.push({
-                        message: 'Disposition added',
-                        variant: 'success',
-                        dismissAfter: 3000
-                    })
-            }      
+                    .catch((error) => {
+                        console.log(error);
+                    });
+
+                localStorage.setItem('dispositions', JSON.stringify(labelsToUpdate));
+                toaster.push({
+                    message: 'Disposition added',
+                    variant: 'success',
+                    dismissAfter: 3000
+                })
+            }
         };
 
         const modalHeadingID = useUID();
@@ -125,9 +156,31 @@ export const SiteDisposition = () => {
     }
 
     useEffect(() => {
-        let currentDisposition = [];
-        //setDynamoDisposition(JSON.parse(localStorage.getItem('dispositions')))
-        console.log(`Disposition(s) are: ${currentDisposition}`)
+        let currentDispositionsLists = [];
+        let readData = JSON.stringify({
+            "TableName": "Dispositions"
+        });
+        let config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: `${process.env.REACT_APP_URL}/scanTable`,
+            headers: {},
+            data: readData
+        };
+        console.log(config)
+        axios.request(config)
+            .then((response) => {
+                let items = response.data.items
+                console.log("I", items)
+                for (let i = 0; i < items.length; i++) {
+                    currentDispositionsLists.push(items[i].label)
+                }
+                setDispositionsList(items);
+                console.log(`DispositionsList(s) are: ${currentDispositionsLists}`)
+            })
+            .catch((error) => {
+                console.log(error);
+            })
     }, []);
     return (
         <div id="body" style={{ width: '50%' }}>
@@ -148,7 +201,7 @@ export const SiteDisposition = () => {
                     </Tr>
                 </THead>
                 <TBody>
-                    {dynamoDisposition.map((dispositionList, index) => (
+                    {dispositionsList.map((dispositionList, index) => (
                         <Tr key={"row" + index}>
                             <Td key={"label" + index}>{dispositionList.label}</Td>
                             <Td key={"desc" + index}>{dispositionList.value}</Td>
