@@ -54,7 +54,7 @@ resource "aws_dynamodb_table" "dndGlobal_table" {
   }
 }
 
-resource "aws_dynamodb_table" "shedules_table" {
+resource "aws_dynamodb_table" "schedules_table" {
   name         = var.dynamo.table4
   billing_mode = "PAY_PER_REQUEST"
   hash_key    = var.dynamo.hash_key4
