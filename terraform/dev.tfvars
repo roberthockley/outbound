@@ -14,4 +14,6 @@ dynamo = {
   hash_key3 = "phoneNumber"
   table4    = "Schedules"
   hash_key4 = "campaign"
+  table4    = "Dispositions"
+  hash_key4 = "value"
 }

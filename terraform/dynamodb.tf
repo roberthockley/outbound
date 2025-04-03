@@ -54,7 +54,7 @@ resource "aws_dynamodb_table" "dndGlobal_table" {
   }
 }
 
-resource "aws_dynamodb_table" "cshedules_table" {
+resource "aws_dynamodb_table" "shedules_table" {
   name         = var.dynamo.table4
   billing_mode = "PAY_PER_REQUEST"
   hash_key    = var.dynamo.hash_key4
@@ -64,7 +64,22 @@ resource "aws_dynamodb_table" "cshedules_table" {
   }
 
   tags = {
-    Name        = "${var.dynamo.table3}"
+    Name        = "${var.dynamo.table4}"
+    Environment = "${var.environment.name}"
+  }
+}
+
+resource "aws_dynamodb_table" "disposition_table" {
+  name         = var.dynamo.table5
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key    = var.dynamo.hash_key5
+  attribute {
+    name = var.dynamo.hash_key5
+    type = "S"
+  }
+
+  tags = {
+    Name        = "${var.dynamo.table5}"
     Environment = "${var.environment.name}"
   }
 }

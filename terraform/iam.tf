@@ -19,7 +19,7 @@ resource "aws_iam_role" "RoleForMakeCampaign" {
 resource "aws_iam_policy" "RoleForMakeCampaignIAM" {
   name        = "RoleForMakeCampaignIAM"
   path        = "/"
-  description = "For the Secret Rotation Lambda"
+  description = ""
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -37,6 +37,27 @@ resource "aws_iam_policy" "RoleForMakeCampaignIAM" {
   })
 }
 
+resource "aws_iam_policy" "RoleForMakeCampaignConnect" {
+  name        = "RoleForMakeCampaignIAM"
+  path        = "/"
+  description = "For Connect permissions"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        "Sid" : "VisualEditor0",
+        "Effect" : "Allow",
+        "Action" : [
+          "connect:StartOutboundVoiceContact",
+          "connect:ListPhoneNumbersV2"
+        ],
+        "Resource" : [
+          "*",
+        ]
+      }
+    ]
+  })
+}
 
 resource "aws_iam_role_policy_attachment" "RoleForMakeCampaign_AmazonDynamoDBFullAccess" {
   depends_on = [aws_iam_role.RoleForMakeCampaign]
@@ -71,6 +92,12 @@ resource "aws_iam_role_policy_attachment" "RoleForMakeCampaign_CloudWatchEventsF
 resource "aws_iam_role_policy_attachment" "RoleForMakeCampaign_IAM" {
   depends_on = [aws_iam_role.RoleForMakeCampaign]
   policy_arn = aws_iam_policy.RoleForMakeCampaignIAM.arn
+  role       = "RoleForMakeCampaign"
+}
+
+resource "aws_iam_role_policy_attachment" "RoleForMakeCampaign_Connect" {
+  depends_on = [aws_iam_role.RoleForMakeCampaign]
+  policy_arn = aws_iam_policy.RoleForMakeCampaignConnect.arn
   role       = "RoleForMakeCampaign"
 }
 

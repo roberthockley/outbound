@@ -23,11 +23,11 @@ export const SiteDisposition = () => {
     const toaster = useToaster();
     let handleFormSubmit //=console.log("Submit")
 
-    const removeDisposition = (codeToRemove) => { 
+    const removeDisposition = (labelToRemove) => { 
         let newDispositionList = []
         for (let i = 0; i < dynamoDisposition.length; i++) {
-            if(dynamoDisposition[i].code == codeToRemove){
-                console.log("Removing", codeToRemove)
+            if(dynamoDisposition[i].label == labelToRemove){
+                console.log("Removing", labelToRemove)
             }else{
                 newDispositionList.push(dynamoDisposition[i])
             }
@@ -52,23 +52,23 @@ export const SiteDisposition = () => {
         const addDisposition = () => {
             setIsOpen(false);
             let updates = {}
-            let codesToCheck = []
+            let labelsToCheck = []
             for (let i = 0; i < dynamoDisposition.length; i++) {
-                codesToCheck.push(dynamoDisposition[i].code)
+                labelsToCheck.push(dynamoDisposition[i].label)
             }
-            console.log(codesToCheck)
-            if (codesToCheck.indexOf(code) !== -1) {
+            console.log(labelsToCheck)
+            if (labelsToCheck.indexOf(label) !== -1) {
                     toaster.push({
                         message: 'Disposition Exists',
                         variant: 'error',
                         dismissAfter: 3000
                     })
                 }else{
-                    updates.code = code
-                    updates.description = description
-                    let codesToUpdate = dynamoDisposition
-                    codesToUpdate.push(updates)
-                    localStorage.setItem('dispositions', JSON.stringify(codesToUpdate));
+                    updates.label = label
+                    updates.value = value
+                    let labelsToUpdate = dynamoDisposition
+                    labelsToUpdate.push(updates)
+                    localStorage.setItem('dispositions', JSON.stringify(labelsToUpdate));
                     toaster.push({
                         message: 'Disposition added',
                         variant: 'success',
@@ -80,8 +80,8 @@ export const SiteDisposition = () => {
         const modalHeadingID = useUID();
         const nameInputRef = React.createRef();
         const numberInputRef = React.createRef();
-        const [code, setCode] = React.useState('');
-        const [description, setDescription] = React.useState('');
+        const [label, setLabel] = React.useState('');
+        const [value, setValue] = React.useState('');
         return (
             <div>
                 <Button variant="primary" onClick={handleOpen}>
@@ -94,21 +94,21 @@ export const SiteDisposition = () => {
                         </ModalHeading>
                     </ModalHeader>
                     <ModalBody>
-                        <Label htmlFor={uidDP + 2} required>
+                        <Label htmlFor={uidDP + 2} >
                         </Label>
-                        <Label>Disposition Code</Label>
+                        <Label>Disposition Code Label</Label>
                         <Input
                             type="text"
                             id={modalHeadingID + 2}
-                            onChange={e => setCode(e.currentTarget.value)}
+                            onChange={e => setLabel(e.currentTarget.value)}
                         />
-                        <Label htmlFor={uidDP} required>
+                        <Label htmlFor={uidDP}>
                         </Label>
-                        <Label>Description</Label>
+                        <Label>Disposition Code Value</Label>
                         <Input
                             type="text"
                             id={modalHeadingID}
-                            onChange={e => setDescription(e.currentTarget.value)}
+                            onChange={e => setValue(e.currentTarget.value)}
                         />
                     </ModalBody>
                     <ModalFooter>
@@ -137,8 +137,8 @@ export const SiteDisposition = () => {
             <Table aria-label="number-grid" id="number-grid" striped="true" >
                 <THead stickyHeader top={0}>
                     <Tr>
-                        <Th >Disposition Code</Th>
-                        <Th >Description</Th>
+                        <Th >Disposition Code Label</Th>
+                        <Th >Description Code Value</Th>
                         <Th> <AddDispositionModal
                             isModalOpen={isModalOpen}
                             handleClose={closeModal}
@@ -150,10 +150,10 @@ export const SiteDisposition = () => {
                 <TBody>
                     {dynamoDisposition.map((dispositionList, index) => (
                         <Tr key={"row" + index}>
-                            <Td key={"code" + index}>{dispositionList.code}</Td>
-                            <Td key={"desc" + index}>{dispositionList.description}</Td>
+                            <Td key={"label" + index}>{dispositionList.label}</Td>
+                            <Td key={"desc" + index}>{dispositionList.value}</Td>
                             <Td key={"button" + index} textAlign='left'>
-                                <Button variant="secondary" textAlign='left' size="small" onClick={() => removeDisposition(dispositionList.code, dispositionList.description)}><DeleteIcon decorative={false} title="Delete" /></Button>
+                                <Button variant="secondary" textAlign='left' size="small" onClick={() => removeDisposition(dispositionList.label, dispositionList.value)}><DeleteIcon decorative={false} title="Delete" /></Button>
                             </Td>
                         </Tr>
                     ))}

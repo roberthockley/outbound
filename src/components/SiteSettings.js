@@ -260,6 +260,7 @@ export const SiteSettings = () => {
                 for (let i = 0; i < numList.length; i++) {
                     numToUse.push(numList[i].PhoneNumber)
                 }
+                console.log(numToUse)
                 setNumbers(numToUse)
             })
             .catch((error) => {
@@ -579,7 +580,6 @@ export const SiteSettings = () => {
                                         setDuration("");
                                         setCallerId("");
                                         setEnabled("");
-                                        setNumbers([]);
                                         setDND("");
                                         setTZ("Asia/Singapore");
                                         setCampaignSchedule("Standard");
