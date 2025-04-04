@@ -10,6 +10,13 @@ resource "aws_lambda_layer_version" "lambda_layer_dynamodb" {
   compatible_runtimes = ["nodejs22.x"]
 }
 
+resource "aws_lambda_layer_version" "lambda_layer_scheduler" {
+  filename            = "scheduler_layer.zip"
+  layer_name          = "scheduler"
+  description         = "^3.782.0"
+  compatible_runtimes = ["nodejs22.x"]
+}
+
 resource "aws_lambda_layer_version" "lambda_layer_eventbridge" {
   filename            = "eventbridge_lambda_layer.zip"
   layer_name          = "eventbridge_lambda"
@@ -128,4 +135,27 @@ resource "aws_lambda_permission" "allow_eventbridge_invoke_lambda_postcallsummar
 
   # Reference the ARN of the EventBridge Rule
   source_arn = aws_cloudwatch_event_rule.postcallsummary.arn
+}
+
+resource "aws_lambda_function" "lambda_scheduler" {
+  # If the file is not in the current working directory you will need to include a
+  # path.module in the filename.
+  filename      = "lambda_scheduler.zip"
+  function_name = "SetSchedule"
+  role          = aws_iam_role.RoleForMakeCampaign.arn
+  handler       = "index.handler"
+  publish       = true
+  layers        = [aws_lambda_layer_version.lambda_layer_scheduler.arn]
+  runtime       = "nodejs20.x"
+  memory_size   = "128"
+  timeout       = "30"
+  ephemeral_storage {
+    size = 512 # Min 512 MB and the Max 10240 MB
+  }
+  environment {
+    variables = {
+      lambda = "${aws_lambda_function.lambda_makeCampaign.arn}"
+      role = "${aws_iam_role.RoleForMakeCampaign.arn}"
+    }
+  }
 }

@@ -7,7 +7,8 @@ resource "aws_iam_role" "RoleForMakeCampaign" {
         Effect = "Allow"
         Principal = {
           Service = ["apigateway.amazonaws.com",
-          "lambda.amazonaws.com"]
+          "lambda.amazonaws.com",
+          "scheduler.amazonaws.com"]
         }
       }
     ]

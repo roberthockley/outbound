@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@aws-sdk/client-scheduler": "^3.782.0"
+  }
+}
