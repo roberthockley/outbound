@@ -1,0 +1,185 @@
+{
+  "Version": "2019-10-30",
+  "StartAction": "31274b79-1d9d-4b60-af72-643eca93260f",
+  "Metadata": {
+    "entryPointPosition": {
+      "x": 14.4,
+      "y": 233.6
+    },
+    "ActionMetadata": {
+      "31274b79-1d9d-4b60-af72-643eca93260f": {
+        "position": {
+          "x": 144.8,
+          "y": 229.6
+        }
+      },
+      "9b2efdc3-4224-454d-91cd-9aba62c8e86b": {
+        "position": {
+          "x": 1175.2,
+          "y": 217.6
+        }
+      },
+      "dbef5059-0d45-40cf-8fd1-beeaeb9eaebd": {
+        "position": {
+          "x": 912.8,
+          "y": 356
+        },
+        "dynamicParams": []
+      },
+      "96e32323-dd4c-4922-96ef-a4d9f85e65e5": {
+        "position": {
+          "x": 412,
+          "y": 230.4
+        },
+        "parameters": {
+          "TimeLimitSeconds": {
+            "unit": 1
+          }
+        },
+        "timeoutUnit": {
+          "display": "Seconds",
+          "value": "second"
+        }
+      },
+      "4803830f-e5db-4fcd-b71b-fffb2c3d70de": {
+        "position": {
+          "x": 656.8,
+          "y": 221.6
+        },
+        "parameters": {
+          "ViewResource": {
+            "Id": {
+              "displayName": "Summary"
+            }
+          },
+          "InvocationTimeLimitSeconds": {
+            "unit": 60
+          },
+          "ViewData": {
+            "AttributeSection_1743491127033": {
+              "useJson": true
+            }
+          }
+        }
+      }
+    },
+    "Annotations": [],
+    "name": "PCS_View",
+    "description": "Performs A/B call distribution",
+    "type": "contactFlow",
+    "status": "PUBLISHED",
+    "hash": {}
+  },
+  "Actions": [
+    {
+      "Parameters": {
+        "FlowLoggingBehavior": "Enabled"
+      },
+      "Identifier": "31274b79-1d9d-4b60-af72-643eca93260f",
+      "Type": "UpdateFlowLoggingBehavior",
+      "Transitions": {
+        "NextAction": "96e32323-dd4c-4922-96ef-a4d9f85e65e5"
+      }
+    },
+    {
+      "Parameters": {},
+      "Identifier": "9b2efdc3-4224-454d-91cd-9aba62c8e86b",
+      "Type": "EndFlowExecution",
+      "Transitions": {}
+    },
+    {
+      "Parameters": {
+        "Attributes": {
+          "test": "test"
+        },
+        "TargetContact": "Current"
+      },
+      "Identifier": "dbef5059-0d45-40cf-8fd1-beeaeb9eaebd",
+      "Type": "UpdateContactAttributes",
+      "Transitions": {
+        "NextAction": "9b2efdc3-4224-454d-91cd-9aba62c8e86b",
+        "Errors": [
+          {
+            "NextAction": "9b2efdc3-4224-454d-91cd-9aba62c8e86b",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "TimeLimitSeconds": "5"
+      },
+      "Identifier": "96e32323-dd4c-4922-96ef-a4d9f85e65e5",
+      "Type": "Wait",
+      "Transitions": {
+        "NextAction": "4803830f-e5db-4fcd-b71b-fffb2c3d70de",
+        "Conditions": [
+          {
+            "NextAction": "4803830f-e5db-4fcd-b71b-fffb2c3d70de",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "WaitCompleted"
+              ]
+            }
+          }
+        ],
+        "Errors": [
+          {
+            "NextAction": "4803830f-e5db-4fcd-b71b-fffb2c3d70de",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "ViewResource": {
+          "Id": "arn:aws:connect:ap-southeast-1:117134819170:instance/fd415d45-5ce7-4b93-996e-d2307380bda0/view/8474f8ee-46fe-4f17-9d8c-670677bfd866:$LATEST"
+        },
+        "InvocationTimeLimitSeconds": "180",
+        "ViewData": {
+          "AttributeSection_1743491127033": {
+            "Items": [
+              {
+                "Label": "Summary",
+                "Value": "$.Attributes.summary"
+              }
+            ]
+          }
+        }
+      },
+      "Identifier": "4803830f-e5db-4fcd-b71b-fffb2c3d70de",
+      "Type": "ShowView",
+      "Transitions": {
+        "NextAction": "9b2efdc3-4224-454d-91cd-9aba62c8e86b",
+        "Conditions": [
+          {
+            "NextAction": "dbef5059-0d45-40cf-8fd1-beeaeb9eaebd",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "ActionSelected"
+              ]
+            }
+          }
+        ],
+        "Errors": [
+          {
+            "NextAction": "9b2efdc3-4224-454d-91cd-9aba62c8e86b",
+            "ErrorType": "NoMatchingCondition"
+          },
+          {
+            "NextAction": "9b2efdc3-4224-454d-91cd-9aba62c8e86b",
+            "ErrorType": "NoMatchingError"
+          },
+          {
+            "NextAction": "9b2efdc3-4224-454d-91cd-9aba62c8e86b",
+            "ErrorType": "TimeLimitExceeded"
+          }
+        ]
+      }
+    }
+  ]
+}

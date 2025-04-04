@@ -1,0 +1,217 @@
+{
+  "Version": "2019-10-30",
+  "StartAction": "d782ed93-d84a-4d27-a709-2bc3b78f5529",
+  "Metadata": {
+    "entryPointPosition": {
+      "x": -202.4,
+      "y": 12.8
+    },
+    "ActionMetadata": {
+      "2662fc18-4d92-4e35-a3b6-838713475a71": {
+        "position": {
+          "x": 139.2,
+          "y": 240
+        }
+      },
+      "597027b7-1129-4fbe-b89c-425b3050427f": {
+        "position": {
+          "x": 894.4,
+          "y": 227.2
+        }
+      },
+      "c7ef288b-dfe3-4672-ab62-4f2b8b56fc49": {
+        "position": {
+          "x": 136,
+          "y": 16
+        },
+        "conditions": [],
+        "conditionMetadata": [
+          {
+            "id": "92425023-674a-43b2-9c08-cb4ffb7832b1",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "Sales"
+          }
+        ]
+      },
+      "b7d5e040-db21-4fa5-8df1-65cc3fe5aaa1": {
+        "position": {
+          "x": 382.4,
+          "y": 12.8
+        },
+        "parameters": {
+          "QueueId": {
+            "displayName": "BasicQueue"
+          }
+        },
+        "queue": {
+          "text": "BasicQueue"
+        }
+      },
+      "716ef800-deef-4a51-a858-d2cc8c13df37": {
+        "position": {
+          "x": 1204,
+          "y": 164.8
+        }
+      },
+      "8c446713-ba22-479b-bfe9-da03603002a4": {
+        "position": {
+          "x": 634.4,
+          "y": 12
+        }
+      },
+      "a91a427f-759d-4251-a496-1e21e6e36cc8": {
+        "position": {
+          "x": 890.4,
+          "y": 2.4
+        },
+        "parameters": {
+          "QueueId": {
+            "displayName": "BasicQueue"
+          }
+        },
+        "queue": {
+          "id": "arn:aws:connect:ap-southeast-1:117134819170:instance/fd415d45-5ce7-4b93-996e-d2307380bda0/queue/1c590b59-14df-480e-ad1b-4c6aabd160be",
+          "text": "BasicQueue"
+        }
+      },
+      "d782ed93-d84a-4d27-a709-2bc3b78f5529": {
+        "position": {
+          "x": -100,
+          "y": 11.2
+        }
+      }
+    },
+    "Annotations": [],
+    "name": "Outbound Dialler",
+    "description": "Outbound Dialler",
+    "type": "contactFlow",
+    "status": "PUBLISHED",
+    "hash": {}
+  },
+  "Actions": [
+    {
+      "Parameters": {},
+      "Identifier": "2662fc18-4d92-4e35-a3b6-838713475a71",
+      "Type": "EndFlowExecution",
+      "Transitions": {}
+    },
+    {
+      "Parameters": {
+        "Text": "Some Issue"
+      },
+      "Identifier": "597027b7-1129-4fbe-b89c-425b3050427f",
+      "Type": "MessageParticipant",
+      "Transitions": {
+        "NextAction": "716ef800-deef-4a51-a858-d2cc8c13df37",
+        "Errors": [
+          {
+            "NextAction": "716ef800-deef-4a51-a858-d2cc8c13df37",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "ComparisonValue": "$.Attributes.campaign"
+      },
+      "Identifier": "c7ef288b-dfe3-4672-ab62-4f2b8b56fc49",
+      "Type": "Compare",
+      "Transitions": {
+        "NextAction": "2662fc18-4d92-4e35-a3b6-838713475a71",
+        "Conditions": [
+          {
+            "NextAction": "b7d5e040-db21-4fa5-8df1-65cc3fe5aaa1",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "Sales"
+              ]
+            }
+          }
+        ],
+        "Errors": [
+          {
+            "NextAction": "2662fc18-4d92-4e35-a3b6-838713475a71",
+            "ErrorType": "NoMatchingCondition"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "QueueId": "arn:aws:connect:ap-southeast-1:117134819170:instance/fd415d45-5ce7-4b93-996e-d2307380bda0/queue/1c590b59-14df-480e-ad1b-4c6aabd160be"
+      },
+      "Identifier": "b7d5e040-db21-4fa5-8df1-65cc3fe5aaa1",
+      "Type": "UpdateContactTargetQueue",
+      "Transitions": {
+        "NextAction": "8c446713-ba22-479b-bfe9-da03603002a4",
+        "Errors": [
+          {
+            "NextAction": "8c446713-ba22-479b-bfe9-da03603002a4",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {},
+      "Identifier": "716ef800-deef-4a51-a858-d2cc8c13df37",
+      "Type": "DisconnectParticipant",
+      "Transitions": {}
+    },
+    {
+      "Parameters": {
+        "CallbackNumber": "$.Attributes.number"
+      },
+      "Identifier": "8c446713-ba22-479b-bfe9-da03603002a4",
+      "Type": "UpdateContactCallbackNumber",
+      "Transitions": {
+        "NextAction": "a91a427f-759d-4251-a496-1e21e6e36cc8",
+        "Errors": [
+          {
+            "NextAction": "a91a427f-759d-4251-a496-1e21e6e36cc8",
+            "ErrorType": "InvalidCallbackNumber"
+          },
+          {
+            "NextAction": "a91a427f-759d-4251-a496-1e21e6e36cc8",
+            "ErrorType": "CallbackNumberNotDialable"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "RetryDelaySeconds": "60",
+        "InitialCallDelaySeconds": "1",
+        "MaximumConnectionAttempts": "1",
+        "QueueId": "arn:aws:connect:ap-southeast-1:117134819170:instance/fd415d45-5ce7-4b93-996e-d2307380bda0/queue/1c590b59-14df-480e-ad1b-4c6aabd160be"
+      },
+      "Identifier": "a91a427f-759d-4251-a496-1e21e6e36cc8",
+      "Type": "CreateCallbackContact",
+      "Transitions": {
+        "NextAction": "716ef800-deef-4a51-a858-d2cc8c13df37",
+        "Errors": [
+          {
+            "NextAction": "716ef800-deef-4a51-a858-d2cc8c13df37",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "FlowLoggingBehavior": "Enabled"
+      },
+      "Identifier": "d782ed93-d84a-4d27-a709-2bc3b78f5529",
+      "Type": "UpdateFlowLoggingBehavior",
+      "Transitions": {
+        "NextAction": "c7ef288b-dfe3-4672-ab62-4f2b8b56fc49"
+      }
+    }
+  ]
+}

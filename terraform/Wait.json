@@ -1,0 +1,74 @@
+{
+  "Version": "2019-10-30",
+  "StartAction": "ccf6d535-1d83-4175-a215-bffa535bb7e8",
+  "Metadata": {
+    "entryPointPosition": {
+      "x": 40,
+      "y": 40
+    },
+    "ActionMetadata": {
+      "3825c7f9-d18a-439f-9c47-3dda8b7e1baa": {
+        "position": {
+          "x": 422.4,
+          "y": 95.2
+        }
+      },
+      "ccf6d535-1d83-4175-a215-bffa535bb7e8": {
+        "position": {
+          "x": 164.8,
+          "y": 48.8
+        },
+        "parameters": {
+          "TimeLimitSeconds": {
+            "unit": 1
+          }
+        },
+        "timeoutUnit": {
+          "display": "Seconds",
+          "value": "second"
+        }
+      }
+    },
+    "Annotations": [],
+    "name": "Wait",
+    "description": "",
+    "type": "contactFlow",
+    "status": "PUBLISHED",
+    "hash": {}
+  },
+  "Actions": [
+    {
+      "Parameters": {},
+      "Identifier": "3825c7f9-d18a-439f-9c47-3dda8b7e1baa",
+      "Type": "DisconnectParticipant",
+      "Transitions": {}
+    },
+    {
+      "Parameters": {
+        "TimeLimitSeconds": "5"
+      },
+      "Identifier": "ccf6d535-1d83-4175-a215-bffa535bb7e8",
+      "Type": "Wait",
+      "Transitions": {
+        "NextAction": "3825c7f9-d18a-439f-9c47-3dda8b7e1baa",
+        "Conditions": [
+          {
+            "NextAction": "3825c7f9-d18a-439f-9c47-3dda8b7e1baa",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "WaitCompleted"
+              ]
+            }
+          }
+        ],
+        "Errors": [
+          {
+            "NextAction": "3825c7f9-d18a-439f-9c47-3dda8b7e1baa",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    }
+  ]
+}

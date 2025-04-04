@@ -21,7 +21,6 @@ resource "aws_connect_instance_storage_config" "transcripts" {
   }
 }
 
-
 resource "aws_connect_instance_storage_config" "recordings" {
   depends_on = [ aws_s3_bucket.transcripts ] 
   instance_id   = aws_connect_instance.song.id
@@ -87,4 +86,12 @@ resource "aws_connect_instance_storage_config" "evaluations" {
     }
     storage_type = "S3"
   }
+}
+
+resource "aws_connect_contact_flow" "wait" {
+  instance_id  = aws_connect_instance.song.id
+  name         = "Wait"
+  description  = "Ensure callback enabled"
+  type         = "CONTACT_FLOW"
+  filename     = "Wait.json"
 }
