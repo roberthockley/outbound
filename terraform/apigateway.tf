@@ -999,8 +999,114 @@ resource "aws_api_gateway_integration_response" "connect_outbound_unmarshalled_p
 }
 
 resource "aws_api_gateway_deployment" "connect_outbound_deployment" {
-  depends_on  = [aws_api_gateway_integration_response.connect_outbound_csv_post, aws_api_gateway_integration_response.connect_outbound_csv_options, aws_api_gateway_integration_response.connect_outbound_unmarshalled_post, aws_api_gateway_integration_response.connect_outbound_unmarshalled_options,  aws_api_gateway_integration_response.connect_outbound_createTable_post, aws_api_gateway_integration_response.connect_outbound_createTable_options, aws_api_gateway_integration_response.connect_outbound_delete_post, aws_api_gateway_integration_response.connect_outbound_delete_options, aws_api_gateway_integration_response.connect_outbound_make_post, aws_api_gateway_integration_response.connect_outbound_make_options, aws_api_gateway_integration_response.connect_outbound_scan_post, aws_api_gateway_integration_response.connect_outbound_scan_options, aws_api_gateway_integration_response.connect_outbound_numbers_post, aws_api_gateway_integration_response.connect_outbound_numbers_options, aws_api_gateway_integration_response.connect_outbound_update_post, aws_api_gateway_integration_response.connect_outbound_update_options, aws_api_gateway_integration_response.connect_outbound_deleteTable_post, aws_api_gateway_integration_response.connect_outbound_deleteTable_options]
+  depends_on  = [aws_api_gateway_integration_response.connect_outbound_scheduler_post, aws_api_gateway_integration_response.connect_outbound_scheduler_options, aws_api_gateway_integration_response.connect_outbound_csv_post, aws_api_gateway_integration_response.connect_outbound_csv_options, aws_api_gateway_integration_response.connect_outbound_unmarshalled_post, aws_api_gateway_integration_response.connect_outbound_unmarshalled_options,  aws_api_gateway_integration_response.connect_outbound_createTable_post, aws_api_gateway_integration_response.connect_outbound_createTable_options, aws_api_gateway_integration_response.connect_outbound_delete_post, aws_api_gateway_integration_response.connect_outbound_delete_options, aws_api_gateway_integration_response.connect_outbound_make_post, aws_api_gateway_integration_response.connect_outbound_make_options, aws_api_gateway_integration_response.connect_outbound_scan_post, aws_api_gateway_integration_response.connect_outbound_scan_options, aws_api_gateway_integration_response.connect_outbound_numbers_post, aws_api_gateway_integration_response.connect_outbound_numbers_options, aws_api_gateway_integration_response.connect_outbound_update_post, aws_api_gateway_integration_response.connect_outbound_update_options, aws_api_gateway_integration_response.connect_outbound_deleteTable_post, aws_api_gateway_integration_response.connect_outbound_deleteTable_options]
   rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+}
+
+resource "aws_api_gateway_resource" "connect_outbound_scheduler" {
+  parent_id   = aws_api_gateway_rest_api.connect_outbound.root_resource_id
+  path_part   = "scheduler"
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+}
+
+resource "aws_api_gateway_method" "connect_outbound_scheduler_options" {
+  api_key_required = "false"
+  authorization    = "NONE"
+  http_method      = "OPTIONS"
+  resource_id      = aws_api_gateway_resource.connect_outbound_scheduler.id
+  rest_api_id      = aws_api_gateway_rest_api.connect_outbound.id
+}
+
+resource "aws_api_gateway_method" "connect_outbound_scheduler_post" {
+  api_key_required = "false"
+  authorization    = "NONE"
+  http_method      = "POST"
+  resource_id      = aws_api_gateway_resource.connect_outbound_scheduler.id
+  rest_api_id      = aws_api_gateway_rest_api.connect_outbound.id
+}
+
+resource "aws_api_gateway_method_response" "connect_outbound_scheduler_options" {
+  depends_on  = [aws_api_gateway_method.connect_outbound_scheduler_options]
+  http_method = "OPTIONS"
+  resource_id = aws_api_gateway_resource.connect_outbound_scheduler.id
+  response_models = {
+    "application/json" = "Empty"
+  }
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "false"
+    "method.response.header.Access-Control-Allow-Methods" = "false"
+    "method.response.header.Access-Control-Allow-Origin"  = "false"
+  }
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+  status_code = "200"
+}
+
+resource "aws_api_gateway_method_response" "connect_outbound_scheduler_post" {
+  depends_on  = [aws_api_gateway_method.connect_outbound_scheduler_post]
+  http_method = "POST"
+  resource_id = aws_api_gateway_resource.connect_outbound_scheduler.id
+  response_models = {
+    "application/json" = "Empty"
+  }
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "false"
+  }
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+  status_code = "200"
+}
+
+resource "aws_api_gateway_integration" "connect_outbound_scheduler_options" {
+  depends_on           = [aws_api_gateway_method_response.connect_outbound_scheduler_options]
+  cache_namespace      = aws_api_gateway_resource.connect_outbound_scheduler.id
+  connection_type      = "INTERNET"
+  http_method          = "OPTIONS"
+  passthrough_behavior = "WHEN_NO_MATCH"
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+  resource_id          = aws_api_gateway_resource.connect_outbound_scheduler.id
+  rest_api_id          = aws_api_gateway_rest_api.connect_outbound.id
+  timeout_milliseconds = "29000"
+  type                 = "MOCK"
+}
+
+resource "aws_api_gateway_integration" "connect_outbound_scheduler_post" {
+  depends_on              = [aws_api_gateway_method_response.connect_outbound_scheduler_post]
+  cache_namespace         = aws_api_gateway_resource.connect_outbound_scheduler.id
+  connection_type         = "INTERNET"
+  content_handling        = "CONVERT_TO_TEXT"
+  http_method             = "POST"
+  integration_http_method = "POST"
+  passthrough_behavior    = "WHEN_NO_MATCH"
+  resource_id             = aws_api_gateway_resource.connect_outbound_scheduler.id
+  rest_api_id             = aws_api_gateway_rest_api.connect_outbound.id
+  timeout_milliseconds    = "29000"
+  type                    = "AWS"
+  uri                     = aws_lambda_function.lambda_scheduler.invoke_arn
+}
+
+resource "aws_api_gateway_integration_response" "connect_outbound_scheduler_options" {
+  depends_on  = [aws_api_gateway_integration.connect_outbound_scheduler_options]
+  http_method = "OPTIONS"
+  resource_id = aws_api_gateway_resource.connect_outbound_scheduler.id
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  }
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+  status_code = "200"
+}
+
+resource "aws_api_gateway_integration_response" "connect_outbound_scheduler_post" {
+  depends_on  = [aws_api_gateway_integration.connect_outbound_scheduler_post]
+  http_method = "POST"
+  resource_id = aws_api_gateway_resource.connect_outbound_scheduler.id
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+  }
+  rest_api_id = aws_api_gateway_rest_api.connect_outbound.id
+  status_code = "200"
 }
 
 resource "aws_api_gateway_stage" "connect_outbound" {
@@ -1051,6 +1157,15 @@ resource "aws_lambda_permission" "connect_unmarshalledDynamo" {
   statement_id  = "AllowAPIGatewayInvoke_Connect_Outbound"
   action        = "lambda:InvokeFunction"
   function_name =aws_lambda_function.lambda_unmarshalledDynamo.function_name
+  principal     = "apigateway.amazonaws.com" # For API Gateway
+  # Define the source ARN for your API Gateway
+  source_arn = "${aws_api_gateway_rest_api.connect_outbound.execution_arn}/*/*/*"
+}
+
+resource "aws_lambda_permission" "connect_scheduler" {
+  statement_id  = "AllowAPIGatewayInvoke_Connect_Outbound"
+  action        = "lambda:InvokeFunction"
+  function_name =aws_lambda_function.lambda_scheduler.function_name
   principal     = "apigateway.amazonaws.com" # For API Gateway
   # Define the source ARN for your API Gateway
   source_arn = "${aws_api_gateway_rest_api.connect_outbound.execution_arn}/*/*/*"
