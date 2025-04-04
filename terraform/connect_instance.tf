@@ -95,3 +95,11 @@ resource "aws_connect_contact_flow" "wait" {
   type         = "CONTACT_FLOW"
   filename     = "Wait.json"
 }
+
+resource "aws_connect_contact_flow" "outbound" {
+  instance_id  = aws_connect_instance.song.id
+  name         = "Outbound Dialler"
+  description  = "Outbound call orchestration"
+  type         = "CONTACT_FLOW"
+  filename     = "Outbound.json"
+}
